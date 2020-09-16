@@ -7,11 +7,12 @@ dart:
 dart_task:
 - test: --platform vm
 
-# As long as you don't want any other configuration, you can just use the name
-# of a task instead of "name: true".
+# As long as you don't want any other configuration, you can just use the name of a task instead of "name: true".
 - test
 
-# Warnings are fatal, but we only analyze the lib/ directory.
+#To run the Dart analyzer to verify that your code doesn’t have any static errors. 
+#By default it analyzes all Dart files in your repository, but you can configure it by providing arguments instead of true.
 #- dartanalyzer: --fatal-warnings lib
 
-- dartfmt
+#To run the Dart formatter to verify that all your files are correctly formatted
+#- dartfmt
