@@ -1,18 +1,49 @@
 language: dart
+addons:
+  apt:
+    packages:
+      - lib32stdc++6
+env:
+  global:
+    - FLUTTER_CHANNEL=stable
+install:
+  - git clone https://github.com/flutter/flutter.git -b $FLUTTER_CHANNEL
+  - export PATH="$PATH:`pwd`/flutter/bin/cache/dart-sdk/bin"
+  - export PATH="$PATH:`pwd`/flutter/bin"
+  - flutter doctor -v
+  - cd RasPiFinder/ && flutter packages get
+cache:
+  directories:
+    - $HOME/.pub-cache
 
-dart:
-# Install the latest stable release
-- stable
+static_analysis: &static_analysis
+  name: "Static analysis"
+  script: flutter analyze
 
-dart_task:
-- test: --platform vm
+unit_tests: &unit_tests
+  name: "Unit tests"
+  #script: flutter test test/unit_test.dart
 
-# As long as you don't want any other configuration, you can just use the name of a task instead of "name: true".
-- test
+widget_tests: &widget_tests
+  name: "Widget tests"
+  script: flutter test test/widget_test.dart
 
-#To run the Dart analyzer to verify that your code doesn’t have any static errors. 
-#By default it analyzes all Dart files in your repository, but you can configure it by providing arguments instead of true.
-#- dartanalyzer: --fatal-warnings lib
+integration_tests: &integration_tests
+  name: "Integration tests"
+  #script: flutter drive --target=test_driver/main.dart
 
-#To run the Dart formatter to verify that all your files are correctly formatted
-#- dartfmt
+jobs:
+  include:
+  - <<: *static_analysis
+  - <<: *unit_tests
+  - <<: *widget_tests
+  - <<: *integration_tests
+  - stage: build
+  - stage: deploy
+
+# stages:
+  # - compile
+  # - test
+  # - build
+  # - name: deploy
+    # if: branch = master
