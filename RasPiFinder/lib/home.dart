@@ -42,7 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children:<Widget>[
-              Text('Home'),
+              Text('RasPiFinder'),
             ]
       ),
     ),
