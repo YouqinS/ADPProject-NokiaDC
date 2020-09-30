@@ -1,3 +1,5 @@
+import 'package:RasPiFinder/auth/components/app_bar.dart';
+import 'package:RasPiFinder/auth/components/navigate.dart';
 import 'package:RasPiFinder/auth/components/signup_signin_check.dart';
 import 'package:RasPiFinder/auth/components/rounded_button.dart';
 import 'package:RasPiFinder/auth/components/text_input_field.dart';
@@ -7,24 +9,20 @@ import 'package:RasPiFinder/home/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  LoginPage({Key key}) : super(key: key);
+
+  @override
+  LoginForm createState() => new LoginForm();
+}
+
+class LoginForm extends State<LoginPage> {
+  final formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "RasPiFinder",
-          style: TextStyle(
-              color: Colors.white,
-              letterSpacing: 2,
-              fontWeight: FontWeight.bold,
-              fontSize: 20
-          ),
-        ),
-        backgroundColor: Colors.blue,
-        centerTitle: true,
-      ),
+      appBar: piAppBar,
       backgroundColor: Colors.white,
       body: Container(
         child: Column(
@@ -43,27 +41,13 @@ class LoginPage extends StatelessWidget {
               text: "Sign In",
               //TODO connect to DB to store user credentials and status
               press: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return HomePage();
-                    },
-                  ),
-                );
+                navigateToPage(context, HomePage());
               },
             ),
             SizedBox(height: size.height * 0.03),
             SignupSigninCheck(
               press: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return SignupPage();
-                    },
-                  ),
-                );
+               navigateToPage(context, SignupPage());
               },
             ),
           ],

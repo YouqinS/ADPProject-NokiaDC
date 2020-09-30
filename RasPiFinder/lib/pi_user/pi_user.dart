@@ -1,12 +1,12 @@
 import 'package:RasPiFinder/auth/components/app_bar.dart';
+import 'package:RasPiFinder/auth/components/navigate.dart';
 import 'package:RasPiFinder/auth/components/rounded_button.dart';
 import 'package:RasPiFinder/home/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class PisUser extends StatefulWidget {
-  PisUser({Key key, this.title}) : super(key: key);
-  final String title;
+  PisUser({Key key}) : super(key: key);
 
   @override
   PiUserInfo createState() => new PiUserInfo();
@@ -70,7 +70,7 @@ class PiUserInfo extends State<PisUser> {
                         text: 'Save',
                         press: () {
                           submit();
-                          navigateToHome(context);
+                          navigateToPage(context, HomePage());
                         },
                       )
                   )
@@ -91,16 +91,5 @@ class PiUserInfo extends State<PisUser> {
       print(room);
       print(building);
     }
-  }
-
-  void navigateToHome(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) {
-          return HomePage();
-        },
-      ),
-    );
   }
 }
