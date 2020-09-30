@@ -39,9 +39,13 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home'),
-
+        title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children:<Widget>[
+              Text('Home'),
+            ]
       ),
+    ),
       body: Center(
         child: _image == null
             ? Text('Click the Scan button to open camera',
@@ -54,6 +58,23 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: getImage,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(
+            icon: new Icon(Icons.home),
+            title: new Text('Home'),
+          ),
+          BottomNavigationBarItem(
+            icon: new Icon(Icons.person),
+            title: new Text('Profile'),
+          ),
+          BottomNavigationBarItem(
+            icon: new Icon(Icons.search),
+            title: new Text('Search'),
+          ),
+        ],
+      ),
     );
   }
 }
