@@ -1,3 +1,4 @@
+import 'package:RasPiFinder/auth/components/app_bar.dart';
 import 'package:RasPiFinder/auth/components/password_input_field.dart';
 import 'package:RasPiFinder/auth/components/rounded_button.dart';
 import 'package:RasPiFinder/auth/components/signup_signin_check.dart';
@@ -12,18 +13,7 @@ class SignupPage extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "RasPiFinder",
-          style: TextStyle(
-              color: Colors.white,
-              letterSpacing: 2,
-              fontWeight: FontWeight.bold,
-              fontSize: 20),
-        ),
-        backgroundColor: Colors.blue,
-        centerTitle: true,
-      ),
+      appBar: piAppBar,
       backgroundColor: Colors.white,
       body: Container(
         child: Column(

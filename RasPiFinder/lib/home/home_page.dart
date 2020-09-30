@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:RasPiFinder/auth/components/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:RasPiFinder/pi_user/pi_user.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -27,19 +29,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-      title: Text(
-      "RasPiFinder",
-      style: TextStyle(
-          color: Colors.white,
-          letterSpacing: 2,
-          fontWeight: FontWeight.bold,
-          fontSize: 20
-      ),
-    ),
-    backgroundColor: Colors.blue,
-    centerTitle: true,
-    ),
+      appBar: piAppBar,
       body: Center(
         child: _image == null
             ? Text('Click the Scan button to open camera',
@@ -49,7 +39,17 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton.extended(
         icon:Icon(Icons.camera_alt),
         label: Text("Scan"),
-        onPressed: getImage,
+        //onPressed: getImage,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return PisUser();
+              },
+            ),
+          );
+        },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
 
