@@ -1,11 +1,11 @@
 import 'package:RasPiFinder/auth/components/app_bar.dart';
 import 'package:RasPiFinder/auth/components/navigate.dart';
+import 'package:RasPiFinder/auth/components/navigation_bar.dart';
 import 'package:RasPiFinder/auth/components/signup_signin_check.dart';
 import 'package:RasPiFinder/auth/components/rounded_button.dart';
 import 'package:RasPiFinder/auth/components/text_input_field.dart';
 import 'package:RasPiFinder/auth/components/password_input_field.dart';
 import 'package:RasPiFinder/auth/signup/signup_page.dart';
-import 'package:RasPiFinder/home/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -41,7 +41,7 @@ class LoginForm extends State<LoginPage> {
               text: "Sign In",
               //TODO connect to DB to store user credentials and status
               press: () {
-                navigateToPage(context, HomePage());
+                navigateToPage(context, NavPage());
               },
             ),
             SizedBox(height: size.height * 0.03),
