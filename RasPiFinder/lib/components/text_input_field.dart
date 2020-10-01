@@ -1,4 +1,4 @@
-import 'package:RasPiFinder/auth/components/text_field_container.dart';
+import 'package:RasPiFinder/components/text_field_container.dart';
 import 'package:flutter/material.dart';
 
 class TextInputField extends StatelessWidget {

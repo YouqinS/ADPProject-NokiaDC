@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:RasPiFinder/auth/components/app_bar.dart';
-import 'package:RasPiFinder/auth/components/navigate.dart';
+import 'package:RasPiFinder/components/app_bar.dart';
+import 'package:RasPiFinder/components/navigate.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:RasPiFinder/pi_user/pi_user.dart';
