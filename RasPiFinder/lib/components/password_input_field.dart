@@ -3,16 +3,19 @@ import 'package:flutter/material.dart';
 
 class PasswordInputField extends StatelessWidget {
   final ValueChanged<String> onChanged;
+  String userInput = '';
+  final FormFieldValidator<String> validateInput;
 
-  const PasswordInputField({
+  PasswordInputField({
     Key key,
     this.onChanged,
+    this.validateInput,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFieldContainer(
-      child: TextField(
+      child: TextFormField(
         obscureText: true,
         onChanged: onChanged,
         cursorColor: Colors.blue,
@@ -28,6 +31,8 @@ class PasswordInputField extends StatelessWidget {
           ),
           border: InputBorder.none,
         ),
+        onSaved: (input) => userInput = input,
+        validator: validateInput,
       ),
     );
   }
