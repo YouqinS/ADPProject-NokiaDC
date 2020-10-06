@@ -5,14 +5,14 @@ import 'package:RasPiFinder/home/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class PisUser extends StatefulWidget {
-  PisUser({Key key}) : super(key: key);
+class AppUser extends StatefulWidget {
+  AppUser({Key key}) : super(key: key);
 
   @override
   PiUserInfo createState() => new PiUserInfo();
 }
 
-class PiUserInfo extends State<PisUser> {
+class PiUserInfo extends State<AppUser> {
   final formKey = GlobalKey<FormState>();
   String name, phone, address;
   String userType = 'User Type';
@@ -38,7 +38,7 @@ class PiUserInfo extends State<PisUser> {
                 margin: EdgeInsets.fromLTRB(0, 0, 0, size.height * 0.08),
                 //color: Colors.red,
                 child: Text(
-                  'Fill your info related to this Pi',
+                  'Fill info related to this Pi',
                   style: TextStyle(
                     color: Colors.blue,
                     fontWeight: FontWeight.bold,
@@ -47,7 +47,6 @@ class PiUserInfo extends State<PisUser> {
                   ),
                 ),
               ),
-              //SizedBox(height: size.height * 0.01, ),
               Row(
                 children: [
                   Text(
@@ -89,27 +88,7 @@ class PiUserInfo extends State<PisUser> {
                   children: <Widget>[
                     TextFormField(
                       decoration: InputDecoration(
-                        labelText: 'Name :',
-                        labelStyle: textStyle,
-                        //border: OutlineInputBorder(),
-                      ),
-                      onSaved: (input) => name = input,
-                      validator: validateNameInput,
-                    ),
-                    SizedBox(height: size.height * 0.03),
-                    TextFormField(
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        labelText: 'Phone Number :',
-                        labelStyle: textStyle,
-                      ),
-                      onSaved: (input) => phone = input,
-                      validator: validatePhoneInput,
-                    ),
-                    SizedBox(height: size.height * 0.03),
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Office Address :',
+                        labelText: 'Pi Location/Address :',
                         labelStyle: textStyle,
                       ),
                       onSaved: (input) => address = input,
@@ -149,13 +128,6 @@ class PiUserInfo extends State<PisUser> {
     }
   }
 
-  String validateNameInput(String name) {
-    if (name.isEmpty) {
-      return 'Please enter your name !';
-    }
-    return null;
-  }
-
   String validateAddressInput(String address) {
     if (address.isEmpty) {
       return 'Please enter office address info !';
@@ -163,12 +135,6 @@ class PiUserInfo extends State<PisUser> {
     return null;
   }
 
-  String validatePhoneInput(String phone) {
-    if (phone.isEmpty || (null == double.tryParse(phone))) {
-      return 'Please enter a valid phone number !';
-    }
-    return null;
-  }
 
   void validateUserTypeInput() {
     if (userType == 'User Type') {

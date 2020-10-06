@@ -4,7 +4,7 @@ import 'package:RasPiFinder/components/app_bar.dart';
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:RasPiFinder/pi_user/pi_user.dart';
+import 'package:RasPiFinder/app_user/app_user.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
         //onPressed: getImage,
         onPressed: () {
           //for temporary testing
-          navigateToPage(context, PisUser());
+          navigateToPage(context, AppUser());
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
