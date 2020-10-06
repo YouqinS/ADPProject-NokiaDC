@@ -102,7 +102,6 @@ class PiUserInfo extends State<AppUser> {
                         labelStyle: textStyle,
                       ),
                       onSaved: (input) => software = input,
-                      validator: validateAddressInput,
                     ),
                     SizedBox(height: size.height * 0.03),
                     Container(
