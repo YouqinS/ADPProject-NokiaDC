@@ -14,8 +14,8 @@ class AppUser extends StatefulWidget {
 
 class PiUserInfo extends State<AppUser> {
   final formKey = GlobalKey<FormState>();
-  String name, phone, address;
-  String userType = 'User Type';
+  String address, software;
+  String userType = 'Select :';
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +29,7 @@ class PiUserInfo extends State<AppUser> {
         appBar: piAppBar,
         body: Card(
           color: Colors.grey[100],
+          semanticContainer: true,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -49,8 +50,9 @@ class PiUserInfo extends State<AppUser> {
               ),
               Row(
                 children: [
+                  SizedBox(width: size.width * 0.02,),
                   Text(
-                    'Select User Type : ',
+                    'I am a : ',
                     style: textStyle,
                   ),
                   SizedBox(width: size.width * 0.15,),
@@ -70,7 +72,7 @@ class PiUserInfo extends State<AppUser> {
                         validateUserTypeInput();
                       });
                     },
-                    items: <String>['User Type', 'Pi Finder', 'Pi Owner', 'Pi User']
+                    items: <String>['Select :', 'Pi Finder', 'Pi Owner', 'Pi User']
                         .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
@@ -88,10 +90,18 @@ class PiUserInfo extends State<AppUser> {
                   children: <Widget>[
                     TextFormField(
                       decoration: InputDecoration(
-                        labelText: 'Pi Location/Address :',
+                        labelText: '  Pi Location/Address :',
                         labelStyle: textStyle,
                       ),
                       onSaved: (input) => address = input,
+                      validator: validateAddressInput,
+                    ),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: '  Software(optional) :',
+                        labelStyle: textStyle,
+                      ),
+                      onSaved: (input) => software = input,
                       validator: validateAddressInput,
                     ),
                     SizedBox(height: size.height * 0.03),
@@ -113,31 +123,30 @@ class PiUserInfo extends State<AppUser> {
   }
 
   void submit(){
-    if (userType == 'User Type'){
+    if (userType == 'Select :'){
       showAlert();
     }
-    if(formKey.currentState.validate() && userType != 'User Type'){
+    if(formKey.currentState.validate() && userType != 'Select :'){
       formKey.currentState.save();
       //TODO get current GPS data and store to DB
       //TODO connect to DB to store user input
-      print(name);
-      print(phone);
-      print(address);
       print(userType);
+      print(software);
+      print(address);
       navigateToPage(context, HomePage());
     }
   }
 
   String validateAddressInput(String address) {
     if (address.isEmpty) {
-      return 'Please enter office address info !';
+      return 'Please enter Pi location !';
     }
     return null;
   }
 
 
   void validateUserTypeInput() {
-    if (userType == 'User Type') {
+    if (userType == 'Select :') {
       showAlert();
     }
   }
