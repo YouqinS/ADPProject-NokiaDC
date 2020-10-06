@@ -166,7 +166,7 @@ class PiUserInfo extends State<AppUser> {
             ),
           ),
           actions: <Widget>[
-            TextButton(
+            FlatButton(
               child: Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
