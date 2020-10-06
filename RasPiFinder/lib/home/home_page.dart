@@ -53,15 +53,15 @@ class _HomePageState extends State<HomePage> {
         items: [
           BottomNavigationBarItem(
             icon: new Icon(Icons.home),
-            label: 'Home',
+            title: new Text("Home"),
           ),
           BottomNavigationBarItem(
             icon: new Icon(Icons.person),
-            label: 'Profile',
+            title: new Text("Profile"),
           ),
           BottomNavigationBarItem(
             icon: new Icon(Icons.search),
-            label: 'Search',
+            title: new Text("Search"),
           ),
         ],
       ),
