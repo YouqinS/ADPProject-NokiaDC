@@ -3,16 +3,15 @@ import 'package:flutter/material.dart';
 
 class TextInputField extends StatelessWidget {
   final String hintText;
-  String userInput = '';
   final IconData icon;
-  final ValueChanged<String> onChanged;
+  final FormFieldSetter<String> onSaved;
   final FormFieldValidator<String> validateInput;
 
   TextInputField({
     Key key,
     this.hintText,
     this.icon,
-    this.onChanged,
+    this.onSaved,
     this.validateInput,
   }) : super(key: key);
 
@@ -20,7 +19,7 @@ class TextInputField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFieldContainer(
       child: TextFormField(
-        onChanged: onChanged,
+        onSaved: onSaved,
         decoration: InputDecoration(
           icon: Icon(
             icon,
@@ -29,7 +28,6 @@ class TextInputField extends StatelessWidget {
           hintText: hintText,
           border: InputBorder.none,
         ),
-        onSaved: (input) => userInput = input,
         validator: validateInput,
       ),
     );

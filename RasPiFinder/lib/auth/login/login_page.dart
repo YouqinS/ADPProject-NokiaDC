@@ -35,13 +35,13 @@ class LoginForm extends State<LoginPage> {
               TextInputField(
                 hintText: "Username",
                 icon: Icons.person,
-                onChanged: (value) {
+                onSaved: (value) {
                   userName = value;
                 },
                 validateInput: validateUsernameInput,
               ),
               PasswordInputField(
-                onChanged: (value) {
+                onSaved: (value) {
                   password = value;
                 },
                 validateInput: validatePasswdInput,
@@ -67,13 +67,13 @@ class LoginForm extends State<LoginPage> {
   }
 
   String validateUsernameInput(String username) {
-    if (null == userName || username.isEmpty) {
+    if (null == username || username.isEmpty) {
       return 'Please enter username !';
     }
     return null;
   }
 
-  String validatePasswdInput(String username) {
+  String validatePasswdInput(String password) {
     if (null == password || password.isEmpty) {
       return 'Please enter password !';
     }

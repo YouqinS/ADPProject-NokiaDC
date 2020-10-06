@@ -2,13 +2,12 @@ import 'package:RasPiFinder/components/text_field_container.dart';
 import 'package:flutter/material.dart';
 
 class PasswordInputField extends StatelessWidget {
-  final ValueChanged<String> onChanged;
-  String userInput = '';
+  final FormFieldSetter<String> onSaved;
   final FormFieldValidator<String> validateInput;
 
   PasswordInputField({
     Key key,
-    this.onChanged,
+    this.onSaved,
     this.validateInput,
   }) : super(key: key);
 
@@ -17,7 +16,7 @@ class PasswordInputField extends StatelessWidget {
     return TextFieldContainer(
       child: TextFormField(
         obscureText: true,
-        onChanged: onChanged,
+        onSaved: onSaved,
         cursorColor: Colors.blue,
         decoration: InputDecoration(
           hintText: "Password",
@@ -25,13 +24,8 @@ class PasswordInputField extends StatelessWidget {
             Icons.lock,
             color: Colors.blue,
           ),
-          suffixIcon: Icon(
-            Icons.visibility,
-            color: Colors.blue,
-          ),
           border: InputBorder.none,
         ),
-        onSaved: (input) => userInput = input,
         validator: validateInput,
       ),
     );
