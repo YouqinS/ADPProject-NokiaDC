@@ -31,15 +31,56 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: piAppBar,
-      body: Center(
-        child: _image == null
-            ? Text('Click the Scan button to open camera',
-            style: new TextStyle(fontSize: 20, fontWeight: FontWeight.bold))
-            :Image.file(_image),
+      body: Column(children: ListTile.divideTiles(context: context, tiles: [
+      ListTile(
+          leading: Image.network(
+              "https://cdn4.iconfinder.com/data/icons/flat-brand-logo-2/512/nokia-512.png"),
+          title: Text('Product 1'),
+          subtitle: Text('1234567'),
+          trailing: Icon(Icons.chevron_right)),
+      ListTile(
+          leading: Image.network(
+              "https://cdn4.iconfinder.com/data/icons/flat-brand-logo-2/512/nokia-512.png"),
+          title: Text('Product 2'),
+          subtitle: Text('1234567'),
+          trailing: Icon(Icons.chevron_right)),
+      ListTile(
+          leading: Image.network(
+              "https://cdn4.iconfinder.com/data/icons/flat-brand-logo-2/512/nokia-512.png"),
+          title: Text('Product 3'),
+          subtitle: Text('1234567'),
+          trailing: Icon(Icons.chevron_right)),
+      ListTile(
+          leading: Image.network(
+              "https://cdn4.iconfinder.com/data/icons/flat-brand-logo-2/512/nokia-512.png"),
+          title: Text('Product 4'),
+          subtitle: Text('1234567'),
+          trailing: Icon(Icons.chevron_right)),
+      ListTile(
+          leading: Image.network(
+              "https://cdn4.iconfinder.com/data/icons/flat-brand-logo-2/512/nokia-512.png"),
+          title: Text('Product 5'),
+          subtitle: Text('1234567'),
+          trailing: Icon(Icons.chevron_right)),
+        ListTile(
+            leading: Image.network(
+                "https://cdn4.iconfinder.com/data/icons/flat-brand-logo-2/512/nokia-512.png"),
+            title: Text('Product 6'),
+            subtitle: Text('1234567'),
+            trailing: Icon(Icons.chevron_right)),
+        ListTile(
+            leading: Image.network(
+                "https://cdn4.iconfinder.com/data/icons/flat-brand-logo-2/512/nokia-512.png"),
+            title: Text('Product 7'),
+            subtitle: Text('1234567'),
+            trailing: Icon(Icons.chevron_right)),
+      ]).toList(),
       ),
+
       floatingActionButton: FloatingActionButton.extended(
         icon:Icon(Icons.camera_alt),
         label: Text("Scan"),
+        tooltip: ('Open camera to scan a QR code'),
         //TODO add function to scan qr code
         //onPressed: getImage,
         onPressed: () {
