@@ -5,7 +5,6 @@ import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/profile/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:RasPiFinder/app_user/app_user.dart';
 
 class HomePage extends StatefulWidget {
   @override

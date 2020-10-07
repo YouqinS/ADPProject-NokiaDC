@@ -14,7 +14,7 @@ class AppUser extends StatefulWidget {
 
 class PiUserInfo extends State<AppUser> {
   final formKey = GlobalKey<FormState>();
-  String address, software;
+  String address, software, other;
   String userType = 'Select :';
 
   @override
@@ -98,10 +98,17 @@ class PiUserInfo extends State<AppUser> {
                     ),
                     TextFormField(
                       decoration: InputDecoration(
-                        labelText: '  Software(optional) :',
+                        labelText: '  Software :',
                         labelStyle: textStyle,
                       ),
                       onSaved: (input) => software = input,
+                    ),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: '  Other :',
+                        labelStyle: textStyle,
+                      ),
+                      onSaved: (input) => other = input,
                     ),
                     SizedBox(height: size.height * 0.03),
                     Container(
@@ -137,8 +144,8 @@ class PiUserInfo extends State<AppUser> {
   }
 
   String validateAddressInput(String address) {
-    if (address.isEmpty) {
-      return 'Please enter Pi location !';
+    if (address.isNotEmpty && address.length < 5) {
+      return 'Please enter valid Pi location !';
     }
     return null;
   }

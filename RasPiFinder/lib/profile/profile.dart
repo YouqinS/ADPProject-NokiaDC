@@ -1,6 +1,7 @@
 import 'package:RasPiFinder/auth/login/login_page.dart';
 import 'package:RasPiFinder/components/app_bar.dart';
 import 'package:RasPiFinder/components/navigate.dart';
+import 'package:RasPiFinder/components/rounded_button.dart';
 import 'package:RasPiFinder/profile/setting.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,8 +25,6 @@ class ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     setUserInfo();
-    var textStyle = TextStyle(
-        fontSize: 20.0, fontWeight: FontWeight.w400, color: Colors.blue);
     return Scaffold(
         appBar: piAppBar,
         body: Card(
@@ -40,10 +39,14 @@ class ProfileState extends State<Profile> {
                 //crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   //TODO: can be changed to avatar if necessary
-                  Icon(
-                    Icons.person,
-                    color: Colors.blue[900],
-                    size: size.width * 0.2,
+                  CircleAvatar(
+                    radius: 55,
+                    backgroundColor: Colors.blue[100],
+                    child: Icon(
+                      Icons.person,
+                      color: Colors.blue[900],
+                      size: size.height * 0.1,
+                    ),
                   ),
                   Column(
                     children: [
@@ -131,18 +134,12 @@ class ProfileState extends State<Profile> {
                   SizedBox(
                     height: size.height * 0.08,
                   ),
-                  FloatingActionButton.extended(
-                      onPressed: () {
-                        //for temporary testing
-                        navigateToPage(context, LoginPage());
-                      },
-                      label: Text("LOG OUT",
-                          style: TextStyle(
-                            color: Colors.white,
-                            letterSpacing: 1.2,
-                            fontSize: 18,
-                          )
-                      ),
+                  RoundedButton(
+                    text: "LOG OUT",
+                    //TODO connect to DB to store user credentials and status
+                    press: () {
+                      navigateToPage(context, LoginPage());
+                    },
                   ),
                 ],
               ),
