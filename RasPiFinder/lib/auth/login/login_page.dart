@@ -23,7 +23,7 @@ class LoginForm extends State<LoginPage> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: piAppBar,
+      appBar: PiAppBar(title: 'RasPiFinder').build(context),
       body: Card(
         color: Colors.grey[100],
         child: Form(

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:RasPiFinder/components/app_bar.dart';
 import 'package:RasPiFinder/components/navigate.dart';
+import 'package:RasPiFinder/pi_data/pi_data.dart';
 import 'package:RasPiFinder/profile/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -30,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: piAppBar,
+      appBar: PiAppBar(title: 'RasPiFinder',).build(context),
       body: Center(
         child: _image == null
             ? Text('Click the Scan button to open camera',
@@ -44,7 +45,7 @@ class _HomePageState extends State<HomePage> {
         //onPressed: getImage,
         onPressed: () {
           //for temporary testing
-          navigateToPage(context, Profile());
+          navigateToPage(context, PiData());
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

@@ -26,7 +26,7 @@ class PiUserInfo extends State<AppUser> {
                         color: Colors.blue
                       );
     return new Scaffold(
-        appBar: piAppBar,
+        appBar: PiAppBar(title: 'Fill Pi Info').build(context),
         body: Card(
           color: Colors.grey[100],
           semanticContainer: true,

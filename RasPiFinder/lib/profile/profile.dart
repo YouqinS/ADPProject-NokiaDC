@@ -26,7 +26,7 @@ class ProfileState extends State<Profile> {
     Size size = MediaQuery.of(context).size;
     setUserInfo();
     return Scaffold(
-        appBar: piAppBar,
+        appBar: PiAppBar(title: 'Profile').build(context),
         body: Card(
           color: Colors.grey[100],
           semanticContainer: true,
