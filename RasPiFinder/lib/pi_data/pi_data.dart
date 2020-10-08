@@ -1,5 +1,6 @@
 import 'package:RasPiFinder/components/app_bar.dart';
 import 'package:RasPiFinder/components/navigate.dart';
+import 'package:RasPiFinder/map/map_view.dart';
 import 'package:RasPiFinder/pi_data/dataContainer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -85,7 +86,7 @@ class _PiDataState extends State<PiData> {
                       children: [
                         FloatingActionButton.extended(
                           onPressed: (){
-                            navigateToPage(context, PiData());
+                            navigateToPage(context, MapView());
                           },
                           label: Text("Map"),
                           icon:Icon(Icons.map),
