@@ -24,8 +24,8 @@ class LoginForm extends State<LoginPage> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: piAppBar,
-      backgroundColor: Colors.white,
       body: Card(
+        color: Colors.grey[100],
         child: Form(
           key: formKey,
           child: Column(
@@ -41,6 +41,7 @@ class LoginForm extends State<LoginPage> {
                 validateInput: validateUsernameInput,
               ),
               PasswordInputField(
+                hintText: 'Password',
                 onSaved: (value) {
                   password = value;
                 },

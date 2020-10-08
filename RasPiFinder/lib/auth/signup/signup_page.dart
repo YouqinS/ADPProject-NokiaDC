@@ -25,69 +25,68 @@ class SignupForm extends State<SignupPage> {
     return Scaffold(
       appBar: piAppBar,
       backgroundColor: Colors.white,
-      body: Card(
-        child: Form(
-          key: formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              TextInputField(
-                hintText: "Username",
-                icon: Icons.person,
-                onSaved: (value) {
-                  username = value;
-                },
-                validateInput: validateUsernameInput,
+      body: Container(
+        color: Colors.grey[100],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SingleChildScrollView(
+              child:  Card(
+                  color: Colors.grey[100],
+                  elevation: 0,
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        TextInputField(
+                          hintText: "Email",
+                          icon: Icons.email,
+                          onSaved: (value) {
+                            email = value;
+                          },
+                          validateInput: validateEmailInput,
+                        ),
+                        TextInputField(
+                          hintText: "Phone Number",
+                          icon: Icons.phone_android,
+                          onSaved: (value) {
+                            phone = value;
+                          },
+                          validateInput: validatePhoneInput,
+                        ),
+                        PasswordInputField(
+                          hintText: 'Password',
+                          onSaved: (value) {
+                            password = value;
+                          },
+                          validateInput: validatePasswdInput,
+                        ),
+                        RoundedButton(
+                          text: "Sign Up",
+                          //TODO connect to DB to store user credentials and status
+                          press: () {
+                            submit();
+                          },
+                        ),
+                        SizedBox(height: size.height * 0.03),
+                        SignupSigninCheck(
+                          login: false,
+                          press: () {
+                            navigateToPage(context, LoginPage());
+                          },
+                        ),
+                      ],
+                    ),
+                  )
               ),
-              TextInputField(
-                hintText: "Email",
-                icon: Icons.email,
-                onSaved: (value) {
-                  email = value;
-                },
-                validateInput: validateEmailInput,
-              ),
-              TextInputField(
-                hintText: "Phone Number",
-                icon: Icons.phone_android,
-                onSaved: (value) {
-                  phone = value;
-                },
-                validateInput: validatePhoneInput,
-              ),
-              PasswordInputField(
-                onSaved: (value) {
-                  password = value;
-                },
-                validateInput: validatePasswdInput,
-              ),
-              RoundedButton(
-                text: "Sign Up",
-                //TODO connect to DB to store user credentials and status
-                press: () {
-                  submit();
-                },
-              ),
-              SizedBox(height: size.height * 0.03),
-              SignupSigninCheck(
-                login: false,
-                press: () {
-                  navigateToPage(context, LoginPage());
-                },
-              ),
-            ],
-          ),
-        )
+            )
+          ],
+        ),
       ),
     );
-  }
-
-  String validateUsernameInput(String username) {
-    if (null == username || username.isEmpty) {
-      return 'Please enter username !';
-    }
-    return null;
   }
 
   String validateEmailInput(String email) {
@@ -102,8 +101,8 @@ class SignupForm extends State<SignupPage> {
   }
 
   String validatePhoneInput(String phone) {
-    if (null == phone || phone.isEmpty) {
-      return 'Please enter phone number !';
+    if (null == phone || phone.isEmpty || phone.length < 10) {
+      return 'A valid Finnish phone number contains at least 10 numbers!';
     }
     return null;
   }
