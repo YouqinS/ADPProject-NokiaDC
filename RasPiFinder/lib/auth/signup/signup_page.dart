@@ -23,7 +23,7 @@ class SignupForm extends State<SignupPage> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: piAppBar,
+      appBar: PiAppBar(title: 'RasPiFinder').build(context),
       backgroundColor: Colors.white,
       body: Container(
         color: Colors.grey[100],

@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: piAppBar,
+      appBar: PiAppBar(title: 'RasPiFinder',).build(context),
       body: Center(
         child: _image == null
             ? Text('Click the Scan button to open camera',

@@ -22,7 +22,7 @@ class SettingsState extends State<Settings> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: piAppBar,
+      appBar: PiAppBar(title: 'Settings').build(context),
       body: SingleChildScrollView(
         child: Container(
           color: Colors.grey[100],
