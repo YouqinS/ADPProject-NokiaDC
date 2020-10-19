@@ -1,4 +1,3 @@
-import 'package:RasPiFinder/auth/login/login_page.dart';
 import 'package:RasPiFinder/components/app_bar.dart';
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/components/password_input_field.dart';
@@ -8,9 +7,12 @@ import 'package:RasPiFinder/components/text_input_field.dart';
 import 'package:RasPiFinder/home/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:RasPiFinder/services/authentication_service.dart';
 
 class SignupPage extends StatefulWidget {
-  SignupPage({Key key}) : super(key: key);
+  // SignupPage({Key key}) : super(key: key);
+  final Function toggle;
+  SignupPage({this.toggle});
 
   @override
   SignupForm createState() => new SignupForm();
@@ -18,7 +20,10 @@ class SignupPage extends StatefulWidget {
 
 class SignupForm extends State<SignupPage> {
   final formKey = GlobalKey<FormState>();
+  final AuthenticationService _authenticationService = AuthenticationService();
+  bool loading = false;
   String username, email, phone, password;
+  String error = '';
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -58,24 +63,38 @@ class SignupForm extends State<SignupPage> {
                           validateInput: validatePhoneInput,
                         ),
                         PasswordInputField(
-                          hintText: 'Password',
                           onSaved: (value) {
                             password = value;
                           },
-                          validateInput: validatePasswdInput,
+                          validateInput: (val) => val.length < 6 ? 'Enter a password more than 6 characters' : null,
                         ),
                         RoundedButton(
                           text: "Sign Up",
-                          //TODO connect to DB to store user credentials and status
-                          press: () {
-                            submit();
+                          press: () async {
+                            if (formKey.currentState.validate()) {
+                              formKey.currentState.save();
+                              setState(() => loading = true);
+                              dynamic result = await _authenticationService.registerWithEmailAndPassword(email, password);
+                              if (result == null) {
+                                setState(() {
+                                    error = 'Please supply the valid email';
+                                    loading = false;
+                                  } 
+                                );
+                              }
+                            }
                           },
                         ),
-                        SizedBox(height: size.height * 0.03),
+                        SizedBox(height: size.height * 0.02),
+                        Text(
+                          error,
+                          style: TextStyle(color: Colors.red, fontSize: 14.0),
+                        ),
+                        SizedBox(height: size.height * 0.02),
                         SignupSigninCheck(
                           login: false,
                           press: () {
-                            navigateToPage(context, LoginPage());
+                            widget.toggle();
                           },
                         ),
                       ],
