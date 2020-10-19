@@ -2,14 +2,11 @@ import 'package:RasPiFinder/components/password_input_field.dart';
 import 'package:RasPiFinder/components/rounded_button.dart';
 import 'package:RasPiFinder/components/signup_signin_check.dart';
 import 'package:RasPiFinder/components/text_input_field.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:RasPiFinder/services/authentication_service.dart';
 import 'package:RasPiFinder/components/loading.dart';
 import 'package:RasPiFinder/components/app_bar.dart';
-import 'package:flutter/services.dart';
-
 
 
 class SignupPage extends StatefulWidget {
