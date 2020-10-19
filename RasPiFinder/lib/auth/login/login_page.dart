@@ -1,63 +1,79 @@
-import 'package:RasPiFinder/auth/signup/signup_page.dart';
-import 'package:RasPiFinder/components/app_bar.dart';
-import 'package:RasPiFinder/components/navigate.dart';
-import 'package:RasPiFinder/components/password_input_field.dart';
-import 'package:RasPiFinder/components/rounded_button.dart';
 import 'package:RasPiFinder/components/signup_signin_check.dart';
+import 'package:RasPiFinder/components/rounded_button.dart';
 import 'package:RasPiFinder/components/text_input_field.dart';
-import 'package:RasPiFinder/home/home_page.dart';
+import 'package:RasPiFinder/components/password_input_field.dart';
+import 'package:RasPiFinder/services/authentication_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:RasPiFinder/components/loading.dart';
+import 'package:RasPiFinder/components/app_bar.dart';
+
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key key}) : super(key: key);
+
+  final Function toggle;
+  LoginPage({ this.toggle });
+  // LoginPage({Key key}) : super(key: key);
 
   @override
   LoginForm createState() => new LoginForm();
 }
 
 class LoginForm extends State<LoginPage> {
+
+  final AuthenticationService _authenticationService = AuthenticationService();
   final formKey = GlobalKey<FormState>();
-  String userName, password;
+  String email, password, error;
+  bool loading = false;
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Scaffold(
+    return loading ? Loading() : Scaffold(
       appBar: PiAppBar(title: 'RasPiFinder').build(context),
+      backgroundColor: Colors.white,
       body: Card(
-        color: Colors.grey[100],
         child: Form(
           key: formKey,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              TextInputField(
-                hintText: "Username",
+               TextInputField(
+                hintText: "Email",
                 icon: Icons.person,
                 onSaved: (value) {
-                  userName = value;
+                  email = value;
                 },
-                validateInput: validateUsernameInput,
+                validateInput: (val) => val.isEmpty ? 'Enter an email' : null,
               ),
               PasswordInputField(
-                hintText: 'Password',
                 onSaved: (value) {
                   password = value;
                 },
-                validateInput: validatePasswdInput,
+                validateInput: (val) => val.length < 6 ? 'Enter a password more than 6 characters' : null,
               ),
               RoundedButton(
                 text: "Sign In",
-                //TODO connect to DB to store user credentials and status
-                press: () {
-                  submit();
+                press: () async {
+                  if (formKey.currentState.validate()) {
+                    setState(() => loading = true);
+                    formKey.currentState.save();
+                    dynamic result = await _authenticationService.signInWithEmailAndPassword(email, password);
+                    if (result == null) {
+                      setState(() {
+                        error = 'Could not sign in with the credentials';
+                        loading = false;
+                      });                      
+                    }
+                  }
                 },
               ),
               SizedBox(height: size.height * 0.03),
               SignupSigninCheck(
                 press: () {
-                  navigateToPage(context, SignupPage());
+                  // navigateToPage(context, SignupPage());
+                  widget.toggle();
                 },
               ),
             ],
@@ -65,30 +81,5 @@ class LoginForm extends State<LoginPage> {
         ),
       ),
     );
-  }
-
-  String validateUsernameInput(String username) {
-    if (null == username || username.isEmpty) {
-      return 'Please enter username !';
-    }
-    return null;
-  }
-
-  String validatePasswdInput(String password) {
-    if (null == password || password.isEmpty) {
-      return 'Please enter password !';
-    }
-    return null;
-  }
-
-  void submit(){
-    if(formKey.currentState.validate()){
-      formKey.currentState.save();
-      //TODO get current GPS data and store to DB
-      //TODO connect to DB to store user input
-      print(userName);
-      print(password);
-      navigateToPage(context, HomePage());
-    }
   }
 }

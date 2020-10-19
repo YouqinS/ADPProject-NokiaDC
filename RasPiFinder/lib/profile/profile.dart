@@ -1,6 +1,6 @@
-import 'package:RasPiFinder/auth/login/login_page.dart';
 import 'package:RasPiFinder/components/app_bar.dart';
 import 'package:RasPiFinder/components/navigate.dart';
+import 'package:RasPiFinder/services/authentication_service.dart';
 import 'package:RasPiFinder/components/rounded_button.dart';
 import 'package:RasPiFinder/profile/setting.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,11 +15,14 @@ class Profile extends StatefulWidget {
   ProfileState createState() => new ProfileState();
 }
 
-class ProfileState extends State<Profile> {
+class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
   final formKey = GlobalKey<FormState>();
 
   //TODO get user info from db and display on this screen
   String username, email, phone;
+
+  final AuthenticationService _authenticationService = AuthenticationService();
+
 
   @override
   Widget build(BuildContext context) {
@@ -136,9 +139,8 @@ class ProfileState extends State<Profile> {
                   ),
                   RoundedButton(
                     text: "LOG OUT",
-                    //TODO connect to DB to store user credentials and status
-                    press: () {
-                      navigateToPage(context, LoginPage());
+                    press: () async {
+                      await _authenticationService.signOut();
                     },
                   ),
                 ],
@@ -154,4 +156,7 @@ class ProfileState extends State<Profile> {
     email = 'abc@ced.com';
     phone = '040 1234 567';
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
