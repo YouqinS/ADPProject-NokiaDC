@@ -44,8 +44,8 @@ dependencies:
   firebase_core: ^0.5.0+1
   flutter_spinkit: ^4.1.2+1
   flutter_barcode_scanner: ^1.0.1
-
-
+  flutter_map: 0.10.1
+  geolocator: ^6.1.0
 
 
 dev_dependencies:
