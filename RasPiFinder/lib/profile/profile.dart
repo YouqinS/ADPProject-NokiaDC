@@ -138,11 +138,12 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                   SizedBox(
                     height: size.height * 0.08,
                   ),
-                  RoundedButton(
-                    text: "LOG OUT",
-                    press: () async {
+                  FlatButton(
+                    onPressed: () async {
                       await _authenticationService.signOut();
                     },
+                    child: Text("LOG OUT"),
+                    color: Colors.red[300],
                   ),
                 ],
               ),

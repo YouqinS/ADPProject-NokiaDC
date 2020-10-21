@@ -26,104 +26,107 @@ class PiUserInfo extends State<AppUser> {
                         color: Colors.blue
                       );
     return new Scaffold(
+        backgroundColor: Colors.white,
         appBar: PiAppBar(title: 'Fill Pi Info').build(context),
-        body: Card(
-          color: Colors.grey[100],
-          semanticContainer: true,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                padding: EdgeInsets.all(5),
-                margin: EdgeInsets.fromLTRB(0, 0, 0, size.height * 0.08),
-                //color: Colors.red,
-                child: Text(
-                  'Fill info related to this Pi',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
-                    fontSize: 22,
+        body: SingleChildScrollView(
+          child: Card(
+            elevation: 0,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: size.width * 0.1,),
+                Container(
+                  padding: EdgeInsets.all(5),
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, size.height * 0.08),
+                  //color: Colors.red,
+                  child: Text(
+                    'Fill info related to this Pi',
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                      fontSize: 22,
+                    ),
                   ),
                 ),
-              ),
-              Row(
-                children: [
-                  SizedBox(width: size.width * 0.02,),
-                  Text(
-                    'I am a : ',
-                    style: textStyle,
-                  ),
-                  SizedBox(width: size.width * 0.15,),
-                  DropdownButton<String>(
-                    value: userType,
-                    icon: Icon(Icons.keyboard_arrow_down),
-                    iconSize: 24,
-                    elevation: 16,
-                    style: textStyle,
-                    underline: Container(
-                      height: 2,
-                      color: Colors.grey,
+                Row(
+                  children: [
+                    SizedBox(width: size.width * 0.02,),
+                    Text(
+                      'I am a : ',
+                      style: textStyle,
                     ),
-                    onChanged: (String newValue) {
-                      setState(() {
-                        userType = newValue;
-                        validateUserTypeInput();
-                      });
-                    },
-                    items: <String>['Select :', 'Pi Finder', 'Pi Owner', 'Pi User']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-              Form(
-                key: formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: '  Pi Location/Address :',
-                        labelStyle: textStyle,
+                    SizedBox(width: size.width * 0.15,),
+                    DropdownButton<String>(
+                      value: userType,
+                      icon: Icon(Icons.keyboard_arrow_down),
+                      iconSize: 24,
+                      elevation: 16,
+                      style: textStyle,
+                      underline: Container(
+                        height: 2,
+                        color: Colors.grey,
                       ),
-                      onSaved: (input) => address = input,
-                      validator: validateAddressInput,
+                      onChanged: (String newValue) {
+                        setState(() {
+                          userType = newValue;
+                          validateUserTypeInput();
+                        });
+                      },
+                      items: <String>['Select :', 'Pi Finder', 'Pi Owner', 'Pi User']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
                     ),
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: '  Software :',
-                        labelStyle: textStyle,
-                      ),
-                      onSaved: (input) => software = input,
-                    ),
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: '  Other :',
-                        labelStyle: textStyle,
-                      ),
-                      onSaved: (input) => other = input,
-                    ),
-                    SizedBox(height: size.height * 0.03),
-                    Container(
-                        width: size.width * 0.5,
-                        child: RoundedButton(
-                          text: 'Save',
-                          press: () {
-                            submit();
-                          },
-                        )
-                    )
                   ],
                 ),
-              ),
-            ],
+                Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: '  Pi Location/Address :',
+                          labelStyle: textStyle,
+                        ),
+                        onSaved: (input) => address = input,
+                        validator: validateAddressInput,
+                      ),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: '  Software :',
+                          labelStyle: textStyle,
+                        ),
+                        onSaved: (input) => software = input,
+                      ),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: '  Other :',
+                          labelStyle: textStyle,
+                        ),
+                        onSaved: (input) => other = input,
+                      ),
+                      SizedBox(height: size.height * 0.03),
+                      Container(
+                          width: size.width * 0.5,
+                          child: RoundedButton(
+                            text: 'Save',
+                            press: () {
+                              submit();
+                            },
+                          )
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ));
   }
