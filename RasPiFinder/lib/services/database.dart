@@ -11,11 +11,11 @@ class DatabaseService {
   //collection reference
   final CollectionReference inventoryCollection = FirebaseFirestore.instance.collection("raspberries");
 
-  Future updateUserData (String modelNumber, String name, String items, int availability) async {
+  Future updateUserData (String modelNumber, String name, String roles, int availability) async {
     return await inventoryCollection.doc(uid).set({
       'modelNumber': modelNumber,
       'name': name,
-      'items': items,
+      'roles': roles,
       // 'location': location,
       'availability': availability,
     });
@@ -25,9 +25,9 @@ class DatabaseService {
   List<Rasp> _raspListFromSnapshots(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
       return Rasp(
-        modelNumber: doc.data()['modelName'] ?? '',
+        modelNumber: doc.data()['modelNumber'] ?? '',
         name: doc.data()['name'] ?? '',
-        items: doc.data()['items'] ?? '',
+        roles: doc.data()['roles'] ?? '',
         // location: doc.data()['location'] ?? 0.0,
         availability: doc.data()['availability'] ?? 0,
       );
@@ -40,7 +40,7 @@ class DatabaseService {
       uid: uid,
       modelNumber: snapshot.data()['modelNumber'],
       name: snapshot.data()['name'],
-      items: snapshot.data()['items'],
+      roles: snapshot.data()['roles'],
       availability: snapshot.data()['availability'],
       // location: snapshot.data()['location'],
     );
