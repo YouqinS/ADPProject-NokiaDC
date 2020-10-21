@@ -6,7 +6,7 @@ class ProductProvider with ChangeNotifier {
   final fireStoreService = FirebaseFirestore.instance;
   String _name;
   String _modelNumber;
-  String _roles;
+  // String _roles;
   // var uuid = Uuid();
 
 
@@ -28,7 +28,7 @@ class ProductProvider with ChangeNotifier {
   loadValues(Rasp product) {
     _name = product.name;
     _modelNumber = product.modelNumber;
-    _roles = product.roles;
+    // _roles = product.roles;
   }
 
   // saveProduct(){
