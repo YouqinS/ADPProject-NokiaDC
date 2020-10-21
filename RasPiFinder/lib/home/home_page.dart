@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:RasPiFinder/services/database.dart';
 import 'package:provider/provider.dart';
 
-import '../profile/profile.dart';
-
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();

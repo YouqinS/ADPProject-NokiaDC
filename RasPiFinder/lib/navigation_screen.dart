@@ -37,15 +37,15 @@ class _NavigationPageState extends State<NavigationPage> {
         items: [
           BottomNavigationBarItem(
             icon: new Icon(Icons.home),
-            title: new Text('Home'),
+            label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: new Icon(Icons.person),
-            title: new Text('Profile'),
+            label: 'Profile',
           ),
           BottomNavigationBarItem(
             icon: new Icon(Icons.search),
-            title: new Text('Search'),
+            label: 'Search',
           ),
         ],
         currentIndex: _selectedIndex,
