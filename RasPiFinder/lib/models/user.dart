@@ -10,11 +10,11 @@ class UserData {
 
   final String uid;
   final String name;
-  final String items;
+  final String roles;
   final String modelNumber;
   // final double location;
   final int availability;
 
-  UserData({ this.uid, this.name, this.items, this.modelNumber, this.availability });
+  UserData({ this.uid, this.name, this.roles, this.modelNumber, this.availability });
 
 }
