@@ -1,7 +1,6 @@
 import 'package:RasPiFinder/components/app_bar.dart';
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/services/authentication_service.dart';
-import 'package:RasPiFinder/components/rounded_button.dart';
 import 'package:RasPiFinder/profile/setting.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -138,11 +137,12 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                   SizedBox(
                     height: size.height * 0.08,
                   ),
-                  RoundedButton(
-                    text: "LOG OUT",
-                    press: () async {
+                  FlatButton(
+                    onPressed: () async {
                       await _authenticationService.signOut();
                     },
+                    child: Text("LOG OUT"),
+                    color: Colors.red[300],
                   ),
                 ],
               ),

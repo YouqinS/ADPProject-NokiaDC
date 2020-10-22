@@ -32,51 +32,55 @@ class LoginForm extends State<LoginPage> {
     return loading ? Loading() : Scaffold(
       appBar: PiAppBar(title: 'RasPiFinder').build(context),
       backgroundColor: Colors.white,
-      body: Card(
-        child: Form(
-          key: formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-               TextInputField(
-                hintText: "Email",
-                icon: Icons.person,
-                onSaved: (value) {
-                  email = value;
-                },
-                validateInput: (val) => val.isEmpty ? 'Enter an email' : null,
-              ),
-              PasswordInputField(
-                onSaved: (value) {
-                  password = value;
-                },
-                validateInput: (val) => val.length < 6 ? 'Enter a password more than 6 characters' : null,
-              ),
-              RoundedButton(
-                text: "Sign In",
-                press: () async {
-                  if (formKey.currentState.validate()) {
-                    setState(() => loading = true);
-                    formKey.currentState.save();
-                    dynamic result = await _authenticationService.signInWithEmailAndPassword(email, password);
-                    if (result == null) {
-                      setState(() {
-                        error = 'Could not sign in with the credentials';
-                        loading = false;
-                      });                      
+      body: SingleChildScrollView(
+        child: Card(
+          elevation: 0,
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(height: size.height * 0.1),
+                TextInputField(
+                  hintText: "Email",
+                  icon: Icons.person,
+                  onSaved: (value) {
+                    email = value;
+                  },
+                  validateInput: (val) => val.isEmpty ? 'Enter an email' : null,
+                ),
+                PasswordInputField(
+                  onSaved: (value) {
+                    password = value;
+                  },
+                  validateInput: (val) => val.length < 6 ? 'Enter a password more than 6 characters' : null,
+                ),
+                RoundedButton(
+                  text: "Sign In",
+                  press: () async {
+                    if (formKey.currentState.validate()) {
+                      setState(() => loading = true);
+                      formKey.currentState.save();
+                      dynamic result = await _authenticationService.signInWithEmailAndPassword(email, password);
+                      if (result == null) {
+                        setState(() {
+                          error = 'Could not sign in with the credentials';
+                          loading = false;
+                        });
+                      }
                     }
-                  }
-                },
-              ),
-              SizedBox(height: size.height * 0.03),
-              SignupSigninCheck(
-                press: () {
-                  // navigateToPage(context, SignupPage());
-                  widget.toggle();
-                },
-              ),
-            ],
+                  },
+                ),
+                SizedBox(height: size.height * 0.03),
+                SignupSigninCheck(
+                  press: () {
+                    // navigateToPage(context, SignupPage());
+                    widget.toggle();
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

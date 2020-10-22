@@ -30,79 +30,70 @@ class SignupForm extends State<SignupPage> {
     return Scaffold(
       appBar: PiAppBar(title: 'RasPiFinder').build(context),
       backgroundColor: Colors.white,
-      body: Container(
-        color: Colors.grey[100],
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SingleChildScrollView(
-              child:  Card(
-                  color: Colors.grey[100],
-                  elevation: 0,
-                  child: Form(
-                    key: formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        TextInputField(
-                          hintText: "Email",
-                          icon: Icons.email,
-                          onSaved: (value) {
-                            email = value;
-                          },
-                          validateInput: validateEmailInput,
-                        ),
-                        TextInputField(
-                          hintText: "Phone Number",
-                          icon: Icons.phone_android,
-                          onSaved: (value) {
-                            phone = value;
-                          },
-                          validateInput: validatePhoneInput,
-                        ),
-                        PasswordInputField(
-                          onSaved: (value) {
-                            password = value;
-                          },
-                          validateInput: (val) => val.length < 6 ? 'Enter a password more than 6 characters' : null,
-                        ),
-                        RoundedButton(
-                          text: "Sign Up",
-                          press: () async {
-                            if (formKey.currentState.validate()) {
-                              formKey.currentState.save();
-                              setState(() => loading = true);
-                              dynamic result = await _authenticationService.registerWithEmailAndPassword(email, password);
-                              if (result == null) {
-                                setState(() {
-                                    error = 'Please supply the valid email';
-                                    loading = false;
-                                  } 
-                                );
-                              }
+      body: SingleChildScrollView(
+        child: Card(
+            elevation: 0,
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(height: size.height * 0.05),
+                  TextInputField(
+                    hintText: "Email",
+                    icon: Icons.email,
+                    onSaved: (value) {
+                      email = value;
+                    },
+                    validateInput: validateEmailInput,
+                  ),
+                  TextInputField(
+                    hintText: "Phone Number",
+                    icon: Icons.phone_android,
+                    onSaved: (value) {
+                      phone = value;
+                    },
+                    validateInput: validatePhoneInput,
+                  ),
+                  PasswordInputField(
+                    onSaved: (value) {
+                      password = value;
+                    },
+                    validateInput: (val) => val.length < 6 ? 'Enter a password more than 6 characters' : null,
+                  ),
+                  RoundedButton(
+                    text: "Sign Up",
+                    press: () async {
+                      if (formKey.currentState.validate()) {
+                        formKey.currentState.save();
+                        setState(() => loading = true);
+                        dynamic result = await _authenticationService.registerWithEmailAndPassword(email, password);
+                        if (result == null) {
+                          setState(() {
+                              error = 'Please supply the valid email';
+                              loading = false;
                             }
-                          },
-                        ),
-                        SizedBox(height: size.height * 0.02),
-                        Text(
-                          error,
-                          style: TextStyle(color: Colors.red, fontSize: 14.0),
-                        ),
-                        SizedBox(height: size.height * 0.02),
-                        SignupSigninCheck(
-                          login: false,
-                          press: () {
-                            widget.toggle();
-                          },
-                        ),
-                      ],
-                    ),
-                  )
+                          );
+                        }
+                      }
+                    },
+                  ),
+                  SizedBox(height: size.height * 0.02),
+                  Text(
+                    error,
+                    style: TextStyle(color: Colors.red, fontSize: 14.0),
+                  ),
+                  SizedBox(height: size.height * 0.02),
+                  SignupSigninCheck(
+                    login: false,
+                    press: () {
+                      widget.toggle();
+                    },
+                  ),
+                ],
               ),
             )
-          ],
         ),
       ),
     );
