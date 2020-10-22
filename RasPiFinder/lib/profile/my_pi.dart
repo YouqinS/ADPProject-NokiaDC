@@ -34,8 +34,7 @@ class _MyRasPiState extends State<MyRasPi> {
         itemBuilder: (BuildContext context, int index) {
           return GestureDetector(
             onTap: () {
-              print('card tapped');
-              navigateToPage(context, PiData());
+              navigateToPage(context, PiData(showFAB: true,));
             },
             child: Card(
               elevation: 0.01,
