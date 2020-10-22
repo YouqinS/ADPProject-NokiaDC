@@ -5,14 +5,14 @@ import 'package:RasPiFinder/home/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class AppUser extends StatefulWidget {
-  AppUser({Key key}) : super(key: key);
+class AddPi extends StatefulWidget {
+  AddPi({Key key}) : super(key: key);
 
   @override
-  PiUserInfo createState() => new PiUserInfo();
+  AddPiState createState() => new AddPiState();
 }
 
-class PiUserInfo extends State<AppUser> {
+class AddPiState extends State<AddPi> {
   final formKey = GlobalKey<FormState>();
   String address, software, other;
   String userType = 'Select :';
