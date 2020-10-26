@@ -6,19 +6,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class PiData extends StatefulWidget {
-  final bool showFAB;
-  PiData({Key key, this.showFAB}) : super(key: key);
+  final bool showUpdateBtn, showUnregisterBtn;
+  PiData({Key key, this.showUpdateBtn, this.showUnregisterBtn}) : super(key: key);
 
   @override
-  _PiDataState createState() => _PiDataState(showFAB);
+  _PiDataState createState() => _PiDataState(showUpdateBtn, showUnregisterBtn);
 }
 
 class _PiDataState extends State<PiData> {
   //TODO type to be changed when db data model is ready
   String piUid, owner, user, finder, software, address, gps, other;
 
-  final bool showFAB;
-  _PiDataState(this.showFAB);
+  final bool showUpdateBtn, showUnregisterBtn;
+  _PiDataState(this.showUpdateBtn, this.showUnregisterBtn);
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +45,7 @@ class _PiDataState extends State<PiData> {
         centerTitle: true,
         actions: <Widget>[
           Visibility(
-            visible: showFAB,
+            visible: showUnregisterBtn,
             child: FloatingActionButton.extended(
               //TODO remove user from this pi in db
               onPressed: null,
@@ -157,7 +157,7 @@ class _PiDataState extends State<PiData> {
                   },
                   tooltip: 'Update Pi data',
                 ),
-                visible: showFAB,
+                visible: showUpdateBtn,
               ),
             ],
           ),

@@ -30,7 +30,7 @@ class _SearchPageState extends State<SearchPage>
   Widget _buildRow(String name) {
     return GestureDetector(
       onTap: () {
-        navigateToPage(context, PiData(showFAB: false,));
+        navigateToPage(context, PiData(showUpdateBtn: false, showUnregisterBtn: false,));
       },
       child: ListTile(
         title: Text(name, style: _biggerFont),

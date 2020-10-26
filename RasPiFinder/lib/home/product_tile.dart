@@ -14,7 +14,7 @@ class ProductTile extends StatelessWidget {
       padding: const EdgeInsets.only(top: 8.0),
       child: GestureDetector(
         onTap: () {
-          navigateToPage(context, PiData(showFAB: false,));
+          navigateToPage(context, PiData(showUpdateBtn: false, showUnregisterBtn: false,));
         },
         child: Card(
           margin: EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
