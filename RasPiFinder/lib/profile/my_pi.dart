@@ -4,14 +4,20 @@ import 'package:RasPiFinder/pi_data/dataContainer.dart';
 import 'package:RasPiFinder/pi_data/pi_data.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:RasPiFinder/models/rasps.dart';
 
 class MyRasPi extends StatefulWidget {
+  final List<Rasp> myPies;
+
+  const MyRasPi({Key key, this.myPies}) : super(key: key);
+
   @override
-  _MyRasPiState createState() => _MyRasPiState();
+  _MyRasPiState createState() => _MyRasPiState(this.myPies);
 }
 
 class _MyRasPiState extends State<MyRasPi> {
-  String piUid, software;
+  final List<Rasp> myPies;
+  _MyRasPiState(this.myPies);
 
   @override
   void initState() {
@@ -25,12 +31,10 @@ class _MyRasPiState extends State<MyRasPi> {
 
   @override
   Widget build(BuildContext context) {
-    getPiData();
     return Scaffold(
       appBar: PiAppBar(title: 'My RasPi(s)').build(context),
       body: ListView.builder(
-        //TODO fetch data from db
-        itemCount: 10,
+        itemCount: myPies.length,
         itemBuilder: (BuildContext context, int index) {
           return GestureDetector(
             onTap: () {
@@ -43,27 +47,28 @@ class _MyRasPiState extends State<MyRasPi> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CircleAvatar(
-                    radius: 12,
-                    backgroundColor: Colors.blue[200],
+                    radius: 13,
+                    backgroundColor: Colors.blue[900],
                     child: Text(
                       (index + 1).toString(),
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                        //fontWeight: FontWeight.bold,
-                        color: Colors.deepOrange,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
 
                   DataContainer(
-                    label: 'uid',
-                    content: piUid,
+                    label: 'Model No.',
+                    content: myPies[index].modelNumber,
                     maxLine: 2,
                     isUser: false,
                   ),
                   DataContainer(
                     label: 'Software',
-                    content: software,
+                    //TODO change to software when new data collection integrated
+                    content: myPies[index].name,
                     maxLine: 2,
                     isUser: false,
                   ),
@@ -74,10 +79,5 @@ class _MyRasPiState extends State<MyRasPi> {
         },
       ),
     );
-  }
-
-  void getPiData() {
-    piUid = '7e19fb4a-ff84-4966-a376-b9434027f866';
-    software = 'RasPiOs';
   }
 }

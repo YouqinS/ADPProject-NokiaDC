@@ -1,11 +1,12 @@
 import 'package:RasPiFinder/components/app_bar.dart';
 import 'package:RasPiFinder/components/navigate.dart';
+import 'package:RasPiFinder/models/rasps.dart';
 import 'package:RasPiFinder/services/authentication_service.dart';
 import 'package:RasPiFinder/profile/setting.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import 'my_pi.dart';
+import 'package:provider/provider.dart';
 
 class Profile extends StatefulWidget {
   Profile({Key key}) : super(key: key);
@@ -16,7 +17,6 @@ class Profile extends StatefulWidget {
 
 class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
   final formKey = GlobalKey<FormState>();
-
   //TODO get user info from db and display on this screen
   String username, email, phone;
 
@@ -27,6 +27,7 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
     Size size = MediaQuery.of(context).size;
+    final List<Rasp> myPies = Provider.of<List<Rasp>>(context) ?? [];
     setUserInfo();
     return Scaffold(
         appBar: PiAppBar(title: 'Profile').build(context),
@@ -97,8 +98,7 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                     child: RaisedButton.icon(
                       color: Colors.grey[200],
                       onPressed: () {
-                        //for temporary testing
-                        navigateToPage(context, MyRasPi());
+                        navigateToPage(context, MyRasPi(myPies: myPies));
                       },
                       icon: Icon(
                         Icons.pie_chart_outline_outlined,
