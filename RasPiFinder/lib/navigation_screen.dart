@@ -12,10 +12,10 @@ class NavigationPage extends StatefulWidget {
 }
 
 class _NavigationPageState extends State<NavigationPage> {
+
   PageController _pageController = PageController();
 
   int _selectedIndex = 0;
-
   void _onPageChanged(int index) {
     setState(() {
       _selectedIndex = index;

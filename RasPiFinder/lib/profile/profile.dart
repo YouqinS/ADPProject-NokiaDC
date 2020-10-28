@@ -1,6 +1,7 @@
 import 'package:RasPiFinder/components/app_bar.dart';
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/models/rasps.dart';
+import 'package:RasPiFinder/models/user.dart';
 import 'package:RasPiFinder/services/authentication_service.dart';
 import 'package:RasPiFinder/profile/setting.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,18 +18,18 @@ class Profile extends StatefulWidget {
 
 class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
   final formKey = GlobalKey<FormState>();
-  //TODO get user info from db and display on this screen
-  String username, email, phone;
+  final String notAvail = 'not available';
 
   final AuthenticationService _authenticationService = AuthenticationService();
-
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     Size size = MediaQuery.of(context).size;
-    final List<Rasp> myPies = Provider.of<List<Rasp>>(context) ?? [];
-    setUserInfo();
+    final UserData userData = Provider.of<UserData>(context);
+    final List<Rasp> piCollectionFromDB = Provider.of<List<Rasp>>(context) ?? [];
+    List<Rasp> myPies = getMyPiList(userData.uid, piCollectionFromDB);
+
     return Scaffold(
         appBar: PiAppBar(title: 'Profile').build(context),
         body: Card(
@@ -40,7 +41,6 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   //TODO: can be changed to avatar if necessary
                   CircleAvatar(
@@ -52,40 +52,51 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                       size: size.height * 0.1,
                     ),
                   ),
-                  Column(
-                    children: [
-                      Text(
-                        username,
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.2,
-                          fontSize: 22,
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Text(
+                          userData.name == null ? notAvail : userData.name,
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                            fontSize: 22,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
                         ),
-                      ),
-                      SizedBox(
-                        height: size.height * 0.006,
-                      ),
-                      Text(
-                        //TODO get user info from db and display on this screen
-                        email,
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 18,
+                        SizedBox(
+                          height: size.height * 0.006,
                         ),
-                      ),
-                      SizedBox(
-                        height: size.height * 0.006,
-                      ),
-                      Text(
-                        //TODO get user info from db and display on this screen
-                        phone,
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 18,
+                        Text(
+                          //TODO change to EMAIL
+                          userData.roles == null ? notAvail : userData.roles,
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 18,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
                         ),
-                      ),
-                    ],
+                        SizedBox(
+                          height: size.height * 0.006,
+                        ),
+                        Text(
+                          //TODO change to PHONE NUMBER
+                          userData.modelNumber == null ? notAvail : userData.modelNumber,
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 18,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -118,7 +129,6 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                     child: RaisedButton.icon(
                       color: Colors.grey[200],
                       onPressed: () {
-                        //for temporary testing
                         navigateToPage(context, Settings());
                       },
                       icon: Icon(
@@ -151,11 +161,18 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
         ));
   }
 
-  //for UI testing only
-  void setUserInfo() {
-    username = 'RPiUser007';
-    email = 'abc@ced.com';
-    phone = '040 1234 567';
+  List<Rasp> getMyPiList(String userUid, List<Rasp> piCollectionFromDB) {
+    final List<Rasp> myPies = [];
+    for (int i=0; i<piCollectionFromDB.length; i++) {
+      //TODO change it to userID || finderID || ownerID
+      /*if (piCollectionFromDB[i].userID ==  userUid ||
+          piCollectionFromDB[i].finderID == userUid ||
+          piCollectionFromDB[i].ownerID == userUid) {*/
+      if(piCollectionFromDB[i].modelNumber == '1') {
+        myPies.add(piCollectionFromDB[i]);
+      }
+    }
+    return myPies;
   }
 
   @override

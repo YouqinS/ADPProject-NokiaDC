@@ -1,5 +1,6 @@
 import 'package:RasPiFinder/models/user.dart';
 import 'package:RasPiFinder/auth/authenticate.dart';
+import 'package:RasPiFinder/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:RasPiFinder/navigation_screen.dart';
@@ -14,7 +15,10 @@ class  Wrapper extends StatelessWidget {
     if (user == null) {
       return Authenticate();
     } else {
-      return NavigationPage();    
+      return StreamProvider<UserData>.value(
+        value: DatabaseService(uid: user.uid).userData,
+        child: NavigationPage()
+      );
     }
   }
 }
