@@ -1,4 +1,4 @@
-import 'package:RasPiFinder/components/app_bar.dart';
+import 'package:RasPiFinder/add_pi/add_pi.dart';
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/map/map_view.dart';
 import 'package:RasPiFinder/pi_data/dataContainer.dart';
@@ -6,13 +6,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class PiData extends StatefulWidget {
+  final bool showUpdateBtn, showUnregisterBtn;
+  PiData({Key key, this.showUpdateBtn, this.showUnregisterBtn}) : super(key: key);
+
   @override
-  _PiDataState createState() => _PiDataState();
+  _PiDataState createState() => _PiDataState(showUpdateBtn, showUnregisterBtn);
 }
 
 class _PiDataState extends State<PiData> {
   //TODO type to be changed when db data model is ready
   String piUid, owner, user, finder, software, address, gps, other;
+
+  final bool showUpdateBtn, showUnregisterBtn;
+  _PiDataState(this.showUpdateBtn, this.showUnregisterBtn);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +31,33 @@ class _PiDataState extends State<PiData> {
 
 
     return Scaffold(
-      appBar: PiAppBar(title: 'Pi Data').build(context),
+      appBar: AppBar(
+        title: Text(
+          "Pi Data",
+          style: TextStyle(
+              color: Colors.white,
+              letterSpacing: 2,
+              fontWeight: FontWeight.bold,
+              fontSize: 20
+          ),
+        ),
+        backgroundColor: Colors.blue,
+        centerTitle: true,
+        actions: <Widget>[
+          Visibility(
+            visible: showUnregisterBtn,
+            child: FloatingActionButton.extended(
+              //TODO remove user from this pi in db
+              onPressed: null,
+              label: Text('Unregister'),
+              tooltip: 'Unregister from this Pi',
+              backgroundColor: Colors.red[400],
+              elevation: 0,
+              heroTag: null,
+            ),
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Container(
           height: size.height,
@@ -40,7 +72,7 @@ class _PiDataState extends State<PiData> {
                 child: Column(
                   children: [
                     DataContainer(
-                      label: 'Uid',
+                      label: 'Model No.',
                       content: piUid,
                       maxLine: 2,
                       isUser: false,
@@ -75,21 +107,30 @@ class _PiDataState extends State<PiData> {
                     ),
                     divider,
                     DataContainer(
-                      label: 'Location',
+                      label: 'Address',
                       content: address,
                       maxLine: 3,
                       isUser: false,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
-                      //crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        FloatingActionButton.extended(
-                          onPressed: (){
-                            navigateToPage(context, MapView());
-                          },
-                          label: Text("Map"),
-                          icon:Icon(Icons.map),
+                        Tooltip(
+                          message: 'GPS when last scanned',
+                          child: RaisedButton.icon(
+                              onPressed: () {
+                                navigateToPage(context, MapView());
+                              },
+                              label: Text('GPS',
+                                  style: TextStyle(
+                                    color: Colors.blue[800],
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  )),
+                              icon: Icon(
+                                Icons.map,
+                                color: Colors.blue,
+                              )),
                         ),
                       ],
                     ),
@@ -98,6 +139,25 @@ class _PiDataState extends State<PiData> {
                     DataContainer(label: '', content: other, maxLine: 20, isUser: false,),
                   ],
                 ),
+              ),
+              Visibility(
+                child: FloatingActionButton.extended(
+                  backgroundColor: Colors.blue[800],
+                  elevation: 0,
+                  label: Text(
+                    "UPDATE",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  onPressed: () {
+                    navigateToPage(context, AddPi());
+                  },
+                  tooltip: 'Update Pi data',
+                ),
+                visible: showUpdateBtn,
               ),
             ],
           ),
@@ -108,7 +168,7 @@ class _PiDataState extends State<PiData> {
 
   //TODO GET data from DB, this is for UI testing only
   void getPiData() {
-    piUid = '7e19fb4a-ff84-4966-a376-b9434027f866';
+    piUid = '7e19fb4a-ff84-4966-a376';
     user = 'abcd efgh wpeoh';
     owner = 'abcd efgh wpeoh';
     finder = 'abcd efgh wpeoh';
