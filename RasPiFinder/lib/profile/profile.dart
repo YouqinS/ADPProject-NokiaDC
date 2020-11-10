@@ -27,7 +27,9 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
     super.build(context);
     Size size = MediaQuery.of(context).size;
     final UserData userData = Provider.of<UserData>(context);
+
     final List<Rasp> piCollectionFromDB = Provider.of<List<Rasp>>(context) ?? [];
+
     List<Rasp> myPies = getMyPiList(userData.uid, piCollectionFromDB);
 
     return Scaffold(
@@ -56,7 +58,8 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                     child: Column(
                       children: [
                         Text(
-                          userData.name == null ? notAvail : userData.name,
+                          "username",
+                         // userData.username == null ? notAvail : userData.username,
                           style: TextStyle(
                             color: Colors.blue,
                             fontWeight: FontWeight.bold,
@@ -72,7 +75,8 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                         ),
                         Text(
                           //TODO change to EMAIL
-                          userData.roles == null ? notAvail : userData.roles,
+                        //  userData.email == null ? notAvail : userData.email,
+                          'email',
                           style: TextStyle(
                             color: Colors.blue,
                             fontSize: 18,
@@ -86,7 +90,8 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                         ),
                         Text(
                           //TODO change to PHONE NUMBER
-                          userData.modelNumber == null ? notAvail : userData.modelNumber,
+                          'phoneNumber',
+                         // userData.phoneNumber == null ? notAvail : userData.phoneNumber,
                           style: TextStyle(
                             color: Colors.blue,
                             fontSize: 18,
@@ -164,11 +169,9 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
   List<Rasp> getMyPiList(String userUid, List<Rasp> piCollectionFromDB) {
     final List<Rasp> myPies = [];
     for (int i=0; i<piCollectionFromDB.length; i++) {
-      //TODO change it to userID || finderID || ownerID
-      /*if (piCollectionFromDB[i].userID ==  userUid ||
+      if (piCollectionFromDB[i].userID ==  userUid ||
           piCollectionFromDB[i].finderID == userUid ||
-          piCollectionFromDB[i].ownerID == userUid) {*/
-      if(piCollectionFromDB[i].modelNumber == '1') {
+          piCollectionFromDB[i].ownerID == userUid) {
         myPies.add(piCollectionFromDB[i]);
       }
     }

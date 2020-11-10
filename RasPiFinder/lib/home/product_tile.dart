@@ -21,10 +21,10 @@ class ProductTile extends StatelessWidget {
           child: ListTile(
             leading: CircleAvatar(
               radius: 25.0,
-              backgroundColor: Colors.green[rasp.availability],
+             // backgroundColor: Colors.green[rasp.availability],
             ),
-            title: Text(rasp.roles +' '+ '(' + rasp.name + ')'),
-            subtitle: Text('The model number is ${rasp.modelNumber}'),
+            title: Text(rasp.modelNumber),
+            subtitle: Text(rasp.software==null ? "software" : rasp.software),
           ),
         ),
       ),

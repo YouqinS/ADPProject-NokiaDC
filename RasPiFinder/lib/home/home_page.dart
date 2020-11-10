@@ -1,3 +1,5 @@
+import 'package:RasPiFinder/add_pi/add_pi.dart';
+import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/models/rasps.dart';
 import 'package:flutter/material.dart';
 import 'package:RasPiFinder/services/database.dart';
@@ -16,7 +18,7 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     super.build(context);
 
-    void _showAddPanel() {
+    /*void _showAddPanel() {
       showModalBottomSheet(
         context: context, 
         isScrollControlled: true, 
@@ -31,7 +33,7 @@ class _HomePageState extends State<HomePage>
           );
         }
       );
-    }
+    }*/
 
     return StreamProvider<List<Rasp>>.value(
           value: DatabaseService().rasps,
@@ -52,7 +54,10 @@ class _HomePageState extends State<HomePage>
                 FlatButton.icon(
                   icon: Icon(Icons.add), 
                   label: Text(''),
-                  onPressed: () => _showAddPanel(), 
+                  onPressed: () => {
+                    //TODO
+                    navigateToPage(context, AddPi())
+                  }//_showAddPanel(),
                 )
               ],
             ),

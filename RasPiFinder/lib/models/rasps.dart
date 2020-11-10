@@ -1,9 +1,15 @@
-class Rasp {
-  final String name;
-  final String modelNumber;
-  final String roles;
-  // final double location;
-  final int availability;
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-  Rasp({ this.name, this.modelNumber, this.roles, this.availability });
+class Rasp {
+  final String modelNumber; //uid
+  final String address;
+  final String software;
+  final String finderID;
+  final String userID;
+  final String ownerID;
+  final String other;
+  final GeoPoint geoPoint;
+
+  Rasp({this.modelNumber, this.address, this.software, this.finderID,
+      this.userID, this.ownerID, this.other, this.geoPoint});
 }

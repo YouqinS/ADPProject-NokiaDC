@@ -15,6 +15,7 @@ class  Wrapper extends StatelessWidget {
     if (user == null) {
       return Authenticate();
     } else {
+      print('Wrapper user uid=' + user.uid);
       return StreamProvider<UserData>.value(
         value: DatabaseService(uid: user.uid).userData,
         child: NavigationPage()

@@ -68,7 +68,8 @@ class _MyRasPiState extends State<MyRasPi> {
                   DataContainer(
                     label: 'Software',
                     //TODO change to software when new data collection integrated
-                    content: myPies[index].name,
+                   // content: myPies[index].name,
+                    content: myPies[index].software == null ? "NA" : myPies[index].software,
                     maxLine: 2,
                     isUser: false,
                   ),

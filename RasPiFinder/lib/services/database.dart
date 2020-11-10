@@ -9,9 +9,11 @@ class DatabaseService {
   DatabaseService({ this.uid });
 
   //collection reference
-  final CollectionReference inventoryCollection = FirebaseFirestore.instance.collection("raspberries");
+  final CollectionReference inventoryCollection = FirebaseFirestore.instance.collection("pi");
+  final CollectionReference userCollection = FirebaseFirestore.instance.collection("users");
 
-  Future updateUserData (String modelNumber, String name, String roles, int availability) async {
+/*
+  Future addPi (String modelNumber, String name, String roles, int availability) async {
     return await inventoryCollection.doc(uid).set({
       'modelNumber': modelNumber,
       'name': name,
@@ -20,30 +22,53 @@ class DatabaseService {
       'availability': availability,
     });
   }
+*/
+
+  Future createUser (String username, String email, String phoneNumber) async {
+    return await userCollection.doc(uid).set({
+      'phoneNumber': phoneNumber,
+      'username': username,
+      'email': email,
+    });
+  }
 
   //lists of rasp from snpshots
   List<Rasp> _raspListFromSnapshots(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
       return Rasp(
         modelNumber: doc.data()['modelNumber'] ?? '',
-        name: doc.data()['name'] ?? '',
-        roles: doc.data()['roles'] ?? '',
-        // location: doc.data()['location'] ?? 0.0,
-        availability: doc.data()['availability'] ?? 0,
+        address: doc.data()['address'] ?? '',
+        software: doc.data()['software'] ?? '',
+        finderID: doc.data()['finderID'] ?? '',
+        userID: doc.data()['userID'] ?? '',
+        ownerID: doc.data()['ownerID'] ?? '',
+        other: doc.data()['other'] ?? '',
+       geoPoint: doc.data()['geoPoint'] ?? null,
       );
     }).toList();
   }
-
   // user data from snapshots
   UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
+    print('_userDataFromSnapshot UID=' + uid);
+    print('snapshot data=');
+    print(   snapshot.data());
     return UserData(
       uid: uid,
-      modelNumber: snapshot.data()['modelNumber'],
-      name: snapshot.data()['name'],
-      roles: snapshot.data()['roles'],
-      availability: snapshot.data()['availability'],
-      // location: snapshot.data()['location'],
+      phoneNumber: snapshot.data()['phoneNumber'] ?? "phone number",
+      username: snapshot.data()['username'] ?? "username",
+      email: snapshot.data()['email'] ?? "email",
     );
+  }
+
+  List<UserData> _userListFromSnapshots(QuerySnapshot snapshot) {
+    return snapshot.docs.map((doc) {
+      return UserData(
+        uid: uid,
+        phoneNumber: doc.data()['phoneNumber'],
+        username: doc.data()['username'],
+        email: doc.data()['email'],
+      );
+    }).toList();
   }
 
   // get data streams
@@ -54,8 +79,13 @@ class DatabaseService {
 
   //get user doc stream
   Stream<UserData> get userData {
-    return inventoryCollection.doc(uid).snapshots()
+    print('getUserData() userUID='+uid);
+    return userCollection.doc(uid).snapshots()
       .map(_userDataFromSnapshot);
   }
 
+  Stream<List<UserData>> get users {
+    return userCollection.snapshots()
+        .map(_userListFromSnapshots);
+  }
 }
