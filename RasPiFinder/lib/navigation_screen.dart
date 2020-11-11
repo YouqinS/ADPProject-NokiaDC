@@ -5,6 +5,7 @@ import 'package:RasPiFinder/profile/profile.dart';
 import 'package:RasPiFinder/search/search_page.dart';
 import 'package:provider/provider.dart';
 import 'models/rasps.dart';
+import 'models/user.dart';
 
 class NavigationPage extends StatefulWidget {
   @override
@@ -30,8 +31,13 @@ class _NavigationPageState extends State<NavigationPage> {
   Widget build(BuildContext context) {
     List<Widget> _screens = [HomePage(), Profile(), SearchPage()];
 
-    return StreamProvider<List<Rasp>>.value(
-      value: DatabaseService().rasps,
+    // return StreamProvider<List<Rasp>>.value(
+    //   value: DatabaseService().rasps,
+    return MultiProvider(
+      providers: [
+        StreamProvider<List<Rasp>>.value(value: DatabaseService().rasps),
+        StreamProvider<List<UserData>>.value(value: DatabaseService().users)
+      ],
       child: Scaffold(
         body: PageView(
           controller: _pageController,

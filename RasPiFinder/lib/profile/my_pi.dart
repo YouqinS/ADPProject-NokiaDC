@@ -38,7 +38,7 @@ class _MyRasPiState extends State<MyRasPi> {
         itemBuilder: (BuildContext context, int index) {
           return GestureDetector(
             onTap: () {
-              navigateToPage(context, PiData(showUpdateBtn: true, showUnregisterBtn: true,));
+              navigateToPage(context, PiData(showUpdateBtn: true, showUnregisterBtn: true, rasp: myPies[index],));
             },
             child: Card(
               elevation: 0.01,

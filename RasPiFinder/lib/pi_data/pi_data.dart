@@ -1,16 +1,20 @@
 import 'package:RasPiFinder/add_pi/add_pi.dart';
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/map/map_view.dart';
+import 'package:RasPiFinder/models/rasps.dart';
+import 'package:RasPiFinder/models/user.dart';
 import 'package:RasPiFinder/pi_data/dataContainer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PiData extends StatefulWidget {
   final bool showUpdateBtn, showUnregisterBtn;
-  PiData({Key key, this.showUpdateBtn, this.showUnregisterBtn}) : super(key: key);
+  final Rasp rasp;
+  PiData({Key key, this.showUpdateBtn, this.showUnregisterBtn, this.rasp}) : super(key: key);
 
   @override
-  _PiDataState createState() => _PiDataState(showUpdateBtn, showUnregisterBtn);
+  _PiDataState createState() => _PiDataState(showUpdateBtn, showUnregisterBtn, rasp);
 }
 
 class _PiDataState extends State<PiData> {
@@ -18,11 +22,11 @@ class _PiDataState extends State<PiData> {
   String piUid, owner, user, finder, software, address, gps, other;
 
   final bool showUpdateBtn, showUnregisterBtn;
-  _PiDataState(this.showUpdateBtn, this.showUnregisterBtn);
+  final Rasp rasp;
+  _PiDataState(this.showUpdateBtn, this.showUnregisterBtn, this.rasp);
 
   @override
   Widget build(BuildContext context) {
-    getPiData();
     Size size = MediaQuery.of(context).size;
 
     var divider = Divider(
@@ -30,6 +34,8 @@ class _PiDataState extends State<PiData> {
     );
 
 
+    var notAvailable = 'not available';
+    var none = 'none';
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -73,42 +79,42 @@ class _PiDataState extends State<PiData> {
                   children: [
                     DataContainer(
                       label: 'Model No.',
-                      content: piUid,
+                      content: rasp.modelNumber.isEmpty ? notAvailable : rasp.modelNumber,
                       maxLine: 2,
                       isUser: false,
                     ),
                     divider,
                     DataContainer(
                       label: 'Software',
-                      content: software,
+                      content: rasp.software.isEmpty? notAvailable : rasp.software,
                       maxLine: 2,
                       isUser: false,
                     ),
                     divider,
                     DataContainer(
                       label: 'Owner',
-                      content: owner,
+                      content: rasp.ownerID.isEmpty ? none : rasp.ownerID,
                       maxLine: 1,
                       isUser: true,
                     ),
                     divider,
                     DataContainer(
                       label: 'User',
-                      content: user,
+                      content: rasp.userID.isEmpty ? none : rasp.userID,
                       maxLine: 1,
                       isUser: true,
                     ),
                     divider,
                     DataContainer(
                       label: 'Finder',
-                      content: finder,
+                      content: rasp.finderID.isEmpty ? none : rasp.finderID,
                       maxLine: 1,
                       isUser: true,
                     ),
                     divider,
                     DataContainer(
                       label: 'Address',
-                      content: address,
+                      content: rasp.address.isEmpty ? notAvailable : rasp.address,
                       maxLine: 3,
                       isUser: false,
                     ),
@@ -136,7 +142,7 @@ class _PiDataState extends State<PiData> {
                     ),
                     divider,
                     DataContainer(label: 'Other', content: '', maxLine: 1, isUser: false,),
-                    DataContainer(label: '', content: other, maxLine: 20, isUser: false,),
+                    DataContainer(label: '', content: rasp.other.isEmpty ? notAvailable : rasp.other, maxLine: 20, isUser: false,),
                   ],
                 ),
               ),

@@ -54,9 +54,9 @@ class DatabaseService {
     print(   snapshot.data());
     return UserData(
       uid: uid,
-      phoneNumber: snapshot.data()['phoneNumber'] ?? "phone number",
-      username: snapshot.data()['username'] ?? "username",
-      email: snapshot.data()['email'] ?? "email",
+      phoneNumber: snapshot.data()['phoneNumber'] ?? "",
+      username: snapshot.data()['username'] ?? "",
+      email: snapshot.data()['email'] ?? "",
     );
   }
 

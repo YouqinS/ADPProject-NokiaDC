@@ -58,8 +58,7 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                     child: Column(
                       children: [
                         Text(
-                          "username",
-                         // userData.username == null ? notAvail : userData.username,
+                          userData.username.isEmpty ? notAvail : userData.username,
                           style: TextStyle(
                             color: Colors.blue,
                             fontWeight: FontWeight.bold,
@@ -75,8 +74,7 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                         ),
                         Text(
                           //TODO change to EMAIL
-                        //  userData.email == null ? notAvail : userData.email,
-                          'email',
+                          userData.email.isEmpty ? notAvail : userData.email,
                           style: TextStyle(
                             color: Colors.blue,
                             fontSize: 18,
@@ -90,8 +88,7 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                         ),
                         Text(
                           //TODO change to PHONE NUMBER
-                          'phoneNumber',
-                         // userData.phoneNumber == null ? notAvail : userData.phoneNumber,
+                          userData.phoneNumber.isEmpty ? notAvail : userData.phoneNumber,
                           style: TextStyle(
                             color: Colors.blue,
                             fontSize: 18,

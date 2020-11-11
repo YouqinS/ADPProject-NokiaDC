@@ -10,21 +10,23 @@ class ProductTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var available = (rasp.userID == null || rasp.userID.isEmpty);
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
       child: GestureDetector(
         onTap: () {
-          navigateToPage(context, PiData(showUpdateBtn: false, showUnregisterBtn: false,));
+          navigateToPage(context, PiData(showUpdateBtn: false, showUnregisterBtn: false, rasp: rasp,));
         },
         child: Card(
           margin: EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
           child: ListTile(
             leading: CircleAvatar(
               radius: 25.0,
-             // backgroundColor: Colors.green[rasp.availability],
+              backgroundColor: available ? Colors.green :  Colors.red,
+              child: Text(available ? "free" : "in use", style: TextStyle(color: Colors.white),),
             ),
-            title: Text(rasp.modelNumber),
-            subtitle: Text(rasp.software==null ? "software" : rasp.software),
+            title: Text("model: "+ rasp.modelNumber),
+            subtitle: Text("sw: " + (rasp.software==null ? "software" : rasp.software)),
           ),
         ),
       ),
