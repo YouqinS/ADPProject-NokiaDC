@@ -1,10 +1,13 @@
 import 'package:RasPiFinder/add_pi/add_pi.dart';
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/models/rasps.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:RasPiFinder/services/database.dart';
 import 'package:provider/provider.dart';
 import 'rasp_list.dart';
+import 'package:geolocator/geolocator.dart';
+import "package:latlong/latlong.dart";
 
 class HomePage extends StatefulWidget {
   @override
@@ -13,6 +16,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with AutomaticKeepAliveClientMixin {
+  GeoPoint geoPoint;
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -67,4 +72,19 @@ class _HomePageState extends State<HomePage>
 
   @override
   bool get wantKeepAlive => true;
+
+  //get geopoint, can be called when camera starts, the new geo info can be stored to db together with other pi info
+  Future<Position> getCurrentLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    return position;
+  }
+
+  getGps() {
+    getCurrentLocation().then((result) => {
+          setState(() {
+            geoPoint = new GeoPoint(result.latitude, result.longitude);
+          }),
+        });
+  }
 }
