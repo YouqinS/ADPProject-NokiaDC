@@ -6,6 +6,7 @@ import 'package:RasPiFinder/models/user.dart';
 import 'package:RasPiFinder/pi_data/dataContainer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import "package:latlong/latlong.dart";
 
 class PiData extends StatefulWidget {
   final bool showUpdateBtn, showUnregisterBtn;
@@ -127,7 +128,7 @@ class _PiDataState extends State<PiData> {
                           message: 'GPS when last scanned',
                           child: RaisedButton.icon(
                               onPressed: () {
-                                navigateToPage(context, MapView());
+                                navigateToPage(context, MapView(lastKnownGeopoint: new LatLng(rasp.geoPoint.latitude, rasp.geoPoint.longitude),));
                               },
                               label: Text('GPS',
                                   style: TextStyle(
