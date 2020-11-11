@@ -1,11 +1,9 @@
 import 'package:RasPiFinder/add_pi/add_pi.dart';
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/models/rasps.dart';
-import 'package:RasPiFinder/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:RasPiFinder/services/database.dart';
 import 'package:provider/provider.dart';
-import 'add_products.dart';
 import 'rasp_list.dart';
 
 class HomePage extends StatefulWidget {

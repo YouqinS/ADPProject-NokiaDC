@@ -31,7 +31,8 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
     final List<Rasp> piCollectionFromDB = Provider.of<List<Rasp>>(context) ?? [];
 
     List<Rasp> myPies = getMyPiList(userData.uid, piCollectionFromDB);
-
+    final users = Provider.of<List<UserData>>(context) ?? [];
+    print('Profile users=' + users.toString());
     return Scaffold(
         appBar: PiAppBar(title: 'Profile').build(context),
         body: Card(
@@ -73,7 +74,6 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                           height: size.height * 0.006,
                         ),
                         Text(
-                          //TODO change to EMAIL
                           userData.email.isEmpty ? notAvail : userData.email,
                           style: TextStyle(
                             color: Colors.blue,
@@ -87,7 +87,6 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                           height: size.height * 0.006,
                         ),
                         Text(
-                          //TODO change to PHONE NUMBER
                           userData.phoneNumber.isEmpty ? notAvail : userData.phoneNumber,
                           style: TextStyle(
                             color: Colors.blue,
@@ -111,7 +110,7 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                     child: RaisedButton.icon(
                       color: Colors.grey[200],
                       onPressed: () {
-                        navigateToPage(context, MyRasPi(myPies: myPies));
+                        navigateToPage(context, MyRasPi(myPies: myPies, users: users,));
                       },
                       icon: Icon(
                         Icons.pie_chart_outline_outlined,

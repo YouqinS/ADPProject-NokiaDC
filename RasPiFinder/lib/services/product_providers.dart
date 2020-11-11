@@ -15,14 +15,14 @@ class ProductProvider with ChangeNotifier {
 
 
   //Getters
-  String get _modelNumber => modelNumber;
-  String get _address => address;
-  String get _software => software;
-  String get _other => other;
-  String get _ownerID =>  ownerID;
-  String get _userID => userID;
-  String get  _finderID => finderID;
-  GeoPoint get _geoPoint =>  geoPoint;
+  // String get _modelNumber => modelNumber;
+  // String get _address => address;
+  // String get _software => software;
+  // String get _other => other;
+  // String get _ownerID =>  ownerID;
+  // String get _userID => userID;
+  // String get  _finderID => finderID;
+  // GeoPoint get _geoPoint =>  geoPoint;
 
   //Setters
   changeName(String value) {

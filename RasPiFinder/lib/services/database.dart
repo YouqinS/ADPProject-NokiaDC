@@ -26,6 +26,7 @@ class DatabaseService {
 
   Future createUser (String username, String email, String phoneNumber) async {
     return await userCollection.doc(uid).set({
+      'uid': uid,
       'phoneNumber': phoneNumber,
       'username': username,
       'email': email,
@@ -49,9 +50,6 @@ class DatabaseService {
   }
   // user data from snapshots
   UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
-    print('_userDataFromSnapshot UID=' + uid);
-    print('snapshot data=');
-    print(   snapshot.data());
     return UserData(
       uid: uid,
       phoneNumber: snapshot.data()['phoneNumber'] ?? "",
@@ -63,7 +61,7 @@ class DatabaseService {
   List<UserData> _userListFromSnapshots(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
       return UserData(
-        uid: uid,
+        uid: doc.data()['uid'],
         phoneNumber: doc.data()['phoneNumber'],
         username: doc.data()['username'],
         email: doc.data()['email'],
