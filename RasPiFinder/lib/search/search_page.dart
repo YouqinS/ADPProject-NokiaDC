@@ -1,6 +1,4 @@
-import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/components/text_input_field.dart';
-import 'package:RasPiFinder/pi_data/pi_data.dart';
 import 'package:flutter/material.dart';
 
 class SearchPage extends StatefulWidget {
@@ -30,7 +28,8 @@ class _SearchPageState extends State<SearchPage>
   Widget _buildRow(String name) {
     return GestureDetector(
       onTap: () {
-        navigateToPage(context, PiData(showUpdateBtn: false, showUnregisterBtn: false,));
+        //TODO prepare data needed for PiData Screen
+       // navigateToPage(context, PiData(showUpdateBtn: false, showUnregisterBtn: false,));
       },
       child: ListTile(
         title: Text(name, style: _biggerFont),

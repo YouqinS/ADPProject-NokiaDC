@@ -1,3 +1,4 @@
+/*
 import 'package:RasPiFinder/models/rasps.dart';
 import 'package:RasPiFinder/components/loading.dart';
 import 'package:RasPiFinder/services/database.dart';
@@ -166,17 +167,20 @@ class _AddProductsState extends State<AddProducts> {
                     'Add',
                     style: TextStyle(color: Colors.white),
                   ),
-                  onPressed: () async {
+                  onPressed: () {}
+                  //TODO
+                  */
+/*async {
                     if(_formKey.currentState.validate()){
-                      await DatabaseService(uid: user.uid).updateUserData(
-                        _currentModel ?? snapshot.data.modelNumber,
-                        _currentroles ?? snapshot.data.roles, 
-                        _currentName ?? snapshot.data.name, 
-                        _currentAvailability ?? snapshot.data.availability
+                      await DatabaseService(uid: user.uid).addPi(
+                        _currentModel ?? snapshot.data.phoneNumber,
+                        _currentroles ?? snapshot.data.email,
+                        _currentName ?? snapshot.data.username,
                       );
                       Navigator.pop(context);
                     }
-                  }
+                  }*//*
+
                 ),
               ],
             ),
@@ -187,4 +191,4 @@ class _AddProductsState extends State<AddProducts> {
       }
     );
   }
-}
+}*/

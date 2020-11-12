@@ -4,31 +4,46 @@ import 'package:RasPiFinder/models/rasps.dart';
 
 class ProductProvider with ChangeNotifier {
   final fireStoreService = FirebaseFirestore.instance;
-  String _name;
-  String _modelNumber;
-  // String _roles;
-  // var uuid = Uuid();
+  String modelNumber;
+  String address;
+  String software;
+  String other;
+  String ownerID;
+  String userID;
+  String finderID;
+  GeoPoint geoPoint;
 
 
   //Getters
-  String get name => _name;
-  String get model => _modelNumber;
+  // String get _modelNumber => modelNumber;
+  // String get _address => address;
+  // String get _software => software;
+  // String get _other => other;
+  // String get _ownerID =>  ownerID;
+  // String get _userID => userID;
+  // String get  _finderID => finderID;
+  // GeoPoint get _geoPoint =>  geoPoint;
 
   //Setters
   changeName(String value) {
-    _name = value;
+    //_name = value;
     notifyListeners();
   }
 
   changeModel(String value) {
-    _modelNumber = value;
+    modelNumber = value;
     notifyListeners();
   }
 
-  loadValues(Rasp product) {
-    _name = product.name;
-    _modelNumber = product.modelNumber;
-    // _roles = product.roles;
+  loadValues(Rasp pi) {
+    modelNumber = pi.modelNumber;
+    software = pi.software;
+    address = pi.address;
+    geoPoint = pi.geoPoint;
+    userID = pi.userID;
+    finderID = pi.finderID;
+    ownerID = pi.ownerID;
+    other = pi.other;
   }
 
   // saveProduct(){

@@ -1,7 +1,9 @@
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/models/rasps.dart';
+import 'package:RasPiFinder/models/user.dart';
 import 'package:RasPiFinder/pi_data/pi_data.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProductTile extends StatelessWidget {
 
@@ -10,21 +12,24 @@ class ProductTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final users = Provider.of<List<UserData>>(context) ?? [];
+    var available = (rasp.userID == null || rasp.userID.isEmpty);
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
       child: GestureDetector(
         onTap: () {
-          navigateToPage(context, PiData(showUpdateBtn: false, showUnregisterBtn: false,));
+          navigateToPage(context, PiData(showUpdateBtn: false, showUnregisterBtn: false, rasp: rasp, users: users,));
         },
         child: Card(
           margin: EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
           child: ListTile(
             leading: CircleAvatar(
               radius: 25.0,
-              backgroundColor: Colors.green[rasp.availability],
+              backgroundColor: available ? Colors.green :  Colors.red,
+              child: Text(available ? "free" : "in use", style: TextStyle(color: Colors.white),),
             ),
-            title: Text(rasp.roles +' '+ '(' + rasp.name + ')'),
-            subtitle: Text('The model number is ${rasp.modelNumber}'),
+            title: Text("model: "+ rasp.modelNumber),
+            subtitle: Text("sw: " + (rasp.software==null ? "software" : rasp.software)),
           ),
         ),
       ),

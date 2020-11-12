@@ -41,6 +41,13 @@ class SignupForm extends State<SignupPage> {
                 children: <Widget>[
                   SizedBox(height: size.height * 0.05),
                   TextInputField(
+                    hintText: "Username",
+                    icon: Icons.person,
+                    onSaved: (value) {
+                      username = value;
+                    },
+                  ),
+                  TextInputField(
                     hintText: "Email",
                     icon: Icons.email,
                     onSaved: (value) {
@@ -68,7 +75,7 @@ class SignupForm extends State<SignupPage> {
                       if (formKey.currentState.validate()) {
                         formKey.currentState.save();
                         setState(() => loading = true);
-                        dynamic result = await _authenticationService.registerWithEmailAndPassword(email, password);
+                        dynamic result = await _authenticationService.registerWithEmailAndPassword(email, password, username, phone);
                         if (result == null) {
                           setState(() {
                               error = 'Please supply the valid email';

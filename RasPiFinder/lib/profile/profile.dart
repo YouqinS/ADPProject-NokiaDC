@@ -27,9 +27,12 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
     super.build(context);
     Size size = MediaQuery.of(context).size;
     final UserData userData = Provider.of<UserData>(context);
-    final List<Rasp> piCollectionFromDB = Provider.of<List<Rasp>>(context) ?? [];
-    List<Rasp> myPies = getMyPiList(userData.uid, piCollectionFromDB);
 
+    final List<Rasp> piCollectionFromDB = Provider.of<List<Rasp>>(context) ?? [];
+
+    List<Rasp> myPies = getMyPiList(userData.uid, piCollectionFromDB);
+    final users = Provider.of<List<UserData>>(context) ?? [];
+    print('Profile users=' + users.toString());
     return Scaffold(
         appBar: PiAppBar(title: 'Profile').build(context),
         body: Card(
@@ -56,7 +59,7 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                     child: Column(
                       children: [
                         Text(
-                          userData.name == null ? notAvail : userData.name,
+                          userData.username.isEmpty ? notAvail : userData.username,
                           style: TextStyle(
                             color: Colors.blue,
                             fontWeight: FontWeight.bold,
@@ -71,8 +74,7 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                           height: size.height * 0.006,
                         ),
                         Text(
-                          //TODO change to EMAIL
-                          userData.roles == null ? notAvail : userData.roles,
+                          userData.email.isEmpty ? notAvail : userData.email,
                           style: TextStyle(
                             color: Colors.blue,
                             fontSize: 18,
@@ -85,8 +87,7 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                           height: size.height * 0.006,
                         ),
                         Text(
-                          //TODO change to PHONE NUMBER
-                          userData.modelNumber == null ? notAvail : userData.modelNumber,
+                          userData.phoneNumber.isEmpty ? notAvail : userData.phoneNumber,
                           style: TextStyle(
                             color: Colors.blue,
                             fontSize: 18,
@@ -109,7 +110,7 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                     child: RaisedButton.icon(
                       color: Colors.grey[200],
                       onPressed: () {
-                        navigateToPage(context, MyRasPi(myPies: myPies));
+                        navigateToPage(context, MyRasPi(myPies: myPies, users: users,));
                       },
                       icon: Icon(
                         Icons.pie_chart_outline_outlined,
@@ -164,11 +165,9 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
   List<Rasp> getMyPiList(String userUid, List<Rasp> piCollectionFromDB) {
     final List<Rasp> myPies = [];
     for (int i=0; i<piCollectionFromDB.length; i++) {
-      //TODO change it to userID || finderID || ownerID
-      /*if (piCollectionFromDB[i].userID ==  userUid ||
+      if (piCollectionFromDB[i].userID ==  userUid ||
           piCollectionFromDB[i].finderID == userUid ||
-          piCollectionFromDB[i].ownerID == userUid) {*/
-      if(piCollectionFromDB[i].modelNumber == '1') {
+          piCollectionFromDB[i].ownerID == userUid) {
         myPies.add(piCollectionFromDB[i]);
       }
     }

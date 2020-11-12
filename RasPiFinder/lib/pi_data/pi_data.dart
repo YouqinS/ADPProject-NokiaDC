@@ -1,34 +1,42 @@
 import 'package:RasPiFinder/add_pi/add_pi.dart';
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/map/map_view.dart';
+import 'package:RasPiFinder/models/rasps.dart';
+import 'package:RasPiFinder/models/user.dart';
 import 'package:RasPiFinder/pi_data/dataContainer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class PiData extends StatefulWidget {
   final bool showUpdateBtn, showUnregisterBtn;
-  PiData({Key key, this.showUpdateBtn, this.showUnregisterBtn}) : super(key: key);
+  final Rasp rasp;
+  final List<UserData> users;
+  PiData({Key key, this.showUpdateBtn, this.showUnregisterBtn, this.rasp, this.users}) : super(key: key);
 
   @override
-  _PiDataState createState() => _PiDataState(showUpdateBtn, showUnregisterBtn);
+  _PiDataState createState() => _PiDataState(showUpdateBtn, showUnregisterBtn, rasp, users);
 }
 
 class _PiDataState extends State<PiData> {
-  //TODO type to be changed when db data model is ready
-  String piUid, owner, user, finder, software, address, gps, other;
-
+  final String piOwner = "owner", piUser = "user", piFinder = "finder";
+  var notAvailable = 'not available';
+  var none = 'none';
   final bool showUpdateBtn, showUnregisterBtn;
-  _PiDataState(this.showUpdateBtn, this.showUnregisterBtn);
+  final Rasp rasp;
+  final List<UserData> users;
+  _PiDataState(this.showUpdateBtn, this.showUnregisterBtn, this.rasp, this.users);
 
   @override
   Widget build(BuildContext context) {
-    getPiData();
     Size size = MediaQuery.of(context).size;
+    final names = getNames(users, rasp);
+    final String user = names[piUser] == null ? none : names[piUser];
+    final String owner = names[piOwner] == null ? none : names[piOwner];
+    final String finder = names[piFinder] == null ? none : names[piFinder];
 
     var divider = Divider(
       color: Colors.red,
     );
-
 
     return Scaffold(
       appBar: AppBar(
@@ -73,42 +81,42 @@ class _PiDataState extends State<PiData> {
                   children: [
                     DataContainer(
                       label: 'Model No.',
-                      content: piUid,
+                      content: rasp.modelNumber.isEmpty ? notAvailable : rasp.modelNumber,
                       maxLine: 2,
                       isUser: false,
                     ),
                     divider,
                     DataContainer(
                       label: 'Software',
-                      content: software,
+                      content: rasp.software.isEmpty? notAvailable : rasp.software,
                       maxLine: 2,
                       isUser: false,
                     ),
                     divider,
                     DataContainer(
                       label: 'Owner',
-                      content: owner,
+                      content: rasp.ownerID.isEmpty ? none : owner,
                       maxLine: 1,
                       isUser: true,
                     ),
                     divider,
                     DataContainer(
                       label: 'User',
-                      content: user,
+                      content: rasp.userID.isEmpty ? none : user,
                       maxLine: 1,
                       isUser: true,
                     ),
                     divider,
                     DataContainer(
                       label: 'Finder',
-                      content: finder,
+                      content: rasp.finderID.isEmpty ? none : finder,
                       maxLine: 1,
                       isUser: true,
                     ),
                     divider,
                     DataContainer(
                       label: 'Address',
-                      content: address,
+                      content: rasp.address.isEmpty ? notAvailable : rasp.address,
                       maxLine: 3,
                       isUser: false,
                     ),
@@ -136,7 +144,7 @@ class _PiDataState extends State<PiData> {
                     ),
                     divider,
                     DataContainer(label: 'Other', content: '', maxLine: 1, isUser: false,),
-                    DataContainer(label: '', content: other, maxLine: 20, isUser: false,),
+                    DataContainer(label: '', content: rasp.other.isEmpty ? notAvailable : rasp.other, maxLine: 20, isUser: false,),
                   ],
                 ),
               ),
@@ -166,16 +174,22 @@ class _PiDataState extends State<PiData> {
     );
   }
 
-  //TODO GET data from DB, this is for UI testing only
-  void getPiData() {
-    piUid = '7e19fb4a-ff84-4966-a376';
-    user = 'abcd efgh wpeoh';
-    owner = 'abcd efgh wpeoh';
-    finder = 'abcd efgh wpeoh';
-    software = 'RasPiOs';
-    address = 'Karakaari 7, 02610 Espoo';
-    gps = '41 24.2028,  2 10.4418';
-    other =
-    '41 24.2028,  2 10.4418 7e19fb4a-ff84-4966-a376-b9434027f866 abcd efgh wpeo';
-  }
+   getNames(List<UserData> users, Rasp pi) {
+     final names = new Map();
+    for (UserData userdata in users) {
+      var username = (userdata.username == null || userdata.username.isEmpty) ? "not provided" : userdata.username;
+
+      if (pi.userID == userdata.uid) {
+        names[piUser] = username;
+      }
+      if (pi.ownerID == userdata.uid) {
+        names[piOwner] = username;
+      }
+
+      if (pi.finderID == userdata.uid) {
+        names[piFinder] = username;
+      }
+    }
+    return names;
+   }
 }

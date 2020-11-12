@@ -7,14 +7,11 @@ class MUser {
 }
 
 class UserData {
-
   final String uid;
-  final String name;
-  final String roles;
-  final String modelNumber;
-  // final double location;
-  final int availability;
+  final String username;
+  final String email;
+  final String phoneNumber;
 
-  UserData({ this.uid, this.name, this.roles, this.modelNumber, this.availability });
+  UserData({ this.uid, this.username, this.email, this.phoneNumber});
 
 }
