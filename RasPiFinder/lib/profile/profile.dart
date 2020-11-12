@@ -10,29 +10,30 @@ import 'my_pi.dart';
 import 'package:provider/provider.dart';
 
 class Profile extends StatefulWidget {
-  Profile({Key key}) : super(key: key);
+  final UserData userData;
+  Profile({Key key, this.userData}) : super(key: key);
 
   @override
-  ProfileState createState() => new ProfileState();
+  ProfileState createState() => new ProfileState(userData);
 }
 
 class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
+  final UserData userData;
+  ProfileState(this.userData);
+
   final formKey = GlobalKey<FormState>();
   final String notAvail = 'not available';
-
   final AuthenticationService _authenticationService = AuthenticationService();
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     Size size = MediaQuery.of(context).size;
-    final UserData userData = Provider.of<UserData>(context);
 
     final List<Rasp> piCollectionFromDB = Provider.of<List<Rasp>>(context) ?? [];
-
     List<Rasp> myPies = getMyPiList(userData.uid, piCollectionFromDB);
     final users = Provider.of<List<UserData>>(context) ?? [];
-    print('Profile users=' + users.toString());
+
     return Scaffold(
         appBar: PiAppBar(title: 'Profile').build(context),
         body: Card(
