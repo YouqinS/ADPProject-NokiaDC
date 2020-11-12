@@ -7,7 +7,6 @@ import 'package:RasPiFinder/services/database.dart';
 import 'package:provider/provider.dart';
 import 'rasp_list.dart';
 import 'package:geolocator/geolocator.dart';
-import "package:latlong/latlong.dart";
 
 class HomePage extends StatefulWidget {
   @override
@@ -22,6 +21,7 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     super.build(context);
 
+    getGps();
     /*void _showAddPanel() {
       showModalBottomSheet(
         context: context, 
@@ -81,10 +81,12 @@ class _HomePageState extends State<HomePage>
   }
 
   getGps() {
+    print('getCurrentLocation');
     getCurrentLocation().then((result) => {
           setState(() {
             geoPoint = new GeoPoint(result.latitude, result.longitude);
           }),
         });
+    print('latitude=' + geoPoint.latitude.toString() + ', longitude=' + geoPoint.longitude.toString());
   }
 }
