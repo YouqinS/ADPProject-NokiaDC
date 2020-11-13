@@ -6,13 +6,18 @@ import 'package:geolocator/geolocator.dart';
 import "package:latlong/latlong.dart";
 
 class MapView extends StatefulWidget {
+  final LatLng lastKnownGeopoint;
+
+  const MapView({Key key, this.lastKnownGeopoint}) : super(key: key);
   @override
-  _MapViewState createState() => _MapViewState();
+  _MapViewState createState() => _MapViewState(lastKnownGeopoint);
 }
 
 class _MapViewState extends State<MapView> {
   MapController controller = new MapController();
-  LatLng latLng;
+  final LatLng lastKnownGeopoint;
+
+  _MapViewState(this.lastKnownGeopoint);
 
   Future<Position> getCurrentLocation() async {
     Position position = await Geolocator.getCurrentPosition(
@@ -26,13 +31,9 @@ class _MapViewState extends State<MapView> {
   }
 
   buildMap() {
-    getCurrentLocation().then((result) => {
-    setState(() {
-    latLng = new LatLng(result.latitude, result.longitude);
-    }),
-      controller.onReady.then((value) => {
-        controller.move(new LatLng(result.latitude, result.longitude), 13.0),
-      })
+    print("latitude=" + lastKnownGeopoint.latitude.toString() + "longitude=" + lastKnownGeopoint.longitude.toString());
+    controller.onReady.then((value) => {
+      controller.move(new LatLng(lastKnownGeopoint.latitude, lastKnownGeopoint.longitude), 13.0),
     });
   }
 
@@ -60,7 +61,7 @@ class _MapViewState extends State<MapView> {
               new Marker(
                 width: 80.0,
                 height: 80.0,
-                point:  latLng,
+                point:  lastKnownGeopoint,
                 builder: (ctx) => new Container(
                   child: Icon(
                     Icons.location_on,
