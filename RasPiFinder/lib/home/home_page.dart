@@ -1,10 +1,7 @@
 import 'package:RasPiFinder/add_pi/add_pi.dart';
 import 'package:RasPiFinder/components/navigate.dart';
-import 'package:RasPiFinder/models/rasps.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:RasPiFinder/services/database.dart';
-import 'package:provider/provider.dart';
 import 'rasp_list.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -21,7 +18,6 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     super.build(context);
 
-    getGps();
     /*void _showAddPanel() {
       showModalBottomSheet(
         context: context, 
@@ -39,9 +35,7 @@ class _HomePageState extends State<HomePage>
       );
     }*/
 
-    return StreamProvider<List<Rasp>>.value(
-          value: DatabaseService().rasps,
-          child: Scaffold(
+    return Scaffold(
             appBar: AppBar(
               title: Text(
               "RasPiFinder",
@@ -66,7 +60,6 @@ class _HomePageState extends State<HomePage>
               ],
             ),
             body: RaspList(),
-      ),
     );
   }
 
@@ -87,6 +80,6 @@ class _HomePageState extends State<HomePage>
             geoPoint = new GeoPoint(result.latitude, result.longitude);
           }),
         });
-    print('latitude=' + geoPoint.latitude.toString() + ', longitude=' + geoPoint.longitude.toString());
+    //print('latitude=' + geoPoint.latitude.toString() + ', longitude=' + geoPoint.longitude.toString());
   }
 }

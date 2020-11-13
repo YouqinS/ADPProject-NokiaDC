@@ -1,10 +1,8 @@
-import 'package:RasPiFinder/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:RasPiFinder/home/home_page.dart';
 import 'package:RasPiFinder/profile/profile.dart';
 import 'package:RasPiFinder/search/search_page.dart';
 import 'package:provider/provider.dart';
-import 'models/rasps.dart';
 import 'models/user.dart';
 
 class NavigationPage extends StatefulWidget {
@@ -29,16 +27,12 @@ class _NavigationPageState extends State<NavigationPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> _screens = [HomePage(), Profile(), SearchPage()];
+    final UserData userData = Provider.of<UserData>(context);
 
-    // return StreamProvider<List<Rasp>>.value(
-    //   value: DatabaseService().rasps,
-    return MultiProvider(
-      providers: [
-        StreamProvider<List<Rasp>>.value(value: DatabaseService().rasps),
-        StreamProvider<List<UserData>>.value(value: DatabaseService().users)
-      ],
-      child: Scaffold(
+    List<Widget> _screens = [HomePage(), Profile(userData: userData,), SearchPage()];
+
+
+    return Scaffold(
         body: PageView(
           controller: _pageController,
           children: _screens,
@@ -64,7 +58,6 @@ class _NavigationPageState extends State<NavigationPage> {
           selectedItemColor: Colors.blue,
           onTap: _onItemTapped,
         ),
-      ),
     );
   }
 }
