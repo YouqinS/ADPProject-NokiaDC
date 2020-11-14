@@ -4,12 +4,12 @@ class Rasp {
   final String modelNumber; //uid
   final String address;
   final String software;
-  final String finderID;
-  final String userID;
-  final String ownerID;
+  final Map finder;
+  final Map user;
+  final Map owner;
   final String other;
   final GeoPoint geoPoint;
 
-  Rasp({this.modelNumber, this.address, this.software, this.finderID,
-      this.userID, this.ownerID, this.other, this.geoPoint});
+  Rasp({this.modelNumber, this.address, this.software, this.finder,
+      this.user, this.owner, this.other, this.geoPoint});
 }

@@ -1,7 +1,6 @@
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/map/map_view.dart';
 import 'package:RasPiFinder/models/rasps.dart';
-import 'package:RasPiFinder/models/user.dart';
 import 'package:RasPiFinder/pi_data/dataContainer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,12 +9,10 @@ import "package:latlong/latlong.dart";
 class PiData extends StatefulWidget {
   final bool showUpdateBtn, showUnregisterBtn;
   final Rasp rasp;
-  //TODO should be removed, instead data model needs to have User object,
-  final List<UserData> users; //temporarily used to get pi user/owner/finder info
-  PiData({Key key, this.showUpdateBtn, this.showUnregisterBtn, this.rasp, this.users}) : super(key: key);
+  PiData({Key key, this.showUpdateBtn, this.showUnregisterBtn, this.rasp}) : super(key: key);
 
   @override
-  _PiDataState createState() => _PiDataState(showUpdateBtn, showUnregisterBtn, rasp, users);
+  _PiDataState createState() => _PiDataState(showUpdateBtn, showUnregisterBtn, rasp);
 }
 
 class _PiDataState extends State<PiData> {
@@ -24,16 +21,14 @@ class _PiDataState extends State<PiData> {
   var none = 'none';
   final bool showUpdateBtn, showUnregisterBtn;
   final Rasp rasp;
-  final List<UserData> users;
-  _PiDataState(this.showUpdateBtn, this.showUnregisterBtn, this.rasp, this.users);
+  _PiDataState(this.showUpdateBtn, this.showUnregisterBtn, this.rasp);
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    final names = getNames(users, rasp);
-    final String user = names[piUser] == null ? none : names[piUser];
-    final String owner = names[piOwner] == null ? none : names[piOwner];
-    final String finder = names[piFinder] == null ? none : names[piFinder];
+    final String user = rasp.user == null ? none : rasp.user['email'];
+    final String owner = rasp.owner == null ? none : rasp.owner['email'];
+    final String finder = rasp.finder == null ? none : rasp.finder['email'];
 
     var divider = Divider(
       color: Colors.red,
@@ -96,21 +91,21 @@ class _PiDataState extends State<PiData> {
                     divider,
                     DataContainer(
                       label: 'Owner',
-                      content: rasp.ownerID.isEmpty ? none : owner,
+                      content: owner,
                       maxLine: 1,
                       isUser: true,
                     ),
                     divider,
                     DataContainer(
                       label: 'User',
-                      content: rasp.userID.isEmpty ? none : user,
+                      content:  user,
                       maxLine: 1,
                       isUser: true,
                     ),
                     divider,
                     DataContainer(
                       label: 'Finder',
-                      content: rasp.finderID.isEmpty ? none : finder,
+                      content: finder,
                       maxLine: 1,
                       isUser: true,
                     ),
@@ -182,27 +177,6 @@ class _PiDataState extends State<PiData> {
       navigateToPage(context, MapView(lastKnownGeopoint: new LatLng(rasp.geoPoint.latitude, rasp.geoPoint.longitude),));
     }
   }
-
-   getNames(List<UserData> users, Rasp pi) {
-     final names = new Map();
-    for (UserData userdata in users) {
-      var username = (userdata.username == null || userdata.username.isEmpty) ? "not provided" : userdata.username;
-      // print('userdata.uid=' + userdata.uid);
-      // print('pi.userID=' + pi.userID);
-
-      if (pi.userID == userdata.uid.replaceAll(" ", "")) {
-        names[piUser] = username;
-      }
-      if (pi.ownerID == userdata.uid.replaceAll(" ", "")) {
-        names[piOwner] = username;
-      }
-
-      if (pi.finderID == userdata.uid.replaceAll(" ", "")) {
-        names[piFinder] = username;
-      }
-    }
-    return names;
-   }
 
   Future<void> showAlert() async {
     return showDialog<void>(

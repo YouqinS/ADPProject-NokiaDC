@@ -12,13 +12,12 @@ class ProductTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final users = Provider.of<List<UserData>>(context) ?? [];
-    var available = (rasp.userID == null || rasp.userID.isEmpty);
+    var available = (rasp.user == null || rasp.user.isEmpty);
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
       child: GestureDetector(
         onTap: () {
-          navigateToPage(context, PiData(showUpdateBtn: false, showUnregisterBtn: false, rasp: rasp, users: users,));
+          navigateToPage(context, PiData(showUpdateBtn: false, showUnregisterBtn: false, rasp: rasp));
         },
         child: Card(
           margin: EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),

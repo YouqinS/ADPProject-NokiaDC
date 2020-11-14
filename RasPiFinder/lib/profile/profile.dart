@@ -32,7 +32,6 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
 
     final List<Rasp> piCollectionFromDB = Provider.of<List<Rasp>>(context) ?? [];
     List<Rasp> myPies = getMyPiList(userData.uid, piCollectionFromDB);
-    final users = Provider.of<List<UserData>>(context) ?? [];
 
     return Scaffold(
         appBar: PiAppBar(title: 'Profile').build(context),
@@ -111,7 +110,7 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                     child: RaisedButton.icon(
                       color: Colors.grey[200],
                       onPressed: () {
-                        navigateToPage(context, MyRasPi(myPies: myPies, users: users,));
+                        navigateToPage(context, MyRasPi(myPies: myPies));
                       },
                       icon: Icon(
                         Icons.pie_chart_outline_outlined,
@@ -166,9 +165,9 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
   List<Rasp> getMyPiList(String userUid, List<Rasp> piCollectionFromDB) {
     final List<Rasp> myPies = [];
     for (int i=0; i<piCollectionFromDB.length; i++) {
-      if (piCollectionFromDB[i].userID ==  userUid ||
-          piCollectionFromDB[i].finderID == userUid ||
-          piCollectionFromDB[i].ownerID == userUid) {
+      if ((piCollectionFromDB[i].user != null && piCollectionFromDB[i].user['uid'] ==  userUid) ||
+          (piCollectionFromDB[i].finder != null && piCollectionFromDB[i].finder['uid'] == userUid) ||
+          (piCollectionFromDB[i].owner != null && piCollectionFromDB[i].owner['uid'] == userUid)) {
         myPies.add(piCollectionFromDB[i]);
       }
     }

@@ -22,7 +22,6 @@ class _HomePageState extends State<HomePage>
     super.build(context);
     final UserData userData = Provider.of<UserData>(context);
     final rasPiList = Provider.of<List<Rasp>>(context) ?? [];
-    print(rasPiList);
     return Scaffold(
             appBar: AppBar(
               title: Text(
