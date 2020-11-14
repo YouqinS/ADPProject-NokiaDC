@@ -1,8 +1,9 @@
+import 'package:RasPiFinder/profile/my_pi.dart';
 import 'package:flutter/material.dart';
 import 'package:RasPiFinder/home/home_page.dart';
 import 'package:RasPiFinder/profile/profile.dart';
-import 'package:RasPiFinder/search/search_page.dart';
 import 'package:provider/provider.dart';
+import 'models/rasps.dart';
 import 'models/user.dart';
 
 class NavigationPage extends StatefulWidget {
@@ -27,9 +28,15 @@ class _NavigationPageState extends State<NavigationPage> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Rasp> piCollectionFromDB = Provider.of<List<Rasp>>(context) ?? [];
     final UserData userData = Provider.of<UserData>(context);
 
-    List<Widget> _screens = [HomePage(), Profile(userData: userData,), SearchPage()];
+    List<Rasp> myPies = [];
+    if (userData != null) {
+      myPies = getMyPiList(userData.uid, piCollectionFromDB);
+    }
+
+    List<Widget> _screens = [HomePage(), Profile(userData: userData,), MyRasPi(myPies: myPies,)];
 
 
     return Scaffold(
@@ -50,8 +57,8 @@ class _NavigationPageState extends State<NavigationPage> {
               label: 'Profile',
             ),
             BottomNavigationBarItem(
-              icon: new Icon(Icons.search),
-              label: 'Search',
+              icon: new Icon(Icons.pie_chart_outline_outlined),
+              label: 'MyPies',
             ),
           ],
           currentIndex: _selectedIndex,
@@ -59,5 +66,18 @@ class _NavigationPageState extends State<NavigationPage> {
           onTap: _onItemTapped,
         ),
     );
+  }
+
+//TODO: get 'myPies' by querying db straight?
+  List<Rasp> getMyPiList(String userUid, List<Rasp> piCollectionFromDB) {
+    final List<Rasp> myPies = [];
+    for (int i=0; i<piCollectionFromDB.length; i++) {
+      if ((piCollectionFromDB[i].user != null && piCollectionFromDB[i].user['uid'] ==  userUid) ||
+          (piCollectionFromDB[i].finder != null && piCollectionFromDB[i].finder['uid'] == userUid) ||
+          (piCollectionFromDB[i].owner != null && piCollectionFromDB[i].owner['uid'] == userUid)) {
+        myPies.add(piCollectionFromDB[i]);
+      }
+    }
+    return myPies;
   }
 }

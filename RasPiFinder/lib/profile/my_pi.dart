@@ -1,6 +1,5 @@
 import 'package:RasPiFinder/components/app_bar.dart';
 import 'package:RasPiFinder/components/navigate.dart';
-import 'package:RasPiFinder/models/user.dart';
 import 'package:RasPiFinder/pi_data/dataContainer.dart';
 import 'package:RasPiFinder/pi_data/pi_data.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,18 +8,15 @@ import 'package:RasPiFinder/models/rasps.dart';
 
 class MyRasPi extends StatefulWidget {
   final List<Rasp> myPies;
-  final List<UserData> users;
-
-  const MyRasPi({Key key, this.myPies, this.users}) : super(key: key);
+  const MyRasPi({Key key, this.myPies}) : super(key: key);
 
   @override
-  _MyRasPiState createState() => _MyRasPiState(this.myPies, this.users);
+  _MyRasPiState createState() => _MyRasPiState(this.myPies);
 }
 
 class _MyRasPiState extends State<MyRasPi> {
   final List<Rasp> myPies;
-  final List<UserData> users;
-  _MyRasPiState(this.myPies, this.users);
+  _MyRasPiState(this.myPies);
 
   @override
   void initState() {

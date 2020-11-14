@@ -1,13 +1,10 @@
 import 'package:RasPiFinder/components/app_bar.dart';
 import 'package:RasPiFinder/components/navigate.dart';
-import 'package:RasPiFinder/models/rasps.dart';
 import 'package:RasPiFinder/models/user.dart';
 import 'package:RasPiFinder/services/authentication_service.dart';
 import 'package:RasPiFinder/profile/setting.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'my_pi.dart';
-import 'package:provider/provider.dart';
 
 class Profile extends StatefulWidget {
   final UserData userData;
@@ -29,10 +26,6 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
     Size size = MediaQuery.of(context).size;
-
-    final List<Rasp> piCollectionFromDB = Provider.of<List<Rasp>>(context) ?? [];
-    List<Rasp> myPies = getMyPiList(userData.uid, piCollectionFromDB);
-
     return Scaffold(
         appBar: PiAppBar(title: 'Profile').build(context),
         body: Card(
@@ -110,26 +103,6 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                     child: RaisedButton.icon(
                       color: Colors.grey[200],
                       onPressed: () {
-                        navigateToPage(context, MyRasPi(myPies: myPies));
-                      },
-                      icon: Icon(
-                        Icons.pie_chart_outline_outlined,
-                        color: Colors.blue[900],
-                      ),
-                      label: Text("My RasPi(s)",
-                          style: TextStyle(
-                            color: Colors.blue,
-                            letterSpacing: 1.2,
-                            fontSize: 18,
-                          )
-                      ),
-                    ),
-                  ),
-                  ButtonTheme(
-                    minWidth: size.width,
-                    child: RaisedButton.icon(
-                      color: Colors.grey[200],
-                      onPressed: () {
                         navigateToPage(context, Settings());
                       },
                       icon: Icon(
@@ -160,18 +133,6 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
             ],
           ),
         ));
-  }
-
-  List<Rasp> getMyPiList(String userUid, List<Rasp> piCollectionFromDB) {
-    final List<Rasp> myPies = [];
-    for (int i=0; i<piCollectionFromDB.length; i++) {
-      if ((piCollectionFromDB[i].user != null && piCollectionFromDB[i].user['uid'] ==  userUid) ||
-          (piCollectionFromDB[i].finder != null && piCollectionFromDB[i].finder['uid'] == userUid) ||
-          (piCollectionFromDB[i].owner != null && piCollectionFromDB[i].owner['uid'] == userUid)) {
-        myPies.add(piCollectionFromDB[i]);
-      }
-    }
-    return myPies;
   }
 
   @override

@@ -4,6 +4,7 @@ import 'package:RasPiFinder/home/product_tile.dart';
 import 'package:RasPiFinder/models/rasps.dart';
 import 'package:RasPiFinder/models/user.dart';
 import 'package:RasPiFinder/pi_data/pi_data.dart';
+import 'package:RasPiFinder/search/search_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -39,11 +40,10 @@ class _HomePageState extends State<HomePage>
               centerTitle: true,
               actions: <Widget>[
                 FlatButton.icon(
-                  icon: Icon(Icons.add), 
+                  icon: Icon(Icons.search, color: Colors.white,),
                   label: Text(''),
                   onPressed: () => {
-                    //TODO scan pi to get model number
-                    addPiOrPiData(rasPiList, '', userData)
+                    navigateToPage(context, SearchPage())
                   }
                 )
               ],
@@ -53,7 +53,17 @@ class _HomePageState extends State<HomePage>
               itemBuilder: (context, index) {
                 return ProductTile(rasp: rasPiList[index]);
               },
-            )
+            ),
+      floatingActionButton: FloatingActionButton.extended(
+          onPressed: () => {
+                //TODO scan pi to get model number
+                addPiOrPiData(rasPiList, '', userData)
+              },
+          icon: Icon(
+            Icons.camera_alt_rounded,
+          ),
+          label: Text('Scan QR')),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
