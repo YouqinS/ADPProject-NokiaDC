@@ -1,25 +1,31 @@
+//TODO can be removed
+/*
 import 'package:RasPiFinder/models/rasps.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:RasPiFinder/home/product_tile.dart';
 
 class RaspList extends StatefulWidget {
+  final List<Rasp> rasPiList;
+  RaspList({this.rasPiList});
+
   @override
-  _RaspListState createState() => _RaspListState();
+  _RaspListState createState() => _RaspListState(this.rasPiList);
 }
 
 class _RaspListState extends State<RaspList> {
   bool loading = false;
+  final List<Rasp> rasPiList;
+  _RaspListState(this.rasPiList);
 
   @override
   Widget build(BuildContext context) {
+    print("rasPiList.length=" + rasPiList.length.toString());
 
-    final products = Provider.of<List<Rasp>>(context) ?? [];
       return ListView.builder(
-        itemCount: products.length,
+        itemCount: rasPiList.length,
         itemBuilder: (context, index) {
-          return ProductTile(rasp: products[index]);
-      },      
+          return ProductTile(rasp: rasPiList[index]);
+      },
     );
   }
-}
+}*/

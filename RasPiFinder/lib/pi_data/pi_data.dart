@@ -1,4 +1,3 @@
-import 'package:RasPiFinder/add_pi/add_pi.dart';
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/map/map_view.dart';
 import 'package:RasPiFinder/models/rasps.dart';
@@ -11,7 +10,8 @@ import "package:latlong/latlong.dart";
 class PiData extends StatefulWidget {
   final bool showUpdateBtn, showUnregisterBtn;
   final Rasp rasp;
-  final List<UserData> users;
+  //TODO should be removed, instead data model needs to have User object,
+  final List<UserData> users; //temporarily used to get pi user/owner/finder info
   PiData({Key key, this.showUpdateBtn, this.showUnregisterBtn, this.rasp, this.users}) : super(key: key);
 
   @override
@@ -128,7 +128,7 @@ class _PiDataState extends State<PiData> {
                           message: 'GPS when last scanned',
                           child: RaisedButton.icon(
                               onPressed: () {
-                                navigateToPage(context, MapView(lastKnownGeopoint: new LatLng(rasp.geoPoint.latitude, rasp.geoPoint.longitude),));
+                                navToMap(context);
                               },
                               label: Text('GPS',
                                   style: TextStyle(
@@ -162,7 +162,7 @@ class _PiDataState extends State<PiData> {
                     ),
                   ),
                   onPressed: () {
-                    navigateToPage(context, AddPi());
+                   //TODO implement update functionality
                   },
                   tooltip: 'Update Pi data',
                 ),
@@ -175,22 +175,59 @@ class _PiDataState extends State<PiData> {
     );
   }
 
+  void navToMap(BuildContext context) {
+    if (rasp.geoPoint == null) {
+      showAlert();
+    } else {
+      navigateToPage(context, MapView(lastKnownGeopoint: new LatLng(rasp.geoPoint.latitude, rasp.geoPoint.longitude),));
+    }
+  }
+
    getNames(List<UserData> users, Rasp pi) {
      final names = new Map();
     for (UserData userdata in users) {
       var username = (userdata.username == null || userdata.username.isEmpty) ? "not provided" : userdata.username;
+      // print('userdata.uid=' + userdata.uid);
+      // print('pi.userID=' + pi.userID);
 
-      if (pi.userID == userdata.uid) {
+      if (pi.userID == userdata.uid.replaceAll(" ", "")) {
         names[piUser] = username;
       }
-      if (pi.ownerID == userdata.uid) {
+      if (pi.ownerID == userdata.uid.replaceAll(" ", "")) {
         names[piOwner] = username;
       }
 
-      if (pi.finderID == userdata.uid) {
+      if (pi.finderID == userdata.uid.replaceAll(" ", "")) {
         names[piFinder] = username;
       }
     }
     return names;
    }
+
+  Future<void> showAlert() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Alert'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('No Gps info available!'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }

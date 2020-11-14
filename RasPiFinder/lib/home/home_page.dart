@@ -1,8 +1,11 @@
 import 'package:RasPiFinder/add_pi/add_pi.dart';
 import 'package:RasPiFinder/components/navigate.dart';
+import 'package:RasPiFinder/home/product_tile.dart';
+import 'package:RasPiFinder/models/rasps.dart';
+import 'package:RasPiFinder/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'rasp_list.dart';
+import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,29 +15,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with AutomaticKeepAliveClientMixin {
-  GeoPoint geoPoint;
+  GeoPoint geoPoint = new GeoPoint(60.22479775, 24.756725373913383);
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
-    /*void _showAddPanel() {
-      showModalBottomSheet(
-        context: context, 
-        isScrollControlled: true, 
-        shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
-        builder: (context) {
-          return Container(
-            // padding: MediaQuery.of(context).viewInsets,
-            height: 500,
-            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 40.0),
-            child: AddProducts(),
-          );
-        }
-      );
-    }*/
-
+    final UserData userData = Provider.of<UserData>(context);
+    final rasPiList = Provider.of<List<Rasp>>(context) ?? [];
+    print(rasPiList);
     return Scaffold(
             appBar: AppBar(
               title: Text(
@@ -53,13 +41,18 @@ class _HomePageState extends State<HomePage>
                   icon: Icon(Icons.add), 
                   label: Text(''),
                   onPressed: () => {
-                    //TODO
-                    navigateToPage(context, AddPi())
+                    //TODO query db and add navigation logic to AddPi or PiData(to update Pi)
+                    navigateToPage(context, AddPi(geoPoint: geoPoint, scanner: userData,))
                   }//_showAddPanel(),
                 )
               ],
             ),
-            body: RaspList(),
+            body: ListView.builder(
+              itemCount: rasPiList.length,
+              itemBuilder: (context, index) {
+                return ProductTile(rasp: rasPiList[index]);
+              },
+            )
     );
   }
 
