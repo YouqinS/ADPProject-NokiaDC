@@ -7,21 +7,21 @@ import 'package:flutter/material.dart';
 import "package:latlong/latlong.dart";
 
 class PiData extends StatefulWidget {
-  final bool showUpdateBtn, showUnregisterBtn;
   final Rasp rasp;
-  PiData({Key key, this.showUpdateBtn, this.showUnregisterBtn, this.rasp}) : super(key: key);
+  final bool showUpdateBtn;
+      PiData({Key key, this.rasp, this.showUpdateBtn}) : super(key: key);
 
   @override
-  _PiDataState createState() => _PiDataState(showUpdateBtn, showUnregisterBtn, rasp);
+  _PiDataState createState() => _PiDataState(rasp, showUpdateBtn);
 }
 
 class _PiDataState extends State<PiData> {
+  final bool showUpdateBtn;
   final String piOwner = "owner", piUser = "user", piFinder = "finder";
   var notAvailable = 'not available';
   var none = 'none';
-  final bool showUpdateBtn, showUnregisterBtn;
   final Rasp rasp;
-  _PiDataState(this.showUpdateBtn, this.showUnregisterBtn, this.rasp);
+  _PiDataState(this.rasp, this.showUpdateBtn);
 
   @override
   Widget build(BuildContext context) {
@@ -47,20 +47,7 @@ class _PiDataState extends State<PiData> {
         ),
         backgroundColor: Colors.blue,
         centerTitle: true,
-        actions: <Widget>[
-          Visibility(
-            visible: showUnregisterBtn,
-            child: FloatingActionButton.extended(
-              //TODO remove user from this pi in db
-              onPressed: null,
-              label: Text('Unregister'),
-              tooltip: 'Unregister from this Pi',
-              backgroundColor: Colors.red[400],
-              elevation: 0,
-              heroTag: null,
-            ),
-          ),
-        ],
+        actions: <Widget>[ ],
       ),
       body: SingleChildScrollView(
         child: Container(

@@ -1,9 +1,7 @@
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/models/rasps.dart';
-import 'package:RasPiFinder/models/user.dart';
 import 'package:RasPiFinder/pi_data/pi_data.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class ProductTile extends StatelessWidget {
 
@@ -17,7 +15,7 @@ class ProductTile extends StatelessWidget {
       padding: const EdgeInsets.only(top: 8.0),
       child: GestureDetector(
         onTap: () {
-          navigateToPage(context, PiData(showUpdateBtn: false, showUnregisterBtn: false, rasp: rasp));
+          navigateToPage(context, PiData(rasp: rasp, showUpdateBtn: false,));
         },
         child: Card(
           margin: EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),

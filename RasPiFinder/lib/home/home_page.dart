@@ -3,6 +3,7 @@ import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/home/product_tile.dart';
 import 'package:RasPiFinder/models/rasps.dart';
 import 'package:RasPiFinder/models/user.dart';
+import 'package:RasPiFinder/pi_data/pi_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +16,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with AutomaticKeepAliveClientMixin {
+  //default value for testing: Nokia Espoo campus
   GeoPoint geoPoint = new GeoPoint(60.22479775, 24.756725373913383);
 
   @override
@@ -40,9 +42,9 @@ class _HomePageState extends State<HomePage>
                   icon: Icon(Icons.add), 
                   label: Text(''),
                   onPressed: () => {
-                    //TODO query db and add navigation logic to AddPi or PiData(to update Pi)
-                    navigateToPage(context, AddPi(geoPoint: geoPoint, scanner: userData,))
-                  }//_showAddPanel(),
+                    //TODO scan pi to get model number
+                    addPiOrPiData(rasPiList, '', userData)
+                  }
                 )
               ],
             ),
@@ -73,5 +75,57 @@ class _HomePageState extends State<HomePage>
           }),
         });
     //print('latitude=' + geoPoint.latitude.toString() + ', longitude=' + geoPoint.longitude.toString());
+  }
+
+  addPiOrPiData(List<Rasp> piesInDb, String modelNumber, UserData userData){
+    bool foundInDb = false;
+    for(Rasp pi in piesInDb) {
+      if (pi.modelNumber == modelNumber) {
+        showOptions(pi, userData);
+        foundInDb = true;
+        break;
+      }
+    }
+    if (!foundInDb) {
+      navigateToPage(context, AddPi(geoPoint: geoPoint, scanner: userData,));
+    }
+  }
+
+  showOptions(Rasp pi, UserData userData) {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text('Found Pi in database, what would you like to do?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('View Pi'),
+              onPressed: () {
+                Navigator.pop(context);
+                navigateToPage(
+                    context,
+                    PiData(
+                      rasp: pi,
+                      showUpdateBtn: true,
+                    ));
+              },
+            ),
+            TextButton(
+              child: Text('Update Pi'),
+              onPressed: () {
+                Navigator.pop(context);
+                navigateToPage(
+                    context,
+                    AddPi(
+                      geoPoint: geoPoint,
+                      scanner: userData,
+                    ));
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
