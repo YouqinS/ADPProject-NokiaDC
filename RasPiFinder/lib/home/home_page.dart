@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:qrscan/qrscan.dart' as scanner;
 
 class HomePage extends StatefulWidget {
   @override
@@ -18,12 +19,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with AutomaticKeepAliveClientMixin {
   //default value for testing: Nokia Espoo campus
-  GeoPoint geoPoint = new GeoPoint(60.22479775, 24.756725373913383);
-  String modelNumber = '123abc';
+  //GeoPoint geoPoint = new GeoPoint(60.22479775, 24.756725373913383);
+  GeoPoint geoPoint;
+  String modelNumber = '';
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    getGps();
     final UserData userData = Provider.of<UserData>(context);
     final rasPiList = Provider.of<List<Rasp>>(context) ?? [];
     return Scaffold(
@@ -58,7 +61,8 @@ class _HomePageState extends State<HomePage>
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () => {
                 //TODO scan pi to get model number
-                addPiOrPiData(rasPiList, modelNumber, userData)
+            //scanPiQrCode()
+           addPiOrPiData(rasPiList, userData)
               },
           icon: Icon(
             Icons.camera_alt_rounded,
@@ -80,25 +84,47 @@ class _HomePageState extends State<HomePage>
 
   getGps() {
     print('getCurrentLocation');
-    getCurrentLocation().then((result) => {
-          setState(() {
-            geoPoint = new GeoPoint(result.latitude, result.longitude);
-          }),
-        });
-    //print('latitude=' + geoPoint.latitude.toString() + ', longitude=' + geoPoint.longitude.toString());
+    if(geoPoint == null) {
+      getCurrentLocation().then((result) => {
+        setState(() {
+          geoPoint = new GeoPoint(result.latitude, result.longitude);
+        }),
+      });
+    }
+    print('latitude=' + geoPoint.latitude.toString() + ', longitude=' + geoPoint.longitude.toString());
   }
 
-  addPiOrPiData(List<Rasp> piesInDb, String modelNumber, UserData userData){
+  Future<String> scanPiQrCode() async {
+    String cameraScanResult = await scanner.scan();
+   // String photoScanResult = await scanner.scanPhoto();
+    print('cameraScanResult='+ cameraScanResult);
+   // print('photoScanResult='+ photoScanResult);
+    setState(() {
+      modelNumber = cameraScanResult;
+    });
+    return cameraScanResult;
+  }
+
+  addPiOrPiData(List<Rasp> piesInDb, UserData userData) {
+    scanPiQrCode();
     bool foundInDb = false;
-    for(Rasp pi in piesInDb) {
-      if (pi.modelNumber == modelNumber) {
-        showOptions(pi, userData);
-        foundInDb = true;
-        break;
+    if (modelNumber.isNotEmpty) {
+      for (Rasp pi in piesInDb) {
+        if (pi.modelNumber == modelNumber) {
+          showOptions(pi, userData);
+          foundInDb = true;
+          break;
+        }
       }
-    }
-    if (!foundInDb) {
-      navigateToPage(context, AddPi(geoPoint: geoPoint, modelNumber: modelNumber, scanner: userData,));
+      if (!foundInDb && geoPoint != null) {
+        navigateToPage(
+            context,
+            AddPi(
+              geoPoint: geoPoint,
+              modelNumber: modelNumber,
+              scanner: userData,
+            ));
+      }
     }
   }
 
@@ -131,6 +157,7 @@ class _HomePageState extends State<HomePage>
                     AddPi(
                       geoPoint: geoPoint,
                       scanner: userData,
+                      modelNumber: modelNumber,
                     ));
               },
             ),
