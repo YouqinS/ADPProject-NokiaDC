@@ -1,20 +1,29 @@
 import 'package:RasPiFinder/components/app_bar.dart';
-import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/components/rounded_button.dart';
-import 'package:RasPiFinder/home/home_page.dart';
+import 'package:RasPiFinder/models/user.dart';
+import 'package:RasPiFinder/services/database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AddPi extends StatefulWidget {
-  AddPi({Key key}) : super(key: key);
+  final GeoPoint geoPoint;
+  final UserData scanner;
+  AddPi({Key key, this.geoPoint, this.scanner}) : super(key: key);
 
   @override
-  AddPiState createState() => new AddPiState();
+  AddPiState createState() => new AddPiState(this.geoPoint, this.scanner);
 }
 
 class AddPiState extends State<AddPi> {
+  final GeoPoint geoPoint;
+  final UserData scanner;
+  AddPiState(this.geoPoint, this.scanner);
+
   final formKey = GlobalKey<FormState>();
-  String address, software, other;
+  String modelNumber = '' , address = '', software = '', other = '';
+  Map<String, String> user, owner, finder;
+  String select = 'Select :', piFinder = 'Pi Finder', piOwner = 'Pi Owner', piUser = 'Pi User', otherType = 'Other';
   String userType = 'Select :';
 
   @override
@@ -74,7 +83,7 @@ class AddPiState extends State<AddPi> {
                           validateUserTypeInput();
                         });
                       },
-                      items: <String>['Select :', 'Pi Finder', 'Pi Owner', 'Pi User']
+                      items: <String>[select, piUser, piFinder, piOwner, otherType]
                           .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
@@ -113,14 +122,29 @@ class AddPiState extends State<AddPi> {
                         onSaved: (input) => other = input,
                       ),
                       SizedBox(height: size.height * 0.03),
-                      Container(
-                          width: size.width * 0.5,
-                          child: RoundedButton(
-                            text: 'Save',
-                            press: () {
-                              submit();
-                            },
-                          )
+                      Row(
+                        children: [
+                          Container(
+                            width: size.width * 0.4,
+                            child: RoundedButton(
+                              color: Colors.red[600],
+                              text: 'Cancel',
+                              press: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ),
+                          SizedBox(width: size.width * 0.1),
+                          Container(
+                            width: size.width * 0.4,
+                            child: RoundedButton(
+                              text: 'Save',
+                              press: () {
+                                submit();
+                              },
+                            ),
+                          ),
+                        ],
                       )
                     ],
                   ),
@@ -131,18 +155,36 @@ class AddPiState extends State<AddPi> {
         ));
   }
 
-  void submit(){
+  Future<void> submit() async {
     if (userType == 'Select :'){
       showAlert();
     }
     if(formKey.currentState.validate() && userType != 'Select :'){
       formKey.currentState.save();
-      //TODO get current GPS data and store to DB
-      //TODO connect to DB to store user input
-      print(userType);
-      print(software);
-      print(address);
-      navigateToPage(context, HomePage());
+      if (userType == piUser) {
+        user = new Map();
+        user['email'] = scanner.email;
+        user['phoneNumber'] = scanner.phoneNumber;
+        user['uid'] = scanner.uid;
+      }
+      if (userType == piOwner) {
+        owner = new Map();
+        owner['email'] = scanner.email;
+        owner['phoneNumber'] = scanner.phoneNumber;
+        owner['uid'] = scanner.uid;
+      }
+      if (userType == piFinder) {
+        finder = new Map();
+        finder['email'] = scanner.email;
+        finder['phoneNumber'] = scanner.phoneNumber;
+        finder['uid'] = scanner.uid;
+      }
+      print('userType=' + userType);
+      print('software=' + software);
+      print('address=' + address);
+      print('geoPoint=' + geoPoint.longitude.toString() + '/' + geoPoint.latitude.toString());
+      await DatabaseService().addPi(modelNumber, software, address, owner, user, finder, other, geoPoint);
+      Navigator.of(context).pop();
     }
   }
 

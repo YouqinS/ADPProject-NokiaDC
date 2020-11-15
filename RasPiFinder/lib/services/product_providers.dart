@@ -8,9 +8,9 @@ class ProductProvider with ChangeNotifier {
   String address;
   String software;
   String other;
-  String ownerID;
-  String userID;
-  String finderID;
+  Map owner;
+  Map user;
+  Map finder;
   GeoPoint geoPoint;
 
 
@@ -40,27 +40,9 @@ class ProductProvider with ChangeNotifier {
     software = pi.software;
     address = pi.address;
     geoPoint = pi.geoPoint;
-    userID = pi.userID;
-    finderID = pi.finderID;
-    ownerID = pi.ownerID;
+    user = pi.user;
+    finder = pi.finder;
+    owner = pi.owner;
     other = pi.other;
   }
-
-  // saveProduct(){
-  //   print(_roles);
-  //   if (_productId == null) {
-  //     var newProduct = Product(name: name, model: model, productId: uuid.v4());
-  //     fireStoreService.saveProduct(newProduct);
-  //   } else {
-  //     //Update
-  //     var updatedProduct = 
-  //         Product(name: name, model: _model, productId: _productId);
-  //       fireStoreService.saveProduct(updatedProduct);
-  //   }  
-  //   // print('$name, $model');
-  // }
-
-  // removeProduct(String productId) {
-  //   fireStoreService.removeProduct(productId);
-  // }
 }

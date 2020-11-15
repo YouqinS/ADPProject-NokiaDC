@@ -9,20 +9,22 @@ class DatabaseService {
   DatabaseService({ this.uid });
 
   //collection reference
-  final CollectionReference inventoryCollection = FirebaseFirestore.instance.collection("pi");
+  final CollectionReference piCollection = FirebaseFirestore.instance.collection("pi");
   final CollectionReference userCollection = FirebaseFirestore.instance.collection("users");
 
-/*
-  Future addPi (String modelNumber, String name, String roles, int availability) async {
-    return await inventoryCollection.doc(uid).set({
+  Future addPi (String modelNumber, String software, String address,
+      Map owner, Map user, Map finder, String other, GeoPoint geoPoint) async {
+    return await piCollection.doc().set({
       'modelNumber': modelNumber,
-      'name': name,
-      'roles': roles,
-      // 'location': location,
-      'availability': availability,
+      'software': software,
+      'address': address,
+      'owner': owner,
+      'user': user,
+      'finder': finder,
+      'other': other,
+      'geoPoint': geoPoint,
     });
   }
-*/
 
   Future createUser (String username, String email, String phoneNumber) async {
     return await userCollection.doc(uid).set({
@@ -40,9 +42,9 @@ class DatabaseService {
         modelNumber: doc.data()['modelNumber'] ?? '',
         address: doc.data()['address'] ?? '',
         software: doc.data()['software'] ?? '',
-        finderID: doc.data()['finderID'] ?? '',
-        userID: doc.data()['userID'] ?? '',
-        ownerID: doc.data()['ownerID'] ?? '',
+        finder: doc.data()['finder'] ?? null,
+        user: doc.data()['user'] ?? null,
+        owner: doc.data()['owner'] ?? null,
         other: doc.data()['other'] ?? '',
        geoPoint: doc.data()['geoPoint'] ?? null,
       );
@@ -71,7 +73,7 @@ class DatabaseService {
 
   // get data streams
   Stream<List<Rasp>> get rasps {
-    return inventoryCollection.snapshots()
+    return piCollection.snapshots()
         .map(_raspListFromSnapshots);
   }
 

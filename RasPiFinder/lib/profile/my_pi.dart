@@ -41,7 +41,7 @@ class _MyRasPiState extends State<MyRasPi> {
         itemBuilder: (BuildContext context, int index) {
           return GestureDetector(
             onTap: () {
-              navigateToPage(context, PiData(showUpdateBtn: true, showUnregisterBtn: true, rasp: myPies[index], users: users,));
+              navigateToPage(context, PiData(rasp: myPies[index], showUpdateBtn: true,));
             },
             child: Card(
               elevation: 0.01,
@@ -70,8 +70,6 @@ class _MyRasPiState extends State<MyRasPi> {
                   ),
                   DataContainer(
                     label: 'Software',
-                    //TODO change to software when new data collection integrated
-                   // content: myPies[index].name,
                     content: myPies[index].software == null ? "NA" : myPies[index].software,
                     maxLine: 2,
                     isUser: false,

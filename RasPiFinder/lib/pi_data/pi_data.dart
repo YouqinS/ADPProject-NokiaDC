@@ -1,39 +1,34 @@
-import 'package:RasPiFinder/add_pi/add_pi.dart';
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/map/map_view.dart';
 import 'package:RasPiFinder/models/rasps.dart';
-import 'package:RasPiFinder/models/user.dart';
 import 'package:RasPiFinder/pi_data/dataContainer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import "package:latlong/latlong.dart";
 
 class PiData extends StatefulWidget {
-  final bool showUpdateBtn, showUnregisterBtn;
   final Rasp rasp;
-  final List<UserData> users;
-  PiData({Key key, this.showUpdateBtn, this.showUnregisterBtn, this.rasp, this.users}) : super(key: key);
+  final bool showUpdateBtn;
+      PiData({Key key, this.rasp, this.showUpdateBtn}) : super(key: key);
 
   @override
-  _PiDataState createState() => _PiDataState(showUpdateBtn, showUnregisterBtn, rasp, users);
+  _PiDataState createState() => _PiDataState(rasp, showUpdateBtn);
 }
 
 class _PiDataState extends State<PiData> {
+  final bool showUpdateBtn;
   final String piOwner = "owner", piUser = "user", piFinder = "finder";
   var notAvailable = 'not available';
   var none = 'none';
-  final bool showUpdateBtn, showUnregisterBtn;
   final Rasp rasp;
-  final List<UserData> users;
-  _PiDataState(this.showUpdateBtn, this.showUnregisterBtn, this.rasp, this.users);
+  _PiDataState(this.rasp, this.showUpdateBtn);
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    final names = getNames(users, rasp);
-    final String user = names[piUser] == null ? none : names[piUser];
-    final String owner = names[piOwner] == null ? none : names[piOwner];
-    final String finder = names[piFinder] == null ? none : names[piFinder];
+    final String user = rasp.user == null ? none : rasp.user['email'];
+    final String owner = rasp.owner == null ? none : rasp.owner['email'];
+    final String finder = rasp.finder == null ? none : rasp.finder['email'];
 
     var divider = Divider(
       color: Colors.red,
@@ -52,20 +47,7 @@ class _PiDataState extends State<PiData> {
         ),
         backgroundColor: Colors.blue,
         centerTitle: true,
-        actions: <Widget>[
-          Visibility(
-            visible: showUnregisterBtn,
-            child: FloatingActionButton.extended(
-              //TODO remove user from this pi in db
-              onPressed: null,
-              label: Text('Unregister'),
-              tooltip: 'Unregister from this Pi',
-              backgroundColor: Colors.red[400],
-              elevation: 0,
-              heroTag: null,
-            ),
-          ),
-        ],
+        actions: <Widget>[ ],
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -96,21 +78,21 @@ class _PiDataState extends State<PiData> {
                     divider,
                     DataContainer(
                       label: 'Owner',
-                      content: rasp.ownerID.isEmpty ? none : owner,
+                      content: owner,
                       maxLine: 1,
                       isUser: true,
                     ),
                     divider,
                     DataContainer(
                       label: 'User',
-                      content: rasp.userID.isEmpty ? none : user,
+                      content:  user,
                       maxLine: 1,
                       isUser: true,
                     ),
                     divider,
                     DataContainer(
                       label: 'Finder',
-                      content: rasp.finderID.isEmpty ? none : finder,
+                      content: finder,
                       maxLine: 1,
                       isUser: true,
                     ),
@@ -128,7 +110,7 @@ class _PiDataState extends State<PiData> {
                           message: 'GPS when last scanned',
                           child: RaisedButton.icon(
                               onPressed: () {
-                                navigateToPage(context, MapView(lastKnownGeopoint: new LatLng(rasp.geoPoint.latitude, rasp.geoPoint.longitude),));
+                                navToMap(context);
                               },
                               label: Text('GPS',
                                   style: TextStyle(
@@ -162,7 +144,7 @@ class _PiDataState extends State<PiData> {
                     ),
                   ),
                   onPressed: () {
-                    navigateToPage(context, AddPi());
+                   //TODO implement update functionality
                   },
                   tooltip: 'Update Pi data',
                 ),
@@ -175,22 +157,38 @@ class _PiDataState extends State<PiData> {
     );
   }
 
-   getNames(List<UserData> users, Rasp pi) {
-     final names = new Map();
-    for (UserData userdata in users) {
-      var username = (userdata.username == null || userdata.username.isEmpty) ? "not provided" : userdata.username;
-
-      if (pi.userID == userdata.uid) {
-        names[piUser] = username;
-      }
-      if (pi.ownerID == userdata.uid) {
-        names[piOwner] = username;
-      }
-
-      if (pi.finderID == userdata.uid) {
-        names[piFinder] = username;
-      }
+  void navToMap(BuildContext context) {
+    if (rasp.geoPoint == null) {
+      showAlert();
+    } else {
+      navigateToPage(context, MapView(lastKnownGeopoint: new LatLng(rasp.geoPoint.latitude, rasp.geoPoint.longitude),));
     }
-    return names;
-   }
+  }
+
+  Future<void> showAlert() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Alert'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('No Gps info available!'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
