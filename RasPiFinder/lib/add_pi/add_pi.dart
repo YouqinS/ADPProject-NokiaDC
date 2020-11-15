@@ -163,18 +163,21 @@ class AddPiState extends State<AddPi> {
       formKey.currentState.save();
       if (userType == piUser) {
         user = new Map();
+        user['username'] = scanner.username;
         user['email'] = scanner.email;
         user['phoneNumber'] = scanner.phoneNumber;
         user['uid'] = scanner.uid;
       }
       if (userType == piOwner) {
         owner = new Map();
+        owner['username'] = scanner.username;
         owner['email'] = scanner.email;
         owner['phoneNumber'] = scanner.phoneNumber;
         owner['uid'] = scanner.uid;
       }
       if (userType == piFinder) {
         finder = new Map();
+        finder['username'] = scanner.username;
         finder['email'] = scanner.email;
         finder['phoneNumber'] = scanner.phoneNumber;
         finder['uid'] = scanner.uid;
