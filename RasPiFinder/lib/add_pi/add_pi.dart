@@ -7,21 +7,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AddPi extends StatefulWidget {
+  final String modelNumber;
   final GeoPoint geoPoint;
   final UserData scanner;
-  AddPi({Key key, this.geoPoint, this.scanner}) : super(key: key);
+  AddPi({Key key, this.geoPoint, this.scanner, this.modelNumber}) : super(key: key);
 
   @override
-  AddPiState createState() => new AddPiState(this.geoPoint, this.scanner);
+  AddPiState createState() => new AddPiState(this.geoPoint, this.scanner, this.modelNumber);
 }
 
 class AddPiState extends State<AddPi> {
+  final String modelNumber;
   final GeoPoint geoPoint;
   final UserData scanner;
-  AddPiState(this.geoPoint, this.scanner);
+  AddPiState(this.geoPoint, this.scanner, this.modelNumber);
 
   final formKey = GlobalKey<FormState>();
-  String modelNumber = '' , address = '', software = '', other = '';
+  String address = '', software = '', other = '';
   Map<String, String> user, owner, finder;
   String select = 'Select :', piFinder = 'Pi Finder', piOwner = 'Pi Owner', piUser = 'Pi User', otherType = 'Other';
   String userType = 'Select :';

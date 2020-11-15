@@ -19,6 +19,7 @@ class _HomePageState extends State<HomePage>
     with AutomaticKeepAliveClientMixin {
   //default value for testing: Nokia Espoo campus
   GeoPoint geoPoint = new GeoPoint(60.22479775, 24.756725373913383);
+  String modelNumber = '123abc';
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +58,7 @@ class _HomePageState extends State<HomePage>
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () => {
                 //TODO scan pi to get model number
-                addPiOrPiData(rasPiList, '', userData)
+                addPiOrPiData(rasPiList, modelNumber, userData)
               },
           icon: Icon(
             Icons.camera_alt_rounded,
@@ -97,7 +98,7 @@ class _HomePageState extends State<HomePage>
       }
     }
     if (!foundInDb) {
-      navigateToPage(context, AddPi(geoPoint: geoPoint, scanner: userData,));
+      navigateToPage(context, AddPi(geoPoint: geoPoint, modelNumber: modelNumber, scanner: userData,));
     }
   }
 
