@@ -1,6 +1,7 @@
 import 'package:RasPiFinder/add_pi/add_pi.dart';
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/home/product_tile.dart';
+import 'package:RasPiFinder/home/rasp_list.dart';
 import 'package:RasPiFinder/models/rasps.dart';
 import 'package:RasPiFinder/models/user.dart';
 import 'package:RasPiFinder/pi_data/pi_data.dart';
@@ -29,39 +30,33 @@ class _HomePageState extends State<HomePage>
     final UserData userData = Provider.of<UserData>(context);
     final rasPiList = Provider.of<List<Rasp>>(context) ?? [];
     return Scaffold(
-            appBar: AppBar(
-              title: Text(
-              "RasPiFinder",
-                style: TextStyle(
-                    color: Colors.white,
-                    letterSpacing: 2,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20
-                ),
+      appBar: AppBar(
+        title: Text(
+          "RasPiFinder",
+          style: TextStyle(
+              color: Colors.white,
+              letterSpacing: 2,
+              fontWeight: FontWeight.bold,
+              fontSize: 20),
+        ),
+        backgroundColor: Colors.blue,
+        centerTitle: true,
+        actions: <Widget>[
+          FlatButton.icon(
+              icon: Icon(
+                Icons.search,
+                color: Colors.white,
               ),
-              backgroundColor: Colors.blue,
-              centerTitle: true,
-              actions: <Widget>[
-                FlatButton.icon(
-                  icon: Icon(Icons.search, color: Colors.white,),
-                  label: Text(''),
-                  onPressed: () => {
-                    navigateToPage(context, SearchPage())
-                  }
-                )
-              ],
-            ),
-            body: ListView.builder(
-              itemCount: rasPiList.length,
-              itemBuilder: (context, index) {
-                return ProductTile(rasp: rasPiList[index]);
-              },
-            ),
+              label: Text(''),
+              onPressed: () => {navigateToPage(context, SearchPage())})
+        ],
+      ),
+      body: RaspList(),
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () => {
                 //TODO scan pi to get model number
-            //scanPiQrCode()
-           addPiOrPiData(rasPiList, userData)
+                //scanPiQrCode()
+                addPiOrPiData(rasPiList, userData)
               },
           icon: Icon(
             Icons.camera_alt_rounded,
@@ -84,17 +79,20 @@ class _HomePageState extends State<HomePage>
 
   getGeoPoint() {
     print('getGeoPoint');
-      getCurrentLocation().then((result) => {
-        setState(() {
-          geoPoint = new GeoPoint(result.latitude, result.longitude);
-          print('latitude=' + geoPoint.latitude.toString() + ', longitude=' + geoPoint.longitude.toString());
-        }),
-      });
+    getCurrentLocation().then((result) => {
+          setState(() {
+            geoPoint = new GeoPoint(result.latitude, result.longitude);
+            print('latitude=' +
+                geoPoint.latitude.toString() +
+                ', longitude=' +
+                geoPoint.longitude.toString());
+          }),
+        });
   }
 
   Future<String> scanPiQrCode() async {
     String cameraScanResult = await scanner.scan();
-    print('cameraScanResult='+ cameraScanResult);
+    print('cameraScanResult=' + cameraScanResult);
     setState(() {
       modelNumber = cameraScanResult;
     });
