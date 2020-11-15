@@ -2,18 +2,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:RasPiFinder/models/rasps.dart';
 import 'package:RasPiFinder/models/user.dart';
 
-
 class DatabaseService {
-
   final String uid;
-  DatabaseService({ this.uid });
+  DatabaseService({this.uid});
 
   //collection reference
-  final CollectionReference piCollection = FirebaseFirestore.instance.collection("pi");
-  final CollectionReference userCollection = FirebaseFirestore.instance.collection("users");
+  final CollectionReference piCollection =
+      FirebaseFirestore.instance.collection("pi");
+  final CollectionReference userCollection =
+      FirebaseFirestore.instance.collection("users");
 
-  Future addPi (String modelNumber, String software, String address,
-      Map owner, Map user, Map finder, String other, GeoPoint geoPoint) async {
+  Future addPi(String modelNumber, String software, String address, Map owner,
+      Map user, Map finder, String other, GeoPoint geoPoint) async {
     return await piCollection.doc().set({
       'modelNumber': modelNumber,
       'software': software,
@@ -26,7 +26,7 @@ class DatabaseService {
     });
   }
 
-  Future createUser (String username, String email, String phoneNumber) async {
+  Future createUser(String username, String email, String phoneNumber) async {
     return await userCollection.doc(uid).set({
       'uid': uid,
       'phoneNumber': phoneNumber,
@@ -46,10 +46,11 @@ class DatabaseService {
         user: doc.data()['user'] ?? null,
         owner: doc.data()['owner'] ?? null,
         other: doc.data()['other'] ?? '',
-       geoPoint: doc.data()['geoPoint'] ?? null,
+        geoPoint: doc.data()['geoPoint'] ?? null,
       );
     }).toList();
   }
+
   // user data from snapshots
   UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
     return UserData(
@@ -73,19 +74,21 @@ class DatabaseService {
 
   // get data streams
   Stream<List<Rasp>> get rasps {
-    return piCollection.snapshots()
-        .map(_raspListFromSnapshots);
+    return piCollection.snapshots().map(_raspListFromSnapshots);
   }
 
   //get user doc stream
   Stream<UserData> get userData {
-    print('getUserData() userUID='+uid);
-    return userCollection.doc(uid).snapshots()
-      .map(_userDataFromSnapshot);
+    print('getUserData() userUID=' + uid);
+    return userCollection.doc(uid).snapshots().map(_userDataFromSnapshot);
   }
 
   Stream<List<UserData>> get users {
-    return userCollection.snapshots()
-        .map(_userListFromSnapshots);
+    return userCollection.snapshots().map(_userListFromSnapshots);
+  }
+
+  // search rasp
+  Future<QuerySnapshot> searchRasps(String keyword) {
+    return piCollection.where('keywords', arrayContains: keyword).get();
   }
 }

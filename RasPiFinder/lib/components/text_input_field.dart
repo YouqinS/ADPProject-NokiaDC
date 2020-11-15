@@ -5,6 +5,7 @@ class TextInputField extends StatelessWidget {
   final String hintText;
   final IconData icon;
   final FormFieldSetter<String> onSaved;
+  final FormFieldSetter<String> onChanged;
   final FormFieldValidator<String> validateInput;
 
   TextInputField({
@@ -13,6 +14,7 @@ class TextInputField extends StatelessWidget {
     this.icon,
     this.onSaved,
     this.validateInput,
+    this.onChanged,
   }) : super(key: key);
 
   @override
@@ -20,6 +22,7 @@ class TextInputField extends StatelessWidget {
     return TextFieldContainer(
       child: TextFormField(
         onSaved: onSaved,
+        onChanged: onChanged,
         decoration: InputDecoration(
           icon: Icon(
             icon,
