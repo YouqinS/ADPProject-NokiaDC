@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:RasPiFinder/home/product_tile.dart';
 import 'package:RasPiFinder/components/text_input_field.dart';
-import 'package:RasPiFinder/services/database.dart';
 
 class RaspList extends StatefulWidget {
+  final bool showSearch;
+  RaspList({this.showSearch}) : super();
+
   @override
   _RaspListState createState() => _RaspListState();
 }
@@ -37,82 +39,46 @@ class _RaspListState extends State<RaspList> {
   }
 
   Widget renderProductsList() {
+    List<Rasp> filteredProducts = products;
+    if (keyword != '' && keyword != null) {
+      filteredProducts = products
+          .where((rasp) => rasp.getValuesString().contains(keyword))
+          .toList();
+    }
     return ListView.builder(
       shrinkWrap: true,
-      itemCount: products.length,
+      itemCount: filteredProducts.length,
       itemBuilder: (context, index) {
-        return ProductTile(rasp: products[index]);
+        if (keyword != '' && keyword != null && filteredProducts.length == 0) {
+          return noResult();
+        }
+        return ProductTile(rasp: filteredProducts[index]);
       },
     );
   }
 
-  Widget _renderResults(BuildContext context) {
-    if (keyword != '' && keyword != null) {
-      return searchResult == null
-          ? noResult()
-          : FutureBuilder(
-              future: searchResult,
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return CircularProgressIndicator();
-                }
-                products = [];
-                snapshot.data.documents.forEach((document) {
-                  Rasp rasp = Rasp(
-                    address: document['address'],
-                    software: document['software'],
-                    modelNumber: document['modelNumber'],
-                  );
-                  if (!products.contains(rasp)) {
-                    products.add(rasp);
-                  }
-                });
-                if (products.length == 0) {
-                  return noResult();
-                }
-                return renderProductsList();
-              },
-            );
-    } else {
-      setState(() {
-        products = Provider.of<List<Rasp>>(context) ?? [];
-      });
-      return renderProductsList();
-    }
-  }
-
-  void _onSearch() async {
-    if (keyword != '' && keyword != null) {
-      setState(() {
-        searchResult = DatabaseService().searchRasps(keyword);
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    bool showSearch = widget.showSearch;
+    setState(() {
+      products = Provider.of<List<Rasp>>(context) ?? [];
+      keyword = showSearch ? keyword : '';
+    });
     return Container(
       child: Column(
         children: <Widget>[
-          Row(
-            children: [
-              TextInputField(
-                hintText: "Search by Pi name",
-                icon: Icons.search,
-                onChanged: (value) {
-                  setState(() {
-                    keyword = value;
-                  });
-                },
-              ),
-              IconButton(
-                icon: Icon(Icons.search),
-                onPressed: _onSearch,
-              ),
-            ],
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-          ),
-          Expanded(child: _renderResults(context)),
+          showSearch
+              ? TextInputField(
+                  hintText: "Search by Pi name",
+                  icon: Icons.search,
+                  onChanged: (value) {
+                    setState(() {
+                      keyword = value.toLowerCase().trim();
+                    });
+                  },
+                )
+              : Container(),
+          Expanded(child: renderProductsList()),
         ],
       ),
     );

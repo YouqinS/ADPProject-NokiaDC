@@ -1,11 +1,9 @@
 import 'package:RasPiFinder/add_pi/add_pi.dart';
 import 'package:RasPiFinder/components/navigate.dart';
-import 'package:RasPiFinder/home/product_tile.dart';
 import 'package:RasPiFinder/home/rasp_list.dart';
 import 'package:RasPiFinder/models/rasps.dart';
 import 'package:RasPiFinder/models/user.dart';
 import 'package:RasPiFinder/pi_data/pi_data.dart';
-import 'package:RasPiFinder/search/search_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,6 +21,7 @@ class _HomePageState extends State<HomePage>
   //GeoPoint geoPoint = new GeoPoint(60.22479775, 24.756725373913383);
   GeoPoint geoPoint;
   String modelNumber = '';
+  ValueNotifier<bool> showSearchNotifier = ValueNotifier(false);
 
   @override
   Widget build(BuildContext context) {
@@ -48,10 +47,18 @@ class _HomePageState extends State<HomePage>
                 color: Colors.white,
               ),
               label: Text(''),
-              onPressed: () => {navigateToPage(context, SearchPage())})
+              onPressed: () {
+                showSearchNotifier.value = !showSearchNotifier.value;
+              })
         ],
       ),
-      body: RaspList(),
+      body: ValueListenableBuilder(
+          valueListenable: showSearchNotifier,
+          builder: (context, value, child) {
+            return RaspList(
+              showSearch: value,
+            );
+          }),
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () => {
                 //TODO scan pi to get model number

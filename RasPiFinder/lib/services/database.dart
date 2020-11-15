@@ -86,9 +86,4 @@ class DatabaseService {
   Stream<List<UserData>> get users {
     return userCollection.snapshots().map(_userListFromSnapshots);
   }
-
-  // search rasp
-  Future<QuerySnapshot> searchRasps(String keyword) {
-    return piCollection.where('keywords', arrayContains: keyword).get();
-  }
 }
