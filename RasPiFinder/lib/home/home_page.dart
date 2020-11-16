@@ -26,7 +26,6 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    getGps();
     final UserData userData = Provider.of<UserData>(context);
     final rasPiList = Provider.of<List<Rasp>>(context) ?? [];
     return Scaffold(
@@ -77,28 +76,25 @@ class _HomePageState extends State<HomePage>
 
   //get geopoint, can be called when camera starts, the new geo info can be stored to db together with other pi info
   Future<Position> getCurrentLocation() async {
+    print('getCurrentLocation');
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     return position;
   }
 
-  getGps() {
-    print('getCurrentLocation');
-    if(geoPoint == null) {
+  getGeoPoint() {
+    print('getGeoPoint');
       getCurrentLocation().then((result) => {
         setState(() {
           geoPoint = new GeoPoint(result.latitude, result.longitude);
+          print('latitude=' + geoPoint.latitude.toString() + ', longitude=' + geoPoint.longitude.toString());
         }),
       });
-    }
-    print('latitude=' + geoPoint.latitude.toString() + ', longitude=' + geoPoint.longitude.toString());
   }
 
   Future<String> scanPiQrCode() async {
     String cameraScanResult = await scanner.scan();
-   // String photoScanResult = await scanner.scanPhoto();
     print('cameraScanResult='+ cameraScanResult);
-   // print('photoScanResult='+ photoScanResult);
     setState(() {
       modelNumber = cameraScanResult;
     });
@@ -106,17 +102,23 @@ class _HomePageState extends State<HomePage>
   }
 
   addPiOrPiData(List<Rasp> piesInDb, UserData userData) {
+    getGeoPoint();
     scanPiQrCode();
     bool foundInDb = false;
     if (modelNumber.isNotEmpty) {
       for (Rasp pi in piesInDb) {
         if (pi.modelNumber == modelNumber) {
-          showOptions(pi, userData);
+          navigateToPage(
+              context,
+              PiData(
+                rasp: pi,
+                showUpdateBtn: true,
+              ));
           foundInDb = true;
           break;
         }
       }
-      if (!foundInDb && geoPoint != null) {
+      if (!foundInDb) {
         navigateToPage(
             context,
             AddPi(
@@ -125,40 +127,30 @@ class _HomePageState extends State<HomePage>
               scanner: userData,
             ));
       }
+    } else {
+      showAlert();
     }
   }
 
-  showOptions(Rasp pi, UserData userData) {
+  Future<void> showAlert() async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          content: Text('Found Pi in database, what would you like to do?'),
+          title: Text('Alert'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Failed to get data from qr code. Try again!'),
+              ],
+            ),
+          ),
           actions: <Widget>[
             TextButton(
-              child: Text('View Pi'),
+              child: Text('OK'),
               onPressed: () {
-                Navigator.pop(context);
-                navigateToPage(
-                    context,
-                    PiData(
-                      rasp: pi,
-                      showUpdateBtn: true,
-                    ));
-              },
-            ),
-            TextButton(
-              child: Text('Update Pi'),
-              onPressed: () {
-                Navigator.pop(context);
-                navigateToPage(
-                    context,
-                    AddPi(
-                      geoPoint: geoPoint,
-                      scanner: userData,
-                      modelNumber: modelNumber,
-                    ));
+                Navigator.of(context).pop();
               },
             ),
           ],
