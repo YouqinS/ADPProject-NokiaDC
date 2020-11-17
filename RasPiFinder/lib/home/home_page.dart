@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:qrscan/qrscan.dart' as scanner;
 
 class HomePage extends StatefulWidget {
   @override
@@ -18,7 +19,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with AutomaticKeepAliveClientMixin {
   //default value for testing: Nokia Espoo campus
-  GeoPoint geoPoint = new GeoPoint(60.22479775, 24.756725373913383);
+  //GeoPoint geoPoint = new GeoPoint(60.22479775, 24.756725373913383);
+  GeoPoint geoPoint;
+  String modelNumber = '';
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +60,8 @@ class _HomePageState extends State<HomePage>
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () => {
                 //TODO scan pi to get model number
-                addPiOrPiData(rasPiList, '', userData)
+            //scanPiQrCode()
+           addPiOrPiData(rasPiList, userData)
               },
           icon: Icon(
             Icons.camera_alt_rounded,
@@ -72,65 +76,81 @@ class _HomePageState extends State<HomePage>
 
   //get geopoint, can be called when camera starts, the new geo info can be stored to db together with other pi info
   Future<Position> getCurrentLocation() async {
+    print('getCurrentLocation');
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     return position;
   }
 
-  getGps() {
-    print('getCurrentLocation');
-    getCurrentLocation().then((result) => {
-          setState(() {
-            geoPoint = new GeoPoint(result.latitude, result.longitude);
-          }),
-        });
-    //print('latitude=' + geoPoint.latitude.toString() + ', longitude=' + geoPoint.longitude.toString());
+  getGeoPoint() {
+    print('getGeoPoint');
+      getCurrentLocation().then((result) => {
+        setState(() {
+          geoPoint = new GeoPoint(result.latitude, result.longitude);
+          print('latitude=' + geoPoint.latitude.toString() + ', longitude=' + geoPoint.longitude.toString());
+        }),
+      });
   }
 
-  addPiOrPiData(List<Rasp> piesInDb, String modelNumber, UserData userData){
+  Future<String> scanPiQrCode() async {
+    String cameraScanResult = await scanner.scan();
+    print('cameraScanResult='+ cameraScanResult);
+    setState(() {
+      modelNumber = cameraScanResult;
+    });
+    return cameraScanResult;
+  }
+
+  addPiOrPiData(List<Rasp> piesInDb, UserData userData) {
+    getGeoPoint();
+    scanPiQrCode();
     bool foundInDb = false;
-    for(Rasp pi in piesInDb) {
-      if (pi.modelNumber == modelNumber) {
-        showOptions(pi, userData);
-        foundInDb = true;
-        break;
+    if (modelNumber.isNotEmpty) {
+      for (Rasp pi in piesInDb) {
+        if (pi.modelNumber == modelNumber) {
+          navigateToPage(
+              context,
+              PiData(
+                rasp: pi,
+                showUpdateBtn: true,
+              ));
+          foundInDb = true;
+          break;
+        }
       }
-    }
-    if (!foundInDb) {
-      navigateToPage(context, AddPi(geoPoint: geoPoint, scanner: userData,));
+      if (!foundInDb) {
+        navigateToPage(
+            context,
+            AddPi(
+              geoPoint: geoPoint,
+              modelNumber: modelNumber,
+              scanner: userData,
+            ));
+      }
+    } else {
+      showAlert();
     }
   }
 
-  showOptions(Rasp pi, UserData userData) {
+  Future<void> showAlert() async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          content: Text('Found Pi in database, what would you like to do?'),
+          title: Text('Alert'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Failed to get data from qr code. Try again!'),
+              ],
+            ),
+          ),
           actions: <Widget>[
             TextButton(
-              child: Text('View Pi'),
+              child: Text('OK'),
               onPressed: () {
-                Navigator.pop(context);
-                navigateToPage(
-                    context,
-                    PiData(
-                      rasp: pi,
-                      showUpdateBtn: true,
-                    ));
-              },
-            ),
-            TextButton(
-              child: Text('Update Pi'),
-              onPressed: () {
-                Navigator.pop(context);
-                navigateToPage(
-                    context,
-                    AddPi(
-                      geoPoint: geoPoint,
-                      scanner: userData,
-                    ));
+                Navigator.of(context).pop();
               },
             ),
           ],

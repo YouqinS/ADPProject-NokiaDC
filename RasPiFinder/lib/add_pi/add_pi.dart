@@ -1,5 +1,4 @@
 import 'package:RasPiFinder/components/app_bar.dart';
-import 'package:RasPiFinder/components/rounded_button.dart';
 import 'package:RasPiFinder/models/user.dart';
 import 'package:RasPiFinder/services/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,21 +6,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AddPi extends StatefulWidget {
+  final String modelNumber;
   final GeoPoint geoPoint;
   final UserData scanner;
-  AddPi({Key key, this.geoPoint, this.scanner}) : super(key: key);
+  AddPi({Key key, this.geoPoint, this.scanner, this.modelNumber}) : super(key: key);
 
   @override
-  AddPiState createState() => new AddPiState(this.geoPoint, this.scanner);
+  AddPiState createState() => new AddPiState(this.geoPoint, this.scanner, this.modelNumber);
 }
 
 class AddPiState extends State<AddPi> {
+  final String modelNumber;
   final GeoPoint geoPoint;
   final UserData scanner;
-  AddPiState(this.geoPoint, this.scanner);
+  AddPiState(this.geoPoint, this.scanner, this.modelNumber);
 
   final formKey = GlobalKey<FormState>();
-  String modelNumber = '' , address = '', software = '', other = '';
+  String address = '', software = '', other = '';
   Map<String, String> user, owner, finder;
   String select = 'Select :', piFinder = 'Pi Finder', piOwner = 'Pi Owner', piUser = 'Pi User', otherType = 'Other';
   String userType = 'Select :';
@@ -123,29 +124,26 @@ class AddPiState extends State<AddPi> {
                       ),
                       SizedBox(height: size.height * 0.03),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Container(
-                            width: size.width * 0.4,
-                            child: RoundedButton(
-                              color: Colors.red[600],
-                              text: 'Cancel',
-                              press: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
+                          RaisedButton(
+                            color: Colors.red[600],
+                            child: Text('Cancel',
+                                style: TextStyle(color: Colors.white)),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
                           ),
-                          SizedBox(width: size.width * 0.1),
-                          Container(
-                            width: size.width * 0.4,
-                            child: RoundedButton(
-                              text: 'Save',
-                              press: () {
-                                submit();
-                              },
-                            ),
+                          RaisedButton(
+                            color: Colors.blue[700],
+                            child: Text('Save',
+                                style: TextStyle(color: Colors.white)),
+                            onPressed: () {
+                              submit();
+                            },
                           ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -185,7 +183,12 @@ class AddPiState extends State<AddPi> {
       print('userType=' + userType);
       print('software=' + software);
       print('address=' + address);
-      print('geoPoint=' + geoPoint.longitude.toString() + '/' + geoPoint.latitude.toString());
+      if(geoPoint == null) {
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text('Failed to get gps data!'),
+        ));
+      }
+      print('geoPoint=' + (geoPoint == null ? 'no gps' : geoPoint.longitude.toString() + '/' + geoPoint.latitude.toString()));
       await DatabaseService().addPi(modelNumber, software, address, owner, user, finder, other, geoPoint);
       Navigator.of(context).pop();
     }
