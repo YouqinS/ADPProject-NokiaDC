@@ -72,8 +72,6 @@ class _NavigationPageState extends State<NavigationPage> {
   List<Rasp> getMyPiList(String userUid, List<Rasp> piCollectionFromDB) {
     final List<Rasp> myPies = [];
     for (int i=0; i<piCollectionFromDB.length; i++) {
-      print("piCollectionFromDB[i].user['uid']=" + piCollectionFromDB[i].user['uid']);
-      print("userUid=" + userUid);
       if ((piCollectionFromDB[i].user != null && piCollectionFromDB[i].user['uid'].toString().trim() ==  userUid) ||
           (piCollectionFromDB[i].finder != null && piCollectionFromDB[i].finder['uid'].toString().trim() == userUid) ||
           (piCollectionFromDB[i].owner != null && piCollectionFromDB[i].owner['uid'].toString().trim() == userUid)) {
