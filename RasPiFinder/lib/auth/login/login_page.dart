@@ -46,13 +46,13 @@ class LoginForm extends State<LoginPage> {
                   hintText: "Email",
                   icon: Icons.person,
                   onSaved: (value) {
-                    email = value;
+                    email = value.trim();
                   },
                   validateInput: (val) => val.isEmpty ? 'Enter an email' : null,
                 ),
                 PasswordInputField(
                   onSaved: (value) {
-                    password = value;
+                    password = value.trim();
                   },
                   validateInput: (val) => val.length < 6 ? 'Enter a password more than 6 characters' : null,
                 ),
