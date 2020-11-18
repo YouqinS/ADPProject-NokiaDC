@@ -44,14 +44,14 @@ class SignupForm extends State<SignupPage> {
                     hintText: "Username",
                     icon: Icons.person,
                     onSaved: (value) {
-                      username = value;
+                      username = value.trim();
                     },
                   ),
                   TextInputField(
                     hintText: "Email",
                     icon: Icons.email,
                     onSaved: (value) {
-                      email = value;
+                      email = value.trim();
                     },
                     validateInput: validateEmailInput,
                   ),
@@ -59,13 +59,13 @@ class SignupForm extends State<SignupPage> {
                     hintText: "Phone Number",
                     icon: Icons.phone_android,
                     onSaved: (value) {
-                      phone = value;
+                      phone = value.trim();
                     },
                     validateInput: validatePhoneInput,
                   ),
                   PasswordInputField(
                     onSaved: (value) {
-                      password = value;
+                      password = value.trim();
                     },
                     validateInput: (val) => val.length < 6 ? 'Enter a password more than 6 characters' : null,
                   ),
