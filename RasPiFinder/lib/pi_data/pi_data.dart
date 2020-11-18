@@ -3,11 +3,15 @@ import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/map/map_view.dart';
 import 'package:RasPiFinder/models/rasps.dart';
 import 'package:RasPiFinder/pi_data/dataContainer.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import "package:latlong/latlong.dart";
+import 'package:latlong/latlong.dart';
+import 'package:firebase_core/firebase_core.dart';
+
 
 class PiData extends StatefulWidget {
+
   final Rasp rasp;
   final bool showUpdateBtn;
       PiData({Key key, this.rasp, this.showUpdateBtn}) : super(key: key);
@@ -17,6 +21,29 @@ class PiData extends StatefulWidget {
 }
 
 class _PiDataState extends State<PiData> {
+
+  bool _initialized = false;
+  bool _error = false;
+
+  void initializeFlutterFire() async {
+    try {
+      await Firebase.initializeApp();
+      setState(() {
+        _initialized = true;
+      });
+    } catch(e) {
+      setState(() {
+        _error = true;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    initializeFlutterFire();
+    super.initState();
+  }
+
   final bool showUpdateBtn;
   final String piOwner = "owner", piUser = "user", piFinder = "finder";
   var notAvailable = 'not available';
@@ -147,9 +174,8 @@ class _PiDataState extends State<PiData> {
                       letterSpacing: 1.2,
                     ),
                   ),
-                  onPressed: () {
+                  onPressed: openAlertBox,
                    //TODO implement update functionality
-                  },
                   tooltip: 'Update Pi data',
                 ),
                 visible: showUpdateBtn,
@@ -160,6 +186,78 @@ class _PiDataState extends State<PiData> {
       ),
     );
   }
+
+  final myController1 = TextEditingController();
+  final myController2 = TextEditingController();
+  final myController3 = TextEditingController();
+  final myController4 = TextEditingController();
+  final myController5 = TextEditingController();
+
+  @override
+  void dispose() {
+    myController1.dispose();
+    myController2.dispose();
+    myController3.dispose();
+    myController4.dispose();
+    myController5.dispose();
+    // Clean up the controller when the widget is removed from the widget tree.
+    super.dispose();
+  }
+
+  openAlertBox() {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('TextField AlertDemo'),
+            content: Column(
+              children: <Widget>[
+                TextField(
+                  controller: myController1,
+                  decoration: InputDecoration(hintText:'Enter owner\'s email'),
+                ),
+                TextField(
+                  controller: myController2,
+                  decoration: InputDecoration(hintText:'Enter user\'s email'),
+                ),
+                TextField(
+                  controller: myController3,
+                  decoration: InputDecoration(hintText:'Enter finder\'s email'),
+                ),
+                TextField(
+                  controller: myController4,
+                  decoration: InputDecoration(hintText:'Enter address'),
+                ),
+                TextField(
+                  controller: myController5,
+                  decoration: InputDecoration(hintText:'Enter additional information'),
+                ),
+              ],
+            ),
+            actions: [
+              RaisedButton(
+                onPressed: updateData,
+                textColor: Colors.white,
+                color: Colors.blue,
+                padding: const EdgeInsets.all(10.0),
+                    child: const Text('Update', style: TextStyle(fontSize: 20)),
+              )
+            ],
+          );
+         }
+         );
+    }
+
+    updateData(){
+    FirebaseFirestore.instance.collection("pi").doc("6ncNePezK7PebOabTC6U").update({
+      "owner": myController1.text,
+      "user" : myController2.text,
+      "finder": myController3.text,
+      "address": myController4.text,
+      "other": myController5.text,
+    },);
+    }
+
 
   void navToMap(BuildContext context) {
     if (rasp.geoPoint == null) {
