@@ -69,7 +69,7 @@ class _RaspListState extends State<RaspList> {
         children: <Widget>[
           showSearch
               ? TextInputField(
-                  hintText: "Search by Pi name",
+                  hintText: "Search for Pi",
                   icon: Icons.search,
                   onChanged: (value) {
                     setState(() {
