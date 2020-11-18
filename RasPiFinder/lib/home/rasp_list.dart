@@ -1,31 +1,86 @@
-//TODO can be removed
-/*
 import 'package:RasPiFinder/models/rasps.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:RasPiFinder/home/product_tile.dart';
+import 'package:RasPiFinder/components/text_input_field.dart';
 
 class RaspList extends StatefulWidget {
-  final List<Rasp> rasPiList;
-  RaspList({this.rasPiList});
+  final bool showSearch;
+  RaspList({this.showSearch}) : super();
 
   @override
-  _RaspListState createState() => _RaspListState(this.rasPiList);
+  _RaspListState createState() => _RaspListState();
 }
 
 class _RaspListState extends State<RaspList> {
   bool loading = false;
-  final List<Rasp> rasPiList;
-  _RaspListState(this.rasPiList);
+  String keyword;
+  Future<QuerySnapshot> searchResult;
+  List<Rasp> products = [];
 
-  @override
-  Widget build(BuildContext context) {
-    print("rasPiList.length=" + rasPiList.length.toString());
+  Widget noResult() {
+    return Center(
+      child: ListView(
+        shrinkWrap: true,
+        children: [
+          Icon(
+            Icons.group,
+            color: Colors.grey,
+            size: 200,
+          ),
+          Text(
+            'No results',
+            textAlign: TextAlign.center,
+          )
+        ],
+      ),
+    );
+  }
 
-      return ListView.builder(
-        itemCount: rasPiList.length,
-        itemBuilder: (context, index) {
-          return ProductTile(rasp: rasPiList[index]);
+  Widget renderProductsList() {
+    List<Rasp> filteredProducts = products;
+    if (keyword != '' && keyword != null) {
+      filteredProducts = products
+          .where((rasp) => rasp.getValuesString().contains(keyword))
+          .toList();
+    }
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: filteredProducts.length,
+      itemBuilder: (context, index) {
+        if (keyword != '' && keyword != null && filteredProducts.length == 0) {
+          return noResult();
+        }
+        return ProductTile(rasp: filteredProducts[index]);
       },
     );
   }
-}*/
+
+  @override
+  Widget build(BuildContext context) {
+    bool showSearch = widget.showSearch;
+    setState(() {
+      products = Provider.of<List<Rasp>>(context) ?? [];
+      keyword = showSearch ? keyword : '';
+    });
+    return Container(
+      child: Column(
+        children: <Widget>[
+          showSearch
+              ? TextInputField(
+                  hintText: "Search for Pi",
+                  icon: Icons.search,
+                  onChanged: (value) {
+                    setState(() {
+                      keyword = value.toLowerCase().trim();
+                    });
+                  },
+                )
+              : Container(),
+          Expanded(child: renderProductsList()),
+        ],
+      ),
+    );
+  }
+}

@@ -10,6 +10,29 @@ class Rasp {
   final String other;
   final GeoPoint geoPoint;
 
-  Rasp({this.modelNumber, this.address, this.software, this.finder,
-      this.user, this.owner, this.other, this.geoPoint});
+  String getValuesString() {
+    var result = this.address + this.software + this.modelNumber;
+    if (this.finder != null) {
+      result += this.finder['email'] +
+          this.finder['username'] +
+          this.finder['phoneNumber'];
+    }
+    if (this.user != null) {
+      result += this.user['email'] + this.user['phoneNumber'];
+    }
+    if (this.owner != null) {
+      result += this.owner['email'] + this.owner['phoneNumber'];
+    }
+    return result.toLowerCase();
+  }
+
+  Rasp(
+      {this.modelNumber,
+      this.address,
+      this.software,
+      this.finder,
+      this.user,
+      this.owner,
+      this.other,
+      this.geoPoint});
 }
