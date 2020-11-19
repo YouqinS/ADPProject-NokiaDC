@@ -47,6 +47,7 @@ class AuthenticationService {
     try {
       UserCredential authResult = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password,);
       User user= authResult.user;
+      print('firebaseAuth authResult = ' + authResult.toString());
       print('firebaseAuth user id = ' +user.uid );
 
       //create a new document for the user with the uid

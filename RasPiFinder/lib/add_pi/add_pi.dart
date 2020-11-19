@@ -1,3 +1,4 @@
+import 'package:RasPiFinder/auth/Validator.dart';
 import 'package:RasPiFinder/components/app_bar.dart';
 import 'package:RasPiFinder/models/user.dart';
 import 'package:RasPiFinder/services/database.dart';
@@ -155,7 +156,7 @@ class AddPiState extends State<AddPi> {
 
   Future<void> submit() async {
     if (userType == 'Select :'){
-      showAlert();
+      validateUserTypeInput();
     }
     if(formKey.currentState.validate() && userType != 'Select :'){
       formKey.currentState.save();
@@ -204,34 +205,7 @@ class AddPiState extends State<AddPi> {
 
   void validateUserTypeInput() {
     if (userType == 'Select :') {
-      showAlert();
+      Validator.showAlert(context, "Alert", "Please select a User Type", "OK");
     }
-  }
-
-  Future<void> showAlert() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Alert'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('Please select a User Type !'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 }
