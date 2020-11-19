@@ -1,11 +1,9 @@
 import 'package:RasPiFinder/auth/Validator.dart';
 import 'package:RasPiFinder/components/app_bar.dart';
-import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/components/password_input_field.dart';
 import 'package:RasPiFinder/components/rounded_button.dart';
 import 'package:RasPiFinder/components/signup_signin_check.dart';
 import 'package:RasPiFinder/components/text_input_field.dart';
-import 'package:RasPiFinder/home/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:RasPiFinder/services/authentication_service.dart';

@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage>
           }),
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () => {
-                addPiOrPiData(rasPiList, userData)
+                getModelNumberAndNavigate(rasPiList, userData)
               },
           icon: Icon(
             Icons.camera_alt_rounded,
@@ -97,17 +97,26 @@ class _HomePageState extends State<HomePage>
   }
 
   Future<String> scanPiQrCode() async {
+    print("scanning...");
     String cameraScanResult = await scanner.scan();
     print('cameraScanResult=' + cameraScanResult);
-    setState(() {
-      modelNumber = cameraScanResult;
-    });
     return cameraScanResult;
   }
 
-  addPiOrPiData(List<Rasp> piesInDb, UserData userData) {
+  void getModelNumberAndNavigate(List<Rasp> piesInDb, UserData userData) {
     getGeoPoint();
-    scanPiQrCode();
+
+    scanPiQrCode().then((value) => {
+     setState(() {
+       modelNumber = value;
+       print('modelNumber=' + modelNumber);
+     }),
+
+      addPiOrPiData(piesInDb, userData)
+    });
+  }
+
+  addPiOrPiData(List<Rasp> piesInDb, UserData userData) {
     bool foundInDb = false;
     if (modelNumber.isNotEmpty) {
       for (Rasp pi in piesInDb) {
