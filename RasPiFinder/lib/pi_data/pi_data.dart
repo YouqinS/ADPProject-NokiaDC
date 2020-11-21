@@ -1,3 +1,4 @@
+import 'package:RasPiFinder/auth/Validator.dart';
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/map/map_view.dart';
 import 'package:RasPiFinder/models/rasps.dart';
@@ -159,36 +160,9 @@ class _PiDataState extends State<PiData> {
 
   void navToMap(BuildContext context) {
     if (rasp.geoPoint == null) {
-      showAlert();
+      Validator.showAlert(context, "Alert", "No GPS data available", "OK");
     } else {
       navigateToPage(context, MapView(lastKnownGeopoint: new LatLng(rasp.geoPoint.latitude, rasp.geoPoint.longitude),));
     }
-  }
-
-  Future<void> showAlert() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Alert'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('No Gps info available!'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 }

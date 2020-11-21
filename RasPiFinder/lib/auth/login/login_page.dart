@@ -1,3 +1,4 @@
+import 'package:RasPiFinder/auth/Validator.dart';
 import 'package:RasPiFinder/components/signup_signin_check.dart';
 import 'package:RasPiFinder/components/rounded_button.dart';
 import 'package:RasPiFinder/components/text_input_field.dart';
@@ -44,32 +45,22 @@ class LoginForm extends State<LoginPage> {
                 SizedBox(height: size.height * 0.1),
                 TextInputField(
                   hintText: "Email",
-                  icon: Icons.person,
+                  icon: Icons.email,
                   onSaved: (value) {
                     email = value.trim();
                   },
-                  validateInput: (val) => val.isEmpty ? 'Enter an email' : null,
+                  validateInput: (email) => Validator.validateEmailInput(email.trim()),
                 ),
                 PasswordInputField(
                   onSaved: (value) {
                     password = value.trim();
                   },
-                  validateInput: (val) => val.length < 6 ? 'Enter a password more than 6 characters' : null,
+                  validateInput: (password) => Validator.validatePasswdInput(password.trim()),
                 ),
                 RoundedButton(
                   text: "Sign In",
                   press: () async {
-                    if (formKey.currentState.validate()) {
-                      setState(() => loading = true);
-                      formKey.currentState.save();
-                      dynamic result = await _authenticationService.signInWithEmailAndPassword(email, password);
-                      if (result == null) {
-                        setState(() {
-                          error = 'Could not sign in with the credentials';
-                          loading = false;
-                        });
-                      }
-                    }
+                    submit();
                   },
                 ),
                 SizedBox(height: size.height * 0.03),
@@ -85,5 +76,19 @@ class LoginForm extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  Future submit() async {
+    if (formKey.currentState.validate()) {
+      setState(() => loading = true);
+      formKey.currentState.save();
+      dynamic result = await _authenticationService.signInWithEmailAndPassword(email, password);
+      if (result == null) {
+        setState(() {
+          loading = false;
+        });
+        Validator.showAlert(context, "Alert", "Wrong email or password", "OK");
+      }
+    }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:RasPiFinder/add_pi/add_pi.dart';
+import 'package:RasPiFinder/auth/Validator.dart';
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/home/rasp_list.dart';
 import 'package:RasPiFinder/models/rasps.dart';
@@ -61,9 +62,7 @@ class _HomePageState extends State<HomePage>
           }),
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () => {
-                //TODO scan pi to get model number
-                //scanPiQrCode()
-                addPiOrPiData(rasPiList, userData)
+                getModelNumberAndNavigate(rasPiList, userData)
               },
           icon: Icon(
             Icons.camera_alt_rounded,
@@ -98,17 +97,26 @@ class _HomePageState extends State<HomePage>
   }
 
   Future<String> scanPiQrCode() async {
+    print("scanning...");
     String cameraScanResult = await scanner.scan();
     print('cameraScanResult=' + cameraScanResult);
-    setState(() {
-      modelNumber = cameraScanResult;
-    });
     return cameraScanResult;
   }
 
-  addPiOrPiData(List<Rasp> piesInDb, UserData userData) {
+  void getModelNumberAndNavigate(List<Rasp> piesInDb, UserData userData) {
     getGeoPoint();
-    scanPiQrCode();
+
+    scanPiQrCode().then((value) => {
+     setState(() {
+       modelNumber = value;
+       print('modelNumber=' + modelNumber);
+     }),
+
+      addPiOrPiData(piesInDb, userData)
+    });
+  }
+
+  addPiOrPiData(List<Rasp> piesInDb, UserData userData) {
     bool foundInDb = false;
     if (modelNumber.isNotEmpty) {
       for (Rasp pi in piesInDb) {
@@ -133,34 +141,7 @@ class _HomePageState extends State<HomePage>
             ));
       }
     } else {
-      showAlert();
+      Validator.showAlert(context, "Title", "Failed to get data. Try again!", 'OK');
     }
-  }
-
-  Future<void> showAlert() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Alert'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('Failed to get data from qr code. Try again!'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 }
