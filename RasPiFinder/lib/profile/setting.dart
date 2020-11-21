@@ -1,3 +1,4 @@
+import 'package:RasPiFinder/auth/Validator.dart';
 import 'package:RasPiFinder/components/app_bar.dart';
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/components/password_input_field.dart';
@@ -16,7 +17,7 @@ class Settings extends StatefulWidget {
 
 class SettingsState extends State<Settings> {
   final formKey = GlobalKey<FormState>();
-  String username, email, phone, password;
+  String username, email, phone, password, password2;
 
   @override
   Widget build(BuildContext context) {
@@ -28,25 +29,15 @@ class SettingsState extends State<Settings> {
           color: Colors.grey[100],
           width: size.width,
           height: size.height,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+          child: Card(
+            elevation: 0,
+            color: Colors.grey[100],
+            child:  Form(
+              key: formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  CircleAvatar(
-                    radius: 55,
-                    backgroundColor: Colors.blue[100],
-                    child: Icon(
-                      Icons.person,
-                      color: Colors.blue[900],
-                      size: size.height * 0.1,
-                    ),
-                  ),
-
-                  SizedBox(width: size.width * 0.05,),
+                children: <Widget>[
                   Text(
                     'Edit Profile',
                     style: TextStyle(
@@ -56,64 +47,58 @@ class SettingsState extends State<Settings> {
                       fontSize: 22,
                     ),
                   ),
+                  TextInputField(
+                    hintText: "New Username",
+                    icon: Icons.person,
+                    onSaved: (value) {
+                      username = value;
+                    },
+                    validateInput: validateUsername,
+                  ),
+                  TextInputField(
+                    hintText: "New Email",
+                    icon: Icons.email,
+                    onSaved: (value) {
+                      email = value;
+                    },
+                    validateInput: validateEmailInput,
+                  ),
+                  TextInputField(
+                    hintText: "New Phone Number",
+                    icon: Icons.phone_android,
+                    onSaved: (value) {
+                      phone = value;
+                    },
+                    validateInput: validatePhoneInput,
+                  ),
+                  PasswordInputField(
+                    hintText: 'New Password',
+                    onChanged: (value) {
+                      password = value;
+                    },
+                    onSaved: (value) {
+                      password = value;
+                    },
+                    validateInput: validatePasswdInput,
+                  ),
+                  PasswordInputField(
+                    hintText: 'Confirm Password',
+                    onSaved: (value) {
+                      password2 = value;
+                    },
+                    validateInput: (password2) => Validator.confirmPasswdInput(password, password2),
+                  ),
+                  RoundedButton(
+                    text: "Save",
+                    //TODO connect to DB to store user credentials and status
+                    press: () {
+                      submit();
+                    },
+                  ),
                 ],
               ),
-              SizedBox(height: size.height * 0.05,),
-              Card(
-                elevation: 0,
-                color: Colors.grey[100],
-                child:  Form(
-                  key: formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      TextInputField(
-                        hintText: "New Email",
-                        icon: Icons.email,
-                        onSaved: (value) {
-                          email = value;
-                        },
-                        validateInput: validateEmailInput,
-                      ),
-                      TextInputField(
-                        hintText: "New Phone Number",
-                        icon: Icons.phone_android,
-                        onSaved: (value) {
-                          phone = value;
-                        },
-                        validateInput: validatePhoneInput,
-                      ),
-                      PasswordInputField(
-                        hintText: 'New Password',
-                        onChanged: (value) {
-                          password = value;
-                        },
-                        onSaved: (value) {
-                          password = value;
-                        },
-                        validateInput: validatePasswdInput,
-                      ),
-                      PasswordInputField(
-                        hintText: 'Confirm Password',
-                        onSaved: (value) {
-                          password = value;
-                        },
-                        validateInput: confirmPasswdInput,
-                      ),
-                      RoundedButton(
-                        text: "Save",
-                        //TODO connect to DB to store user credentials and status
-                        press: () {
-                          submit();
-                        },
-                      ),
-                    ],
-                  ),
-                ),
+            ),
 
-              ),
-            ],
           ),
         ),
       ),
@@ -121,37 +106,29 @@ class SettingsState extends State<Settings> {
   }
 
   String validateEmailInput(String email) {
-    Pattern pattern =
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    RegExp regex = new RegExp(pattern);
-
-    if (null != email && email.isNotEmpty && !regex.hasMatch(email)) {
-      return 'Please enter a valid email !';
+    if (null != email && email.isNotEmpty) {
+      return Validator.validateEmailInput(email);
     }
     return null;
   }
 
   String validatePasswdInput(String password) {
-    String  pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
-    RegExp regExp = new RegExp(pattern);
-    if (null != password && password.isNotEmpty && !regExp.hasMatch(password)) {
-      return 'Password needs to contain at least 8 characters,\n'
-          'with at least one big letter, one small letter,\n'
-          'one special character and one number!';
-    }
-    return null;
-  }
-
-  String confirmPasswdInput(String password2) {
-    if (null != password && password.isNotEmpty && password != password2) {
-      return 'Passwords do not match!';
+    if (null != password && password.isNotEmpty) {
+      return Validator.validatePasswdInput(password);
     }
     return null;
   }
 
   String validatePhoneInput(String phone) {
-    if (null != phone && phone.isNotEmpty && phone.length < 10) {
-      return 'A valid Finnish phone number contains at least 10 numbers!';
+    if (null != phone && phone.isNotEmpty) {
+      return Validator.validatePhoneInput(phone);
+    }
+    return null;
+  }
+
+  String validateUsername(String username) {
+    if (username != null && username.isNotEmpty) {
+      return Validator.validateUsername(username);
     }
     return null;
   }
@@ -165,7 +142,7 @@ class SettingsState extends State<Settings> {
       print(phone);
       print(email);
       print(password);
-      navigateToPage(context, HomePage());
+     // navigateToPage(context, HomePage());
     }
   }
 }

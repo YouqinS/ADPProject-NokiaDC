@@ -41,6 +41,14 @@ class Validator {
     return null;
   }
 
+  static   String confirmPasswdInput(String password, String password2) {
+    if (null != password && password.isNotEmpty && password != password2) {
+      return 'Passwords do not match!';
+    }
+    return null;
+  }
+
+
   static Future<void> showAlert(BuildContext context, String title, String bodyText, String btnText) async {
     return showDialog<void>(
       context: context,

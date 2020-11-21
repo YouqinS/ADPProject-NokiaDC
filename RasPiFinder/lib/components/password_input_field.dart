@@ -24,7 +24,7 @@ class PasswordInputField extends StatelessWidget {
         onChanged: onChanged,
         cursorColor: Colors.blue,
         decoration: InputDecoration(
-          hintText: "Password",
+          hintText: hintText.isEmpty ? "Password" : hintText,
           icon: Icon(
             Icons.lock,
             color: Colors.blue,
