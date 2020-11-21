@@ -6,14 +6,22 @@ class DataContainer extends StatelessWidget {
   final String label, content;
   final int maxLine;
   final bool isUser;
+  final Map user;
 
   const DataContainer(
-      {Key key, this.label, this.content, this.maxLine, this.isUser})
+      {Key key, this.label, this.content, this.maxLine, this.isUser, this.user})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    bool noUser = user == null;
+    String titleText = noUser ? 'Alert' : 'User Info';
+    Widget body = noUser ? Text('Not available') :
+    UserInfo(username: user["username"] == null ? "n/a" : user["username"] ,
+        email: user["email"] == null ? "n/a" : user["email"],
+        phone: user["phoneNumber"] == null ? "n/a" : user["phoneNumber"]);
+
     var styleLabel = TextStyle(
       color: Colors.blue[800],
       fontWeight: FontWeight.bold,
@@ -31,12 +39,11 @@ class DataContainer extends StatelessWidget {
         barrierDismissible: false, // user must tap button!
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('UserInfo'),
+            title: Text(titleText),
             content: SingleChildScrollView(
               child: ListBody(
                 children: <Widget>[
-                  //Text('Please select a User Type !'),
-                  UserInfo(username: 'fname lname', email: 'abc@def.gh', phone: '1234567890',),
+                  body
                 ],
               ),
             ),
@@ -55,7 +62,6 @@ class DataContainer extends StatelessWidget {
 
     var contentHolder = isUser
         ? FlatButton(
-      //TODO clicking leads to user info page or popup ?
             onPressed: () {
               showAlert();
             },
