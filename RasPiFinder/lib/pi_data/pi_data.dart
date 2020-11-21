@@ -82,6 +82,7 @@ class _PiDataState extends State<PiData> {
                       content: owner,
                       maxLine: 1,
                       isUser: true,
+                      user: rasp.owner,
                     ),
                     divider,
                     DataContainer(
@@ -89,6 +90,7 @@ class _PiDataState extends State<PiData> {
                       content:  user,
                       maxLine: 1,
                       isUser: true,
+                      user: rasp.user,
                     ),
                     divider,
                     DataContainer(
@@ -96,6 +98,7 @@ class _PiDataState extends State<PiData> {
                       content: finder,
                       maxLine: 1,
                       isUser: true,
+                      user: rasp.finder,
                     ),
                     divider,
                     DataContainer(
