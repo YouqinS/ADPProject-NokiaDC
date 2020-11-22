@@ -10,20 +10,30 @@ class Rasp {
   final String other;
   final GeoPoint geoPoint;
 
+  String _getUserString(Map user) {
+    var result = '';
+    if (user != null) {
+      if (user['email'] != null) {
+        result += user['email'];
+      }
+      if (user['username'] != null) {
+        result += user['username'];
+      }
+      if (user['phoneNumber'] != null) {
+        result += user['phoneNumber'];
+      }
+    }
+    return result;
+  }
+
   String getValuesString() {
-    var result = this.address + this.software + this.modelNumber;
-    if (this.finder != null) {
-      result += this.finder['email'] +
-          this.finder['username'] +
-          this.finder['phoneNumber'];
-    }
-    if (this.user != null) {
-      result += this.user['email'] + this.user['phoneNumber'];
-    }
-    if (this.owner != null) {
-      result += this.owner['email'] + this.owner['phoneNumber'];
-    }
-    return result.toLowerCase();
+    return (this.address +
+            this.software +
+            this.modelNumber +
+            _getUserString(this.finder) +
+            _getUserString(this.user) +
+            _getUserString(this.owner))
+        .toLowerCase();
   }
 
   Rasp(
