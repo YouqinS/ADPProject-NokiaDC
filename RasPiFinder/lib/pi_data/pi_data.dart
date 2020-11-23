@@ -1,24 +1,28 @@
-import 'package:RasPiFinder/auth/Validator.dart';
+import 'dart:async';
+
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/map/map_view.dart';
 import 'package:RasPiFinder/models/rasps.dart';
 import 'package:RasPiFinder/pi_data/dataContainer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong/latlong.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:RasPiFinder/auth/Validator.dart';
 
 
 class PiData extends StatefulWidget {
 
   final Rasp rasp;
   final bool showUpdateBtn;
-      PiData({Key key, this.rasp, this.showUpdateBtn}) : super(key: key);
+  PiData({Key key, this.rasp, this.showUpdateBtn}) : super(key: key);
 
   @override
   _PiDataState createState() => _PiDataState(rasp, showUpdateBtn);
 }
+
 
 class _PiDataState extends State<PiData> {
 
@@ -45,10 +49,12 @@ class _PiDataState extends State<PiData> {
   }
 
   final bool showUpdateBtn;
-  final String piOwner = "owner", piUser = "user", piFinder = "finder";
+  String select = 'Select a type', piOwner = "Owner", piUser = "User", piFinder = "Finder", otherType = 'Other';
+  Map<String, String> userA, ownerA, finderA;
   var notAvailable = 'not available';
   var none = 'none';
   final Rasp rasp;
+
   _PiDataState(this.rasp, this.showUpdateBtn);
 
   @override
@@ -57,7 +63,6 @@ class _PiDataState extends State<PiData> {
     final String user = rasp.user == null ? none : rasp.user['email'];
     final String owner = rasp.owner == null ? none : rasp.owner['email'];
     final String finder = rasp.finder == null ? none : rasp.finder['email'];
-
     var divider = Divider(
       color: Colors.red,
     );
@@ -109,7 +114,6 @@ class _PiDataState extends State<PiData> {
                       content: owner,
                       maxLine: 1,
                       isUser: true,
-                      user: rasp.owner,
                     ),
                     divider,
                     DataContainer(
@@ -117,7 +121,6 @@ class _PiDataState extends State<PiData> {
                       content:  user,
                       maxLine: 1,
                       isUser: true,
-                      user: rasp.user,
                     ),
                     divider,
                     DataContainer(
@@ -125,7 +128,6 @@ class _PiDataState extends State<PiData> {
                       content: finder,
                       maxLine: 1,
                       isUser: true,
-                      user: rasp.finder,
                     ),
                     divider,
                     DataContainer(
@@ -175,7 +177,6 @@ class _PiDataState extends State<PiData> {
                     ),
                   ),
                   onPressed: openAlertBox,
-                   //TODO implement update functionality
                   tooltip: 'Update Pi data',
                 ),
                 visible: showUpdateBtn,
@@ -190,80 +191,183 @@ class _PiDataState extends State<PiData> {
   final myController1 = TextEditingController();
   final myController2 = TextEditingController();
   final myController3 = TextEditingController();
-  final myController4 = TextEditingController();
-  final myController5 = TextEditingController();
 
   @override
   void dispose() {
     myController1.dispose();
     myController2.dispose();
     myController3.dispose();
-    myController4.dispose();
-    myController5.dispose();
     // Clean up the controller when the widget is removed from the widget tree.
     super.dispose();
   }
 
-  openAlertBox() {
-    return showDialog(
+
+  String dropdownValue = 'Select a type';
+  openAlertBox () {
+    showDialog(
         context: context,
         builder: (context) {
-          return AlertDialog(
-            title: Text('TextField AlertDemo'),
-            content: Column(
-              children: <Widget>[
-                TextField(
-                  controller: myController1,
-                  decoration: InputDecoration(hintText:'Enter owner\'s email'),
+          return StatefulBuilder(
+            builder:(context, setState){
+              return AlertDialog(
+                title: Text('Update Pi'),
+                content: Column(mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    DropdownButton<String>(
+                      value: dropdownValue,
+                      onChanged: (String newValue) {
+                        setState(() {
+                          dropdownValue = newValue;
+                          validateUserTypeInput();
+                        });},
+                      items: <String>[select, piOwner, piUser, piFinder, otherType]
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                    TextFormField(
+                      controller: myController1,
+                      decoration: InputDecoration(
+                          labelText: 'Address',
+                          hintText: 'Enter address'),
+                    ),
+                    TextFormField(
+                      controller: myController2,
+                      decoration: InputDecoration(
+                          labelText: 'Software',
+                          hintText: 'Enter software name'),
+                    ),
+                    TextFormField(
+                      controller: myController3,
+                      decoration: InputDecoration(
+                          labelText: 'Other',
+                          hintText: 'Enter additional information'),
+                    ),
+                  ],
                 ),
-                TextField(
-                  controller: myController2,
-                  decoration: InputDecoration(hintText:'Enter user\'s email'),
-                ),
-                TextField(
-                  controller: myController3,
-                  decoration: InputDecoration(hintText:'Enter finder\'s email'),
-                ),
-                TextField(
-                  controller: myController4,
-                  decoration: InputDecoration(hintText:'Enter address'),
-                ),
-                TextField(
-                  controller: myController5,
-                  decoration: InputDecoration(hintText:'Enter additional information'),
-                ),
-              ],
-            ),
-            actions: [
-              RaisedButton(
-                onPressed: updateData,
-                textColor: Colors.white,
-                color: Colors.blue,
-                padding: const EdgeInsets.all(10.0),
+                actions: [
+                  RaisedButton(
+                    onPressed: updateData,
+                    textColor: Colors.white,
+                    color: Colors.blue,
+                    padding: const EdgeInsets.all(10.0),
                     child: const Text('Update', style: TextStyle(fontSize: 20)),
-              )
-            ],
+                  )
+                ],
+              );
+            },
           );
-         }
-         );
+        }
+    );
+  }
+
+
+  CollectionReference docRef = FirebaseFirestore.instance.collection('pi');
+  CollectionReference userRef = FirebaseFirestore.instance.collection('users');
+  FirebaseAuth auth = FirebaseAuth.instance;
+
+  void updateData()async{
+
+    final userX = auth.currentUser;
+    final String mn = rasp.modelNumber;
+
+    final result = await userRef.doc(userX.uid).get();
+    String username = result.data()['username'];
+    String phone = result.data()['phoneNumber'];
+
+    if (dropdownValue == select){
+      validateUserTypeInput();
+    }
+    if(dropdownValue != select) {
+      if (dropdownValue == piUser) {
+        userA = new Map();
+        userA['username'] = username;
+        userA['email'] = userX.email;
+        userA['phoneNumber'] = phone;
+        userA['uid'] = userX.uid;
+      }
+      if (dropdownValue == piOwner) {
+        ownerA = new Map();
+        ownerA['username'] = username;
+        ownerA['email'] = userX.email;
+        ownerA['phoneNumber'] = phone;
+        ownerA['uid'] = userX.uid;
+      }
+      if (dropdownValue == piFinder) {
+        finderA = new Map();
+        finderA['username'] = username;
+        finderA['email'] = userX.email;
+        finderA['phoneNumber'] = phone;
+        finderA['uid'] = userX.uid;
+      }
+      print('userType=' + dropdownValue);
     }
 
-    updateData(){
-    FirebaseFirestore.instance.collection("pi").doc("6ncNePezK7PebOabTC6U").update({
-      "owner": myController1.text,
-      "user" : myController2.text,
-      "finder": myController3.text,
-      "address": myController4.text,
-      "other": myController5.text,
-    },);
-    }
+
+    final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
+    snapshot.docs.forEach((DocumentSnapshot doc) {
+      docRef.doc(doc.id).update({
+        "user":{
+        'username' : username,
+        'email': userX.email,
+        'phoneNumber' : phone,
+        'uid' : userX.uid,
+        },
+        "address": myController1.text,
+        "software": myController2.text,
+        "other": myController3.text,
+      },
+      ).then((value) => print('Data updated successfully'))
+          .catchError((error)=> print('Failed to update pi data'));
+    });
+    Navigator.of(context).pop();
+  }
 
 
   void navToMap(BuildContext context) {
     if (rasp.geoPoint == null) {
-      Validator.showAlert(context, "Alert", "No GPS data available", "OK");
+      showAlert();
     } else {
       navigateToPage(context, MapView(lastKnownGeopoint: new LatLng(rasp.geoPoint.latitude, rasp.geoPoint.longitude),));
     }
   }
+
+  Future<void> showAlert() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Alert'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('No Gps info available!'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+  void validateUserTypeInput() {
+    if (dropdownValue == select) {
+      Validator.showAlert(context, "Alert", "Please select a User Type", "OK");
+    }
+  }
 }
+
+
