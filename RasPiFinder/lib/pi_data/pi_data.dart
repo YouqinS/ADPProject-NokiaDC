@@ -33,9 +33,6 @@ class _PiDataState extends State<PiData> {
   _PiDataState(this.rasp, this.showUpdateBtn);
 
 
-  String select = 'Select a type', piOwnerText = "Owner", piUserText = "User", piFinderText = "Finder", otherType = "Other";
-  Map<String, String> userA, ownerA, finderA;
-
 
   @override
   Widget build(BuildContext context) {
@@ -87,18 +84,16 @@ class _PiDataState extends State<PiData> {
                       content: rasp.software.isEmpty? notAvailable : rasp.software,
                       maxLine: 2,
                       isUser: false,
-                    ),
+                      ),
                     divider,
                     DataContainer(
                       label: 'Owner',
                       content: owner,
                       maxLine: 1,
                       isUser: true,
-                      user: rasp.owner,
-                    ),
+                      user: rasp.owner,),
                     divider,
-                    DataContainer(
-                      label: 'User',
+                    DataContainer(label: 'User',
                       content:  user,
                       maxLine: 1,
                       isUser: true,
@@ -185,6 +180,9 @@ class _PiDataState extends State<PiData> {
   }
 
 
+  String select = 'Select a type', piOwnerText = "Owner", piUserText = "User", piFinderText = "Finder", otherType = "Other";
+  Map<String, String> userA, ownerA, finderA;
+
   String dropdownValue = 'Select a type';
   openAlertBox () {
     showDialog(
@@ -203,7 +201,7 @@ class _PiDataState extends State<PiData> {
                           dropdownValue = newValue;
                           validateUserTypeInput();
                         });},
-                      items: <String>[select, piOwner, piUser, piFinder, otherType]
+                      items: <String>[select, piOwnerText, piUserText, piFinderText, otherType]
                           .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
