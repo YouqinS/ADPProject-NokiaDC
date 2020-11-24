@@ -21,7 +21,7 @@ class PiData extends StatefulWidget {
   PiData({Key key, this.rasp, this.showUpdateBtn}) : super(key: key);
 
   @override
-  _PiDataState createState() => _PiDataState(rasp, showUpdateBtn);
+  _PiDataState createState() => _PiDataState(rasp.modelNumber, showUpdateBtn);
 }
 
 class _PiDataState extends State<PiData> {
@@ -29,20 +29,23 @@ class _PiDataState extends State<PiData> {
   final String piOwner = "owner", piUser = "user", piFinder = "finder";
   var notAvailable = 'not available';
   var none = 'none';
-  final Rasp rasp;
-  _PiDataState(this.rasp, this.showUpdateBtn);
+  final String modelNumber;
+  Rasp currentPi;
+  _PiDataState(this.modelNumber, this.showUpdateBtn);
 
 
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    final String user = rasp.user == null ? none : rasp.user['email'];
-    final String owner = rasp.owner == null ? none : rasp.owner['email'];
-    final String finder = rasp.finder == null ? none : rasp.finder['email'];
+    final String user = (null == currentPi || currentPi.user == null) ? none : currentPi.user['email'];
+    final String owner = (null == currentPi || currentPi.owner == null) ? none : currentPi.owner['email'];
+    final String finder = (null == currentPi || currentPi.finder == null) ? none : currentPi.finder['email'];
     var divider = Divider(
       color: Colors.red,
     );
+
+    getPiByModelNumber(modelNumber)
 
     return Scaffold(
       appBar: AppBar(
@@ -74,30 +77,30 @@ class _PiDataState extends State<PiData> {
                   children: [
                     DataContainer(
                       label: 'Model No.',
-                      content: rasp.modelNumber.isEmpty ? notAvailable : rasp.modelNumber,
+                      content: (null == currentPi || currentPi.modelNumber.isEmpty) ? notAvailable : currentPi.modelNumber,
                       maxLine: 2,
                       isUser: false,
                     ),
                     divider,
                     DataContainer(
                       label: 'Software',
-                      content: rasp.software.isEmpty? notAvailable : rasp.software,
+                      content: (null == currentPi || currentPi.software.isEmpty) ? notAvailable : currentPi.software,
                       maxLine: 2,
                       isUser: false,
-                      ),
+                    ),
                     divider,
                     DataContainer(
                       label: 'Owner',
                       content: owner,
                       maxLine: 1,
                       isUser: true,
-                      user: rasp.owner,),
+                      user: null == currentPi ? null : currentPi.owner,),
                     divider,
                     DataContainer(label: 'User',
-                      content:  user,
-                      maxLine: 1,
-                      isUser: true,
-                      user:rasp.user
+                        content:  user,
+                        maxLine: 1,
+                        isUser: true,
+                        user:null == currentPi ? null : currentPi.user
                     ),
                     divider,
                     DataContainer(
@@ -105,12 +108,12 @@ class _PiDataState extends State<PiData> {
                       content: finder,
                       maxLine: 1,
                       isUser: true,
-                      user:rasp.finder,
+                      user:null == currentPi ? null : currentPi.finder,
                     ),
                     divider,
                     DataContainer(
                       label: 'Address',
-                      content: rasp.address.isEmpty ? notAvailable : rasp.address,
+                      content: (null == currentPi || currentPi.address == null || currentPi.address.isEmpty) ? notAvailable : currentPi.address,
                       maxLine: 3,
                       isUser: false,
                     ),
@@ -138,7 +141,7 @@ class _PiDataState extends State<PiData> {
                     ),
                     divider,
                     DataContainer(label: 'Other', content: '', maxLine: 1, isUser: false,),
-                    DataContainer(label: '', content: rasp.other.isEmpty ? notAvailable : rasp.other, maxLine: 20, isUser: false,),
+                    DataContainer(label: '', content: (null == currentPi || currentPi.other == null || currentPi.other.isEmpty) ? notAvailable : currentPi.other, maxLine: 20, isUser: false,),
                   ],
                 ),
               ),
@@ -165,6 +168,30 @@ class _PiDataState extends State<PiData> {
       ),
     );
   }
+
+
+  Future getPiByModelNumber(String modelNumber) async {
+    CollectionReference docRef = FirebaseFirestore.instance.collection('pi');
+    final QuerySnapshot querySnapshot = await docRef.where('modelNumber', isEqualTo: modelNumber).get();
+
+    var snapshot = querySnapshot.docs[0];
+    print("snapshot.docs[0]=" + snapshot.data().toString());
+
+    setState(() {
+      currentPi = Rasp(
+          modelNumber: snapshot.data()['modelNumber'] ?? "",
+          address: snapshot.data()['address'] ?? "",
+          software: snapshot.data()['software'] ?? "",
+          owner: snapshot.data()['owner'] ?? null,
+          user: snapshot.data()['user'] ?? null,
+          finder: snapshot.data()['finder'] ?? null,
+          geoPoint: snapshot.data()['geoPoint'] ?? null
+      );
+    });
+
+    print("currentPi.modelNumber=" + currentPi.modelNumber);
+  }
+
 
   final myController1 = TextEditingController();
   final myController2 = TextEditingController();
@@ -211,29 +238,29 @@ class _PiDataState extends State<PiData> {
                     ),
                     Expanded(
                       child: TextFormField(
-                      controller: myController1,
-                      decoration: InputDecoration(
-                          labelText: 'Address',
-                          hintText: 'Enter address'),
-                    ),
+                        controller: myController1,
+                        decoration: InputDecoration(
+                            labelText: 'Address',
+                            hintText: 'Enter address'),
+                      ),
                       flex: 1,
                     ),
                     Expanded(
                       child: TextFormField(
-                      controller: myController2,
-                      decoration: InputDecoration(
-                          labelText: 'Software',
-                          hintText: 'Enter software name'),
-                    ),
-                    flex: 1,),
+                        controller: myController2,
+                        decoration: InputDecoration(
+                            labelText: 'Software',
+                            hintText: 'Enter software name'),
+                      ),
+                      flex: 1,),
                     Expanded(
                       child: TextFormField(
-                      controller: myController3,
-                      decoration: InputDecoration(
-                          labelText: 'Other',
-                          hintText: 'Enter additional information'),
-                    ),
-                    flex: 1,),
+                        controller: myController3,
+                        decoration: InputDecoration(
+                            labelText: 'Other',
+                            hintText: 'Enter additional information'),
+                      ),
+                      flex: 1,),
                   ],
                 ),
                 actions: [
@@ -244,7 +271,7 @@ class _PiDataState extends State<PiData> {
                         color: Colors.blue,
                         padding: const EdgeInsets.all(10.0),
                         child: const Text('Update', style: TextStyle(fontSize: 20)),
-                  )
+                      )
                   )
                 ],
               );
@@ -265,7 +292,7 @@ class _PiDataState extends State<PiData> {
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
     final userX = auth.currentUser;
-    final String mn = rasp.modelNumber;
+    final String mn = modelNumber;
 
 
     final result = await userRef.doc(userX.uid).get();
@@ -365,10 +392,10 @@ class _PiDataState extends State<PiData> {
 
 
   void navToMap(BuildContext context) {
-    if (rasp.geoPoint == null) {
+    if (currentPi.geoPoint == null) {
       showAlert();
     } else {
-      navigateToPage(context, MapView(lastKnownGeopoint: new LatLng(rasp.geoPoint.latitude, rasp.geoPoint.longitude),));
+      navigateToPage(context, MapView(lastKnownGeopoint: new LatLng(currentPi.geoPoint.latitude, currentPi.geoPoint.longitude),));
     }
   }
 
@@ -391,11 +418,11 @@ class _PiDataState extends State<PiData> {
               TextButton(
                 child: Text('OK'),
                 onPressed: () {
-                Navigator.of(context).pop();
+                  Navigator.of(context).pop();
                 },
               ),
             ],
-        ),);
+          ),);
       },
     );
   }
@@ -407,4 +434,3 @@ class _PiDataState extends State<PiData> {
     }
   }
 }
-
