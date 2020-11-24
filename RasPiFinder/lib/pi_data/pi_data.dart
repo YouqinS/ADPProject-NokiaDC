@@ -45,7 +45,7 @@ class _PiDataState extends State<PiData> {
       color: Colors.red,
     );
 
-    getPiByModelNumber(modelNumber)
+    getPiByModelNumber(modelNumber);
 
     return Scaffold(
       appBar: AppBar(
