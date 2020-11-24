@@ -1,22 +1,35 @@
+import 'package:RasPiFinder/auth/Validator.dart';
 import 'package:RasPiFinder/components/app_bar.dart';
-import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/components/password_input_field.dart';
 import 'package:RasPiFinder/components/rounded_button.dart';
 import 'package:RasPiFinder/components/text_input_field.dart';
-import 'package:RasPiFinder/home/home_page.dart';
+import 'package:RasPiFinder/models/user.dart';
+import 'package:RasPiFinder/services/authentication_service.dart';
+import 'package:RasPiFinder/services/database.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Settings extends StatefulWidget {
-  Settings({Key key}) : super(key: key);
+  final UserData userData;
+  Settings({Key key, this.userData}) : super(key: key);
 
   @override
-  SettingsState createState() => new SettingsState();
+  SettingsState createState() => new SettingsState(userData);
 }
 
 class SettingsState extends State<Settings> {
+  final UserData userData;
+  String username, email, phone, password, currentEmail, currentPassword;
+  SettingsState(this.userData) {
+    currentEmail = userData.email;
+    email = userData.email;
+    username = userData.username;
+    phone = userData.phoneNumber;
+  }
+
   final formKey = GlobalKey<FormState>();
-  String username, email, phone, password;
+  final AuthenticationService _authenticationService = AuthenticationService();
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +58,9 @@ class SettingsState extends State<Settings> {
                       size: size.height * 0.1,
                     ),
                   ),
-
-                  SizedBox(width: size.width * 0.05,),
+                  SizedBox(
+                    width: size.width * 0.05,
+                  ),
                   Text(
                     'Edit Profile',
                     style: TextStyle(
@@ -58,11 +72,13 @@ class SettingsState extends State<Settings> {
                   ),
                 ],
               ),
-              SizedBox(height: size.height * 0.05,),
+              SizedBox(
+                height: size.height * 0.05,
+              ),
               Card(
                 elevation: 0,
                 color: Colors.grey[100],
-                child:  Form(
+                child: Form(
                   key: formKey,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -71,6 +87,7 @@ class SettingsState extends State<Settings> {
                       TextInputField(
                         hintText: "New Email",
                         icon: Icons.email,
+                        initialValue: email,
                         onSaved: (value) {
                           email = value;
                         },
@@ -79,10 +96,21 @@ class SettingsState extends State<Settings> {
                       TextInputField(
                         hintText: "New Phone Number",
                         icon: Icons.phone_android,
+                        initialValue: phone,
                         onSaved: (value) {
                           phone = value;
                         },
                         validateInput: validatePhoneInput,
+                      ),
+                      PasswordInputField(
+                        hintText: 'Old Password',
+                        onChanged: (value) {
+                          currentPassword = value;
+                        },
+                        onSaved: (value) {
+                          currentPassword = value;
+                        },
+                        validateInput: validatePasswdInput,
                       ),
                       PasswordInputField(
                         hintText: 'New Password',
@@ -111,7 +139,6 @@ class SettingsState extends State<Settings> {
                     ],
                   ),
                 ),
-
               ),
             ],
           ),
@@ -132,7 +159,8 @@ class SettingsState extends State<Settings> {
   }
 
   String validatePasswdInput(String password) {
-    String  pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+    String pattern =
+        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
     RegExp regExp = new RegExp(pattern);
     if (null != password && password.isNotEmpty && !regExp.hasMatch(password)) {
       return 'Password needs to contain at least 8 characters,\n'
@@ -156,16 +184,22 @@ class SettingsState extends State<Settings> {
     return null;
   }
 
-  void submit(){
-    if(formKey.currentState.validate()){
+  void submit() async {
+    if (formKey.currentState.validate()) {
       formKey.currentState.save();
-      //TODO get current GPS data and store to DB
-      //TODO connect to DB to store user input
-      print(username);
-      print(phone);
-      print(email);
-      print(password);
-      navigateToPage(context, HomePage());
+      try {
+        //TODO get current GPS data and store to DB
+        await DatabaseService(uid: userData.uid)
+            .createOrEditUser(username, email, phone);
+        await _authenticationService.updateEmailPassword(
+            currentEmail, currentPassword, email, password);
+        if (password != null) {
+          await _authenticationService.signOut();
+        }
+      } on FirebaseAuthException catch (e) {
+        print(e.toString());
+        Validator.showAlert(context, "Alert", "Wrong current password", "OK");
+      }
     }
   }
 }

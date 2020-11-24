@@ -26,7 +26,8 @@ class DatabaseService {
     });
   }
 
-  Future createUser(String username, String email, String phoneNumber) async {
+  Future createOrEditUser(
+      String username, String email, String phoneNumber) async {
     return await userCollection.doc(uid).set({
       'uid': uid,
       'phoneNumber': phoneNumber,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class TextInputField extends StatelessWidget {
   final String hintText;
   final IconData icon;
+  final String initialValue;
   final FormFieldSetter<String> onSaved;
   final FormFieldSetter<String> onChanged;
   final FormFieldValidator<String> validateInput;
@@ -12,6 +13,7 @@ class TextInputField extends StatelessWidget {
     Key key,
     this.hintText,
     this.icon,
+    this.initialValue,
     this.onSaved,
     this.validateInput,
     this.onChanged,
@@ -23,6 +25,7 @@ class TextInputField extends StatelessWidget {
       child: TextFormField(
         onSaved: onSaved,
         onChanged: onChanged,
+        initialValue: initialValue,
         decoration: InputDecoration(
           icon: Icon(
             icon,
