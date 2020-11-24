@@ -175,21 +175,19 @@ class _PiDataState extends State<PiData> {
     final QuerySnapshot querySnapshot = await docRef.where('modelNumber', isEqualTo: modelNumber).get();
 
     var snapshot = querySnapshot.docs[0];
-    print("snapshot.docs[0]=" + snapshot.data().toString());
 
     setState(() {
       currentPi = Rasp(
           modelNumber: snapshot.data()['modelNumber'] ?? "",
           address: snapshot.data()['address'] ?? "",
           software: snapshot.data()['software'] ?? "",
+          other: snapshot.data()['other'] ?? "",
           owner: snapshot.data()['owner'] ?? null,
           user: snapshot.data()['user'] ?? null,
           finder: snapshot.data()['finder'] ?? null,
-          geoPoint: snapshot.data()['geoPoint'] ?? null
+          geoPoint: snapshot.data()['geoPoint'] ?? null,
       );
     });
-
-    print("currentPi.modelNumber=" + currentPi.modelNumber);
   }
 
 
@@ -240,7 +238,6 @@ class _PiDataState extends State<PiData> {
                       child: TextFormField(
                         controller: myController1,
                         decoration: InputDecoration(
-                            labelText: 'Address',
                             hintText: 'Enter address'),
                       ),
                       flex: 1,
@@ -249,7 +246,6 @@ class _PiDataState extends State<PiData> {
                       child: TextFormField(
                         controller: myController2,
                         decoration: InputDecoration(
-                            labelText: 'Software',
                             hintText: 'Enter software name'),
                       ),
                       flex: 1,),
@@ -257,7 +253,6 @@ class _PiDataState extends State<PiData> {
                       child: TextFormField(
                         controller: myController3,
                         decoration: InputDecoration(
-                            labelText: 'Other',
                             hintText: 'Enter additional information'),
                       ),
                       flex: 1,),
