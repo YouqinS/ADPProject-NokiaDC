@@ -209,33 +209,42 @@ class _PiDataState extends State<PiData> {
                         );
                       }).toList(),
                     ),
-                    TextFormField(
+                    Expanded(
+                      child: TextFormField(
                       controller: myController1,
                       decoration: InputDecoration(
                           labelText: 'Address',
                           hintText: 'Enter address'),
                     ),
-                    TextFormField(
+                      flex: 1,
+                    ),
+                    Expanded(
+                      child: TextFormField(
                       controller: myController2,
                       decoration: InputDecoration(
                           labelText: 'Software',
                           hintText: 'Enter software name'),
                     ),
-                    TextFormField(
+                    flex: 1,),
+                    Expanded(
+                      child: TextFormField(
                       controller: myController3,
                       decoration: InputDecoration(
                           labelText: 'Other',
                           hintText: 'Enter additional information'),
                     ),
+                    flex: 1,),
                   ],
                 ),
                 actions: [
-                  RaisedButton(
-                    onPressed: updateData,
-                    textColor: Colors.white,
-                    color: Colors.blue,
-                    padding: const EdgeInsets.all(10.0),
-                    child: const Text('Update', style: TextStyle(fontSize: 20)),
+                  Visibility(visible:dropdownValue!=select
+                      ,child: RaisedButton(
+                        onPressed: updateData,
+                        textColor: Colors.white,
+                        color: Colors.blue,
+                        padding: const EdgeInsets.all(10.0),
+                        child: const Text('Update', style: TextStyle(fontSize: 20)),
+                  )
                   )
                 ],
               );
@@ -255,9 +264,9 @@ class _PiDataState extends State<PiData> {
 
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
-
     final userX = auth.currentUser;
     final String mn = rasp.modelNumber;
+
 
     final result = await userRef.doc(userX.uid).get();
     String username = result.data()['username'];
@@ -368,24 +377,25 @@ class _PiDataState extends State<PiData> {
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Alert'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('No Gps info available!'),
-              ],
+        return SingleChildScrollView(
+          child: AlertDialog(
+            title: Text('Alert'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text('No Gps info available!'),
+                ],
+              ),
             ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
+            actions: <Widget>[
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
                 Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
+                },
+              ),
+            ],
+        ),);
       },
     );
   }
