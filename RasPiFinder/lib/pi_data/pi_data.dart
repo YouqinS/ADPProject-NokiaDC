@@ -9,7 +9,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong/latlong.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:RasPiFinder/auth/Validator.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -25,39 +24,18 @@ class PiData extends StatefulWidget {
   _PiDataState createState() => _PiDataState(rasp, showUpdateBtn);
 }
 
-
 class _PiDataState extends State<PiData> {
-
-  bool _initialized = false;
-  bool _error = false;
-
-  void initializeFlutterFire() async {
-    try {
-      await Firebase.initializeApp();
-      setState(() {
-        _initialized = true;
-      });
-    } catch(e) {
-      setState(() {
-        _error = true;
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    initializeFlutterFire();
-    super.initState();
-  }
-
   final bool showUpdateBtn;
-  String select = 'Select a type', piOwner = "Owner", piUser = "User", piFinder = "Finder";
-  Map<String, String> userA, ownerA, finderA;
+  final String piOwner = "owner", piUser = "user", piFinder = "finder";
   var notAvailable = 'not available';
   var none = 'none';
   final Rasp rasp;
-
   _PiDataState(this.rasp, this.showUpdateBtn);
+
+
+  String select = 'Select a type', piOwnerText = "Owner", piUserText = "User", piFinderText = "Finder", otherType = "Other";
+  Map<String, String> userA, ownerA, finderA;
+
 
   @override
   Widget build(BuildContext context) {
@@ -116,6 +94,7 @@ class _PiDataState extends State<PiData> {
                       content: owner,
                       maxLine: 1,
                       isUser: true,
+                      user: rasp.owner,
                     ),
                     divider,
                     DataContainer(
@@ -123,6 +102,7 @@ class _PiDataState extends State<PiData> {
                       content:  user,
                       maxLine: 1,
                       isUser: true,
+                      user:rasp.user
                     ),
                     divider,
                     DataContainer(
@@ -130,6 +110,7 @@ class _PiDataState extends State<PiData> {
                       content: finder,
                       maxLine: 1,
                       isUser: true,
+                      user:rasp.finder,
                     ),
                     divider,
                     DataContainer(
@@ -222,7 +203,7 @@ class _PiDataState extends State<PiData> {
                           dropdownValue = newValue;
                           validateUserTypeInput();
                         });},
-                      items: <String>[select, piOwner, piUser, piFinder]
+                      items: <String>[select, piOwner, piUser, piFinder, otherType]
                           .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
@@ -288,7 +269,7 @@ class _PiDataState extends State<PiData> {
       validateUserTypeInput();
     }
     if(dropdownValue != select) {
-      if (dropdownValue == piUser) {
+      if (dropdownValue == piUserText) {
         userA = new Map();
         userA['username'] = username;
         userA['email'] = userX.email;
@@ -307,7 +288,7 @@ class _PiDataState extends State<PiData> {
         });
 
       }
-      if (dropdownValue == piOwner) {
+      if (dropdownValue == piOwnerText) {
         ownerA = new Map();
         ownerA['username'] = username;
         ownerA['email'] = userX.email;
@@ -326,7 +307,7 @@ class _PiDataState extends State<PiData> {
         });
 
       }
-      if (dropdownValue == piFinder) {
+      if (dropdownValue == piFinderText) {
         finderA = new Map();
         finderA['username'] = username;
         finderA['email'] = userX.email;
@@ -344,6 +325,18 @@ class _PiDataState extends State<PiData> {
               .catchError((error)=> print('Failed to update user data'));
         });
 
+      }
+      if (dropdownValue == otherType) {
+        final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
+        snapshot.docs.forEach((DocumentSnapshot doc) {
+          docRef.doc(doc.id).update({
+            "user": null,
+            "owner": null,
+            "finder": null
+          },
+          ).then((value) => print('User data updated successfully'))
+              .catchError((error)=> print('Failed to update user data'));
+        });
       }
       print('userType=' + dropdownValue);
     }
