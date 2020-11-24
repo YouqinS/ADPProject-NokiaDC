@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:latlong/latlong.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:RasPiFinder/auth/Validator.dart';
+import 'package:geolocator/geolocator.dart';
+
 
 
 class PiData extends StatefulWidget {
@@ -49,7 +51,7 @@ class _PiDataState extends State<PiData> {
   }
 
   final bool showUpdateBtn;
-  String select = 'Select a type', piOwner = "Owner", piUser = "User", piFinder = "Finder", otherType = 'Other';
+  String select = 'Select a type', piOwner = "Owner", piUser = "User", piFinder = "Finder";
   Map<String, String> userA, ownerA, finderA;
   var notAvailable = 'not available';
   var none = 'none';
@@ -220,7 +222,7 @@ class _PiDataState extends State<PiData> {
                           dropdownValue = newValue;
                           validateUserTypeInput();
                         });},
-                      items: <String>[select, piOwner, piUser, piFinder, otherType]
+                      items: <String>[select, piOwner, piUser, piFinder]
                           .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
@@ -269,7 +271,11 @@ class _PiDataState extends State<PiData> {
   CollectionReference userRef = FirebaseFirestore.instance.collection('users');
   FirebaseAuth auth = FirebaseAuth.instance;
 
+
   void updateData()async{
+
+    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
 
     final userX = auth.currentUser;
     final String mn = rasp.modelNumber;
@@ -288,6 +294,18 @@ class _PiDataState extends State<PiData> {
         userA['email'] = userX.email;
         userA['phoneNumber'] = phone;
         userA['uid'] = userX.uid;
+
+        final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
+        snapshot.docs.forEach((DocumentSnapshot doc) {
+          docRef.doc(doc.id).update({
+            "user":userA,
+            "owner": null,
+            "finder": null
+          },
+          ).then((value) => print('User data updated successfully'))
+              .catchError((error)=> print('Failed to update user data'));
+        });
+
       }
       if (dropdownValue == piOwner) {
         ownerA = new Map();
@@ -295,6 +313,18 @@ class _PiDataState extends State<PiData> {
         ownerA['email'] = userX.email;
         ownerA['phoneNumber'] = phone;
         ownerA['uid'] = userX.uid;
+
+        final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
+        snapshot.docs.forEach((DocumentSnapshot doc) {
+          docRef.doc(doc.id).update({
+            "user": null,
+            "owner": ownerA,
+            "finder": null
+          },
+          ).then((value) => print('User data updated successfully'))
+              .catchError((error)=> print('Failed to update user data'));
+        });
+
       }
       if (dropdownValue == piFinder) {
         finderA = new Map();
@@ -302,6 +332,18 @@ class _PiDataState extends State<PiData> {
         finderA['email'] = userX.email;
         finderA['phoneNumber'] = phone;
         finderA['uid'] = userX.uid;
+
+        final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
+        snapshot.docs.forEach((DocumentSnapshot doc) {
+          docRef.doc(doc.id).update({
+            "user": null,
+            "owner": null,
+            "finder": finderA
+          },
+          ).then((value) => print('User data updated successfully'))
+              .catchError((error)=> print('Failed to update user data'));
+        });
+
       }
       print('userType=' + dropdownValue);
     }
@@ -310,17 +352,12 @@ class _PiDataState extends State<PiData> {
     final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
     snapshot.docs.forEach((DocumentSnapshot doc) {
       docRef.doc(doc.id).update({
-        "user":{
-        'username' : username,
-        'email': userX.email,
-        'phoneNumber' : phone,
-        'uid' : userX.uid,
-        },
+        "geoPoint": GeoPoint(position.latitude, position.longitude),
         "address": myController1.text,
         "software": myController2.text,
         "other": myController3.text,
       },
-      ).then((value) => print('Data updated successfully'))
+      ).then((value) => print('Pi data updated successfully'))
           .catchError((error)=> print('Failed to update pi data'));
     });
     Navigator.of(context).pop();
@@ -369,5 +406,4 @@ class _PiDataState extends State<PiData> {
     }
   }
 }
-
 
