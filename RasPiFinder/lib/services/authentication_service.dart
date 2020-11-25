@@ -75,17 +75,20 @@ class AuthenticationService {
       EmailAuthCredential credential = EmailAuthProvider.credential(
           email: currentEmail, password: currentPassword);
       // Reauthenticate
-      await FirebaseAuth.instance.currentUser
-          .reauthenticateWithCredential(credential);
+      await _firebaseAuth.currentUser.reauthenticateWithCredential(credential);
 
       if (email != null) {
         await _firebaseAuth.currentUser.updateEmail(email);
       }
       if (password != null) {
         await _firebaseAuth.currentUser.updatePassword(password);
+        credential =
+            EmailAuthProvider.credential(email: email, password: password);
+        await _firebaseAuth.currentUser
+            .reauthenticateWithCredential(credential);
       }
     } catch (e) {
-      print(e.toString());
+      throw e;
     }
   }
 

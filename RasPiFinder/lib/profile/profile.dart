@@ -5,18 +5,19 @@ import 'package:RasPiFinder/services/authentication_service.dart';
 import 'package:RasPiFinder/profile/setting.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Profile extends StatefulWidget {
-  final UserData userData;
-  Profile({Key key, this.userData}) : super(key: key);
+  // final UserData userData;
+  // Profile({Key key, this.userData}) : super(key: key);
 
   @override
-  ProfileState createState() => new ProfileState(userData);
+  ProfileState createState() => new ProfileState();
 }
 
 class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
-  final UserData userData;
-  ProfileState(this.userData);
+  // final UserData userData;
+  // ProfileState(this.userData);
 
   final formKey = GlobalKey<FormState>();
   final String notAvail = 'not available';
@@ -25,6 +26,8 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    UserData userData = Provider.of<UserData>(context);
+    print(userData.email);
     Size size = MediaQuery.of(context).size;
     return Scaffold(
         appBar: PiAppBar(title: 'Profile').build(context),

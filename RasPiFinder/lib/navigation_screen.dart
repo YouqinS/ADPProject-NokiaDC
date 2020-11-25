@@ -12,7 +12,6 @@ class NavigationPage extends StatefulWidget {
 }
 
 class _NavigationPageState extends State<NavigationPage> {
-
   PageController _pageController = PageController();
 
   int _selectedIndex = 0;
@@ -28,7 +27,8 @@ class _NavigationPageState extends State<NavigationPage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Rasp> piCollectionFromDB = Provider.of<List<Rasp>>(context) ?? [];
+    final List<Rasp> piCollectionFromDB =
+        Provider.of<List<Rasp>>(context) ?? [];
     final UserData userData = Provider.of<UserData>(context);
 
     List<Rasp> myPies = [];
@@ -36,45 +36,55 @@ class _NavigationPageState extends State<NavigationPage> {
       myPies = getMyPiList(userData.uid.trim(), piCollectionFromDB);
     }
 
-    List<Widget> _screens = [HomePage(), Profile(userData: userData,), MyRasPi(myPies: myPies,)];
-
+    List<Widget> _screens = [
+      HomePage(),
+      Profile(),
+      MyRasPi(
+        myPies: myPies,
+      )
+    ];
 
     return Scaffold(
-        body: PageView(
-          controller: _pageController,
-          children: _screens,
-          onPageChanged: _onPageChanged,
-          physics: NeverScrollableScrollPhysics(),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: [
-            BottomNavigationBarItem(
-              icon: new Icon(Icons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: new Icon(Icons.person),
-              label: 'Profile',
-            ),
-            BottomNavigationBarItem(
-              icon: new Icon(Icons.pie_chart_outline_outlined),
-              label: 'MyPies',
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          selectedItemColor: Colors.blue,
-          onTap: _onItemTapped,
-        ),
+      body: PageView(
+        controller: _pageController,
+        children: _screens,
+        onPageChanged: _onPageChanged,
+        physics: NeverScrollableScrollPhysics(),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(
+            icon: new Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: new Icon(Icons.person),
+            label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: new Icon(Icons.pie_chart_outline_outlined),
+            label: 'MyPies',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.blue,
+        onTap: _onItemTapped,
+      ),
     );
   }
 
 //TODO: get 'myPies' by querying db straight?
   List<Rasp> getMyPiList(String userUid, List<Rasp> piCollectionFromDB) {
     final List<Rasp> myPies = [];
-    for (int i=0; i<piCollectionFromDB.length; i++) {
-      if ((piCollectionFromDB[i].user != null && piCollectionFromDB[i].user['uid'].toString().trim() ==  userUid) ||
-          (piCollectionFromDB[i].finder != null && piCollectionFromDB[i].finder['uid'].toString().trim() == userUid) ||
-          (piCollectionFromDB[i].owner != null && piCollectionFromDB[i].owner['uid'].toString().trim() == userUid)) {
+    for (int i = 0; i < piCollectionFromDB.length; i++) {
+      if ((piCollectionFromDB[i].user != null &&
+              piCollectionFromDB[i].user['uid'].toString().trim() == userUid) ||
+          (piCollectionFromDB[i].finder != null &&
+              piCollectionFromDB[i].finder['uid'].toString().trim() ==
+                  userUid) ||
+          (piCollectionFromDB[i].owner != null &&
+              piCollectionFromDB[i].owner['uid'].toString().trim() ==
+                  userUid)) {
         myPies.add(piCollectionFromDB[i]);
       }
     }
