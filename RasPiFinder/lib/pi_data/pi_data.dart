@@ -204,8 +204,14 @@ class _PiDataState extends State<PiData> {
     super.dispose();
   }
 
+  clearTextInput(){
+    dropdownValue = select;
+    myController1.clear();
+    myController2.clear();
+    myController3.clear();
+  }
 
-  String select = 'Select a type', piOwnerText = "Owner", piUserText = "User", piFinderText = "Finder", otherType = "Other";
+  String select = 'Select a type', piOwnerText = "Owner", piUserText = "User", piFinderText = "Finder", otherType = "Unregister";
   Map<String, String> userA, ownerA, finderA;
 
   String dropdownValue = 'Select a type';
@@ -276,6 +282,7 @@ class _PiDataState extends State<PiData> {
     );
   }
 
+  
 
   CollectionReference docRef = FirebaseFirestore.instance.collection('pi');
   CollectionReference userRef = FirebaseFirestore.instance.collection('users');
@@ -356,6 +363,7 @@ class _PiDataState extends State<PiData> {
 
       }
       if (dropdownValue == otherType) {
+        validateUserTypeInput();
         final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
         snapshot.docs.forEach((DocumentSnapshot doc) {
           docRef.doc(doc.id).update({
@@ -381,6 +389,7 @@ class _PiDataState extends State<PiData> {
       },
       ).then((value) => print('Pi data updated successfully'))
           .catchError((error)=> print('Failed to update pi data'));
+      clearTextInput();
     });
     Navigator.of(context).pop();
   }
@@ -417,7 +426,8 @@ class _PiDataState extends State<PiData> {
                 },
               ),
             ],
-          ),);
+          ),
+        );
       },
     );
   }
@@ -426,6 +436,9 @@ class _PiDataState extends State<PiData> {
   void validateUserTypeInput() {
     if (dropdownValue == select) {
       Validator.showAlert(context, "Alert", "Please select a User Type", "OK");
+    }
+    if (dropdownValue == otherType) {
+      Validator.showAlert(context, "Alert", "Selecting Unregister will delete all your data from this pi!", "OK");
     }
   }
 }
