@@ -47,6 +47,7 @@ class _PiDataState extends State<PiData> {
 
     getPiByModelNumber(modelNumber);
 
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -160,7 +161,7 @@ class _PiDataState extends State<PiData> {
                   onPressed: openAlertBox,
                   tooltip: 'Update Pi data',
                 ),
-                visible: showUpdateBtn,
+                visible: showUpdateBtn
               ),
             ],
           ),
@@ -191,9 +192,11 @@ class _PiDataState extends State<PiData> {
   }
 
 
-  final myController1 = TextEditingController();
-  final myController2 = TextEditingController();
-  final myController3 = TextEditingController();
+  TextEditingController myController1 = TextEditingController();
+  TextEditingController myController2 = TextEditingController();
+  TextEditingController myController3 = TextEditingController();
+
+
 
   @override
   void dispose() {
@@ -204,18 +207,20 @@ class _PiDataState extends State<PiData> {
     super.dispose();
   }
 
-  clearTextInput(){
+  clearDropdownValue(){
     dropdownValue = select;
-    myController1.clear();
-    myController2.clear();
-    myController3.clear();
   }
+
 
   String select = 'Select a type', piOwnerText = "Owner", piUserText = "User", piFinderText = "Finder", otherType = "Unregister";
   Map<String, String> userA, ownerA, finderA;
-
   String dropdownValue = 'Select a type';
+
   openAlertBox () {
+    myController1 = TextEditingController(text: (currentPi == null || currentPi.address.isEmpty) ? "":currentPi.address);
+    myController2 = TextEditingController(text: (currentPi == null || currentPi.software.isEmpty) ? "":currentPi.software);
+    myController3 = TextEditingController(text: (currentPi == null || currentPi.other.isEmpty) ? "":currentPi.other);
+
     showDialog(
         context: context,
         builder: (context) {
@@ -240,28 +245,42 @@ class _PiDataState extends State<PiData> {
                         );
                       }).toList(),
                     ),
-                    Expanded(
-                      child: TextFormField(
-                        controller: myController1,
-                        decoration: InputDecoration(
-                            hintText: 'Enter address'),
-                      ),
-                      flex: 1,
+                    Visibility(
+                      child: Expanded(
+                        child: TextFormField(
+                          controller: myController1,
+                          decoration: InputDecoration(
+                            labelText: 'Address',
+                              hintText: 'Enter address'
+                           ),
+                        ),
+                        flex: 1),
+                      visible: dropdownValue != otherType,
                     ),
-                    Expanded(
-                      child: TextFormField(
-                        controller: myController2,
-                        decoration: InputDecoration(
-                            hintText: 'Enter software name'),
-                      ),
-                      flex: 1,),
-                    Expanded(
-                      child: TextFormField(
+                    Visibility(
+                      child: Expanded(
+                        child: TextFormField(
+                          controller: myController2,
+                          decoration: InputDecoration(
+                            labelText: 'Software',
+                              hintText: 'Enter software name'
+                              ),
+                        ),
+                        flex: 1,),
+                      visible: dropdownValue != otherType,
+                    ),
+                    Visibility(
+                      child: Expanded(
+                        child: TextFormField(
                         controller: myController3,
                         decoration: InputDecoration(
-                            hintText: 'Enter additional information'),
-                      ),
-                      flex: 1,),
+                          labelText: 'Additional Information',
+                            hintText: 'Enter additional information'
+                        ),
+                        ),
+                        flex: 1,),
+                      visible: dropdownValue != otherType,
+                    )
                   ],
                 ),
                 actions: [
@@ -270,8 +289,8 @@ class _PiDataState extends State<PiData> {
                         onPressed: updateData,
                         textColor: Colors.white,
                         color: Colors.blue,
-                        padding: const EdgeInsets.all(10.0),
-                        child: const Text('Update', style: TextStyle(fontSize: 20)),
+                        padding: const EdgeInsets.all(8.0),
+                        child: const Text('SUBMIT', style: TextStyle(fontSize: 20)),
                       )
                   )
                 ],
@@ -282,16 +301,15 @@ class _PiDataState extends State<PiData> {
     );
   }
 
-  
 
   CollectionReference docRef = FirebaseFirestore.instance.collection('pi');
   CollectionReference userRef = FirebaseFirestore.instance.collection('users');
   FirebaseAuth auth = FirebaseAuth.instance;
 
 
-  void updateData()async{
-
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  void updateData()async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
 
     final userX = auth.currentUser;
     final String mn = modelNumber;
@@ -301,10 +319,10 @@ class _PiDataState extends State<PiData> {
     String username = result.data()['username'];
     String phone = result.data()['phoneNumber'];
 
-    if (dropdownValue == select){
+    if (dropdownValue == select) {
       validateUserTypeInput();
     }
-    if(dropdownValue != select) {
+    if (dropdownValue != select) {
       if (dropdownValue == piUserText) {
         userA = new Map();
         userA['username'] = username;
@@ -312,17 +330,17 @@ class _PiDataState extends State<PiData> {
         userA['phoneNumber'] = phone;
         userA['uid'] = userX.uid;
 
-        final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
+        final QuerySnapshot snapshot = await docRef.where(
+            'modelNumber', isEqualTo: mn).get();
         snapshot.docs.forEach((DocumentSnapshot doc) {
           docRef.doc(doc.id).update({
-            "user":userA,
+            "user": userA,
             "owner": null,
             "finder": null
           },
           ).then((value) => print('User data updated successfully'))
-              .catchError((error)=> print('Failed to update user data'));
+              .catchError((error) => print('Failed to update user data'));
         });
-
       }
       if (dropdownValue == piOwnerText) {
         ownerA = new Map();
@@ -331,7 +349,8 @@ class _PiDataState extends State<PiData> {
         ownerA['phoneNumber'] = phone;
         ownerA['uid'] = userX.uid;
 
-        final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
+        final QuerySnapshot snapshot = await docRef.where(
+            'modelNumber', isEqualTo: mn).get();
         snapshot.docs.forEach((DocumentSnapshot doc) {
           docRef.doc(doc.id).update({
             "user": null,
@@ -339,9 +358,8 @@ class _PiDataState extends State<PiData> {
             "finder": null
           },
           ).then((value) => print('User data updated successfully'))
-              .catchError((error)=> print('Failed to update user data'));
+              .catchError((error) => print('Failed to update user data'));
         });
-
       }
       if (dropdownValue == piFinderText) {
         finderA = new Map();
@@ -350,7 +368,8 @@ class _PiDataState extends State<PiData> {
         finderA['phoneNumber'] = phone;
         finderA['uid'] = userX.uid;
 
-        final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
+        final QuerySnapshot snapshot = await docRef.where(
+            'modelNumber', isEqualTo: mn).get();
         snapshot.docs.forEach((DocumentSnapshot doc) {
           docRef.doc(doc.id).update({
             "user": null,
@@ -358,28 +377,29 @@ class _PiDataState extends State<PiData> {
             "finder": finderA
           },
           ).then((value) => print('User data updated successfully'))
-              .catchError((error)=> print('Failed to update user data'));
+              .catchError((error) => print('Failed to update user data'));
         });
-
       }
       if (dropdownValue == otherType) {
-        validateUserTypeInput();
-        final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
+        final QuerySnapshot snapshot = await docRef.where(
+            'modelNumber', isEqualTo: mn).get();
         snapshot.docs.forEach((DocumentSnapshot doc) {
           docRef.doc(doc.id).update({
             "user": null,
             "owner": null,
             "finder": null
           },
-          ).then((value) => print('User data updated successfully'))
-              .catchError((error)=> print('Failed to update user data'));
+          ).then((value) => print('User data is removed from this pi'))
+              .catchError((error) => print('Failed to update user data'));
         });
       }
       print('userType=' + dropdownValue);
+      stayOrLeave();
     }
 
 
-    final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
+    final QuerySnapshot snapshot = await docRef.where(
+        'modelNumber', isEqualTo: mn).get();
     snapshot.docs.forEach((DocumentSnapshot doc) {
       docRef.doc(doc.id).update({
         "geoPoint": GeoPoint(position.latitude, position.longitude),
@@ -388,12 +408,10 @@ class _PiDataState extends State<PiData> {
         "other": myController3.text,
       },
       ).then((value) => print('Pi data updated successfully'))
-          .catchError((error)=> print('Failed to update pi data'));
-      clearTextInput();
+          .catchError((error) => print('Failed to update pi data'));
+      clearDropdownValue();
     });
-    Navigator.of(context).pop();
   }
-
 
   void navToMap(BuildContext context) {
     if (currentPi.geoPoint == null) {
@@ -439,6 +457,17 @@ class _PiDataState extends State<PiData> {
     }
     if (dropdownValue == otherType) {
       Validator.showAlert(context, "Alert", "Selecting Unregister will delete all your data from this pi!", "OK");
+    }
+  }
+
+  void stayOrLeave(){
+    if (dropdownValue == otherType) {
+      Navigator.of(context).popUntil(ModalRoute.withName('/')); // back to MyRasPie page
+//    Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false); // back to homepage
+
+    }
+    else {
+      Navigator.of(context).pop();
     }
   }
 }
