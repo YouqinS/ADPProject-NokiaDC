@@ -1,6 +1,9 @@
+import 'dart:ui';
+
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/models/rasps.dart';
 import 'package:RasPiFinder/pi_data/pi_data.dart';
+import 'package:RasPiFinder/widgets/theme.dart';
 import 'package:flutter/material.dart';
 
 class ProductTile extends StatelessWidget {
@@ -11,23 +14,77 @@ class ProductTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var available = (rasp.user == null || rasp.user.isEmpty);
-    return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
-      child: GestureDetector(
-        onTap: () {
-          navigateToPage(context, PiData(rasp: rasp, showUpdateBtn: false,));
-        },
-        child: Card(
-          margin: EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
-          child: ListTile(
-            leading: CircleAvatar(
-              radius: 25.0,
-              backgroundColor: available ? Colors.green :  Colors.red,
-              child: Text(available ? "free" : "in use", style: TextStyle(color: Colors.white),),
-            ),
-            title: Text("model: "+ rasp.modelNumber),
-            subtitle: Text("sw: " + (rasp.software==null ? "software" : rasp.software)),
+    return Container(
+        margin: new EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+        child: GestureDetector(
+          onTap: () async {
+            await new Future.delayed(new Duration(seconds: 4));
+            navigateToPage(context, PiData(rasp: rasp, showUpdateBtn: false,));
+          },
+          child: Container(
+            height: 130,
+            margin: new EdgeInsets.only(left: 33.0),
+            decoration: new BoxDecoration(
+              color: AppTheme.cardColor,//new Color(0xFF526BC2),//new Color(0xFF333366),
+              shape: BoxShape.rectangle,
+              borderRadius: new BorderRadius.circular(8.0),
+              boxShadow: <BoxShadow>[
+                new BoxShadow(  
+                  color: Colors.blue,
+                  blurRadius: 10.0,
+                  offset: new Offset(4.0, 4.0),
+                ),
+              ],
           ),
+          child: Container(
+              child: new Stack(
+                children: <Widget>[
+                  ListTile(
+                    title: Padding(
+                      padding: EdgeInsets.fromLTRB(50.0, 15.0, 0.0, 0.0),
+                      child: Text("Model: "+ rasp.modelNumber, style: TextStyle(
+                    color: Colors.white, fontSize: 18.0,), textAlign: TextAlign.left),
+                    ),
+                    isThreeLine: true,
+                    subtitle: Padding(
+                      padding: EdgeInsets.fromLTRB(50.0, 15.0, 0.0,0.0),
+                      child: Column(
+                      // mainAxisAlignment: MainAxisAlignment.center,
+                      // crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [ Container (
+                              child: Row(
+                                children: [Icon(Icons.app_settings_alt, size: 25, color: Colors.lightBlueAccent,),
+                                  Padding(child: Text(  (rasp.software==null ? "software" : rasp.software), style: TextStyle(
+                                    color: Colors.white, fontSize: 15.0), 
+                                    textAlign: TextAlign.left,),
+                                    padding: EdgeInsets.only(left: 10)),]
+                              ),
+                        ), Container(
+                          child: Row(
+                                children: [Icon(Icons.pin_drop_sharp, size: 25, color: Colors.lightGreenAccent,),
+                                  Padding(child: Text( (rasp.address==null ? "Address" : rasp.address), style: TextStyle(
+                                    color: Colors.white, fontSize: 15.0), 
+                                    textAlign: TextAlign.left,),
+                                    padding: EdgeInsets.only(left: 10)),]
+                              ),
+                        )]
+                      ),
+                    ),
+                  ),
+                  FractionalTranslation(
+                    translation: Offset(-0.5, 0.2),
+                    child: Align(
+                      child:CircleAvatar(
+                        radius: 40.0,
+                        backgroundColor: available ? Colors.green :  Colors.red,
+                        child: Text(available ? "free" : "in use", style: TextStyle(color: Colors.white),)
+                      ),
+                      alignment: FractionalOffset(0.5, 0.0),
+                    ),
+                  ),   
+                ],
+              )
+          ), 
         ),
       ),
       

@@ -1,7 +1,9 @@
 import 'package:RasPiFinder/components/app_bar.dart';
+import 'package:RasPiFinder/components/loading.dart';
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/pi_data/dataContainer.dart';
 import 'package:RasPiFinder/pi_data/pi_data.dart';
+import 'package:RasPiFinder/widgets/theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +21,10 @@ class _MyRasPiState extends State<MyRasPi> {
   List<Rasp> myPies = [];
   final String uid;
   _MyRasPiState(this.uid);
+  bool loading = false;
+  GeoPoint geoPoint;
+  Rasp currentPi;
+
 
   @override
   void initState() {
@@ -30,28 +36,52 @@ class _MyRasPiState extends State<MyRasPi> {
     super.dispose();
   }
 
+  Future loadMap() async {
+    if (currentPi == null) {
+        setState(() => loading = true);
+    } else {
+      setState(() {
+          loading = false;
+        });
+      await new Future.delayed(new Duration(seconds: 4));
+    }    
+  }
+
   @override
   Widget build(BuildContext context) {
-   getMyPies();
-
-    return Scaffold(
+    getMyPies();
+  
+    return loading ? Loading() :  new Scaffold(
       appBar: PiAppBar(title: 'My RasPies').build(context),
+      // body: futureBuilder,
       body: ListView.builder(
         itemCount: myPies.length,
         itemBuilder: (BuildContext context, int index) {
           return GestureDetector(
-            onTap: () {
-              navigateToPage(context, PiData(rasp: myPies[index], showUpdateBtn: true,));
+            onTap: () async {
+              if (currentPi != null && currentPi.geoPoint != null ) {
+                    // setState(() => loading = true);
+                    // await new Future.delayed(new Duration(seconds: 4));
+                    navigateToPage(context, PiData(rasp: myPies[index], showUpdateBtn: true,));
+                    // getMyPies();
+                } else {
+                  setState(() {
+                      loading = false;
+                    });
+                  // await new Future.delayed(new Duration(seconds: 4));
+                  navigateToPage(context, PiData(rasp: myPies[index], showUpdateBtn: true,));
+                }
             },
             child: Card(
-              elevation: 0.01,
-              color: Colors.blue[50],
+              margin: new EdgeInsets.fromLTRB(20,10,20,10),
+              elevation: 0.50,
+              color: Colors.blue[100],
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CircleAvatar(
                     radius: 13,
-                    backgroundColor: Colors.blue[900],
+                    backgroundColor: AppTheme.primary,
                     child: Text(
                       (index + 1).toString(),
                       textAlign: TextAlign.left,
