@@ -38,8 +38,8 @@ class _PiDataState extends State<PiData> {
   bool loading = false;
 
 
-   Future loadMap(BuildContext context) async {
-    if (currentPi.geoPoint == null) {
+   Future loadMap() async {
+    if (currentPi == null || currentPi.geoPoint == null) {
         setState(() => loading = true);
     } else {
       setState(() {
@@ -51,6 +51,25 @@ class _PiDataState extends State<PiData> {
 
   @override
   Widget build(BuildContext context) {
+
+    var futureBuilder = new FutureBuilder(
+      future: loadMap(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+          case ConnectionState.waiting:
+            // return new Text('loading...');
+          default:
+            if (snapshot.hasError)
+              return new Text('Error: ${snapshot.error}');
+            else
+              return Container(
+                child:MapOnly(lastKnownGeopoint: new LatLng(currentPi.geoPoint.latitude, currentPi.geoPoint.longitude)),
+                height: MediaQuery.of(context).size.height / 4.0,
+            );
+        } 
+      },
+    );
     Size size = MediaQuery.of(context).size;
     final String user = (null == currentPi || currentPi.user == null) ? none : currentPi.user['email'];
     final String owner = (null == currentPi || currentPi.owner == null) ? none : currentPi.owner['email'];
@@ -71,15 +90,9 @@ class _PiDataState extends State<PiData> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              futureBuilder,
               Container(
-                // loadMap(context,);
-                child:MapOnly(lastKnownGeopoint: new LatLng(currentPi.geoPoint.latitude, currentPi.geoPoint.longitude),),
-                height: MediaQuery.of(context).size.height / 7.0,  // Also Including Tab-bar height.
-//                        child: Chewie(
-//                          controller: _chewieController,
-//                        ),
-            ),
-              Container(
+                // borderRadius: BorderRadius.circular(5.0),
                 decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
                 child:   Card(
                 shape: RoundedRectangleBorder(

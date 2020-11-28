@@ -1,4 +1,5 @@
 import 'package:RasPiFinder/profile/my_pi.dart';
+import 'package:RasPiFinder/widgets/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:RasPiFinder/home/home_page.dart';
 import 'package:RasPiFinder/profile/profile.dart';
@@ -60,7 +61,7 @@ class _NavigationPageState extends State<NavigationPage> {
             ),
           ],
           currentIndex: _selectedIndex,
-          selectedItemColor: Colors.blue,
+          selectedItemColor: AppTheme.iconColors[0],
           onTap: _onItemTapped,
         ),
     );

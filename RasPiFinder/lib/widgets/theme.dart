@@ -7,7 +7,7 @@ class AppTheme {
   static final Color cardColor = Color(0xFF37334d);
   static final Color addCardColor = Color(0xFF03DAC5);
   static final List<Color> iconColors = [
-    Color(0xFFBBDEFB),
+    Color(0xFF64B5F6),
     Color(0xFF27cf53),
     Color(0xFFf3a643),
     Color(0xFF526BC2),

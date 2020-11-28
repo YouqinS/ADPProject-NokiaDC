@@ -17,8 +17,9 @@ class ProductTile extends StatelessWidget {
     return Container(
         margin: new EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
         child: GestureDetector(
+          onDoubleTap: () => null,
           onTap: () async {
-            await new Future.delayed(new Duration(seconds: 4));
+            // await new Future.delayed(new Duration(seconds: 4));
             navigateToPage(context, PiData(rasp: rasp, showUpdateBtn: false,));
           },
           child: Container(
