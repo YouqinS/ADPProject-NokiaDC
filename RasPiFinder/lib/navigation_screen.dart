@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:RasPiFinder/home/home_page.dart';
 import 'package:RasPiFinder/profile/profile.dart';
 import 'package:provider/provider.dart';
-import 'models/rasps.dart';
 import 'models/user.dart';
 
 class NavigationPage extends StatefulWidget {
@@ -27,22 +26,14 @@ class _NavigationPageState extends State<NavigationPage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Rasp> piCollectionFromDB =
-        Provider.of<List<Rasp>>(context) ?? [];
     final UserData userData = Provider.of<UserData>(context);
 
-    List<Rasp> myPies = [];
+    String uid = "";
     if (userData != null) {
-      myPies = getMyPiList(userData.uid.trim(), piCollectionFromDB);
+      uid = userData.uid;
     }
 
-    List<Widget> _screens = [
-      HomePage(),
-      Profile(),
-      MyRasPi(
-        myPies: myPies,
-      )
-    ];
+    List<Widget> _screens = [HomePage(), Profile(), MyRasPi(uid: uid,)];
 
     return Scaffold(
       body: PageView(
@@ -71,23 +62,5 @@ class _NavigationPageState extends State<NavigationPage> {
         onTap: _onItemTapped,
       ),
     );
-  }
-
-//TODO: get 'myPies' by querying db straight?
-  List<Rasp> getMyPiList(String userUid, List<Rasp> piCollectionFromDB) {
-    final List<Rasp> myPies = [];
-    for (int i = 0; i < piCollectionFromDB.length; i++) {
-      if ((piCollectionFromDB[i].user != null &&
-              piCollectionFromDB[i].user['uid'].toString().trim() == userUid) ||
-          (piCollectionFromDB[i].finder != null &&
-              piCollectionFromDB[i].finder['uid'].toString().trim() ==
-                  userUid) ||
-          (piCollectionFromDB[i].owner != null &&
-              piCollectionFromDB[i].owner['uid'].toString().trim() ==
-                  userUid)) {
-        myPies.add(piCollectionFromDB[i]);
-      }
-    }
-    return myPies;
   }
 }
