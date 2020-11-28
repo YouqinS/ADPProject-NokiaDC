@@ -1,17 +1,14 @@
 import 'package:RasPiFinder/auth/Validator.dart';
 import 'package:RasPiFinder/components/app_bar.dart';
-import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/components/password_input_field.dart';
 import 'package:RasPiFinder/components/rounded_button.dart';
 import 'package:RasPiFinder/components/text_input_field.dart';
 import 'package:RasPiFinder/models/user.dart';
-import 'package:RasPiFinder/profile/profile.dart';
 import 'package:RasPiFinder/services/authentication_service.dart';
 import 'package:RasPiFinder/services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class Settings extends StatefulWidget {
   final UserData userData;
