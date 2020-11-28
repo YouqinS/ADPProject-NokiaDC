@@ -324,175 +324,51 @@ class _PiDataState extends State<PiData> {
     }
 
     if(dropdownValue != select) {
+      Map appUser = new Map();
+      appUser['username'] = username;
+      appUser['email'] = userX.email;
+      appUser['phoneNumber'] = phone;
+      appUser['uid'] = userX.uid;
+
+      Rasp dataToUpdate = currentPi;
 
       if(dropdownValue == piUserText) {
-        if(currentPi.finder['email'] == userX.email){
-        userA = new Map();
-        userA['username'] = username;
-        userA['email'] = userX.email;
-        userA['phoneNumber'] = phone;
-        userA['uid'] = userX.uid;
-
-        final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
-        snapshot.docs.forEach((DocumentSnapshot doc) {
-          docRef.doc(doc.id).update({
-            "user": userA,
-            "finder": null
-          },
-          ).then((value) => print('User data updated successfully'))
-              .catchError((error) => print('Failed to update user data'));
-        });
+        dataToUpdate.user = appUser;
+        dataToUpdate.finder = (currentPi.finder != null && currentPi.finder["uid"] == appUser["uid"]) ? null : currentPi.finder;
+        dataToUpdate.owner = (currentPi.owner != null && currentPi.owner["uid"] == appUser["uid"]) ? null : currentPi.owner;
+      } else if (dropdownValue == piOwnerText) {
+        dataToUpdate.owner = appUser;
+        dataToUpdate.finder = (currentPi.finder != null && currentPi.finder["uid"] == appUser["uid"]) ? null : currentPi.finder;
+        dataToUpdate.user = (currentPi.user != null && currentPi.user["uid"] == appUser["uid"]) ? null : currentPi.user;
+      } else if (dropdownValue == piFinderText) {
+        dataToUpdate.finder = appUser;
+        dataToUpdate.user = (currentPi.user != null && currentPi.user["uid"] == appUser["uid"]) ? null : currentPi.user;
+        dataToUpdate.owner = (currentPi.owner != null && currentPi.owner["uid"] == appUser["uid"]) ? null : currentPi.owner;
+      } else if (dropdownValue == otherType) {
+        dataToUpdate.user = (currentPi.user != null && currentPi.user["uid"] == appUser["uid"]) ? null : currentPi.user;
+        dataToUpdate.owner = (currentPi.owner != null && currentPi.owner["uid"] == appUser["uid"]) ? null : currentPi.owner;
+        dataToUpdate.finder = (currentPi.finder != null && currentPi.finder["uid"] == appUser["uid"]) ? null : currentPi.finder;
       }
 
-        else{
-          userA = new Map();
-          userA['username'] = username;
-          userA['email'] = userX.email;
-          userA['phoneNumber'] = phone;
-          userA['uid'] = userX.uid;
+      final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
+      snapshot.docs.forEach((DocumentSnapshot doc) {
+        docRef.doc(doc.id).update({
+          "user": dataToUpdate.user,
+          "owner": dataToUpdate.owner,
+          "finder": dataToUpdate.finder,
+          "geoPoint": GeoPoint(position.latitude, position.longitude),
+          "address": myController1.text,
+          "software": myController2.text,
+          "other": myController3.text,
+        },
+        ).then((value) => print('User data updated successfully'))
+            .catchError((error) => print('Failed to update user data'));
+        clearDropdownValue();
+      });
 
-          final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
-          snapshot.docs.forEach((DocumentSnapshot doc) {
-            docRef.doc(doc.id).update({
-              "user": userA,
-              "owner": null,
-            },
-            ).then((value) => print('User data updated successfully'))
-                .catchError((error) => print('Failed to update user data'));
-          });
-        }
-      }
-
-      if(dropdownValue == piOwnerText){
-        if(currentPi.finder['email'] == userX.email){
-          ownerA = new Map();
-          ownerA['username'] = username;
-          ownerA['email'] = userX.email;
-          ownerA['phoneNumber'] = phone;
-          ownerA['uid'] = userX.uid;
-
-          final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
-          snapshot.docs.forEach((DocumentSnapshot doc) {
-            docRef.doc(doc.id).update({
-              "owner": ownerA,
-              "finder": null
-            },
-            ).then((value) => print('User data updated successfully'))
-                .catchError((error) => print('Failed to update user data'));
-          });
-        }
-
-        else{
-          ownerA = new Map();
-          ownerA['username'] = username;
-          ownerA['email'] = userX.email;
-          ownerA['phoneNumber'] = phone;
-          ownerA['uid'] = userX.uid;
-
-          final QuerySnapshot snapshot = await docRef.where(
-              'modelNumber', isEqualTo: mn).get();
-          snapshot.docs.forEach((DocumentSnapshot doc){
-            docRef.doc(doc.id).update({
-              "owner": ownerA,
-              "user": null
-            },
-            ).then((value) => print('User data updated successfully'))
-                .catchError((error) => print('Failed to update user data'));
-          });
-        }
-      }
-
-      if(dropdownValue == piFinderText){
-        if(currentPi.user['email'] == userX.email){
-          finderA = new Map();
-          finderA['username'] = username;
-          finderA['email'] = userX.email;
-          finderA['phoneNumber'] = phone;
-          finderA['uid'] = userX.uid;
-
-          final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
-          snapshot.docs.forEach((DocumentSnapshot doc) {
-            docRef.doc(doc.id).update({
-              "user": null,
-              "finder": finderA
-            },
-            ).then((value) => print('User data updated successfully'))
-                .catchError((error) => print('Failed to update user data'));
-          });
-        }
-
-      else{
-          finderA = new Map();
-          finderA['username'] = username;
-          finderA['email'] = userX.email;
-          finderA['phoneNumber'] = phone;
-          finderA['uid'] = userX.uid;
-
-          final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
-          snapshot.docs.forEach((DocumentSnapshot doc) {
-            docRef.doc(doc.id).update({
-              "owner": null,
-              "finder": finderA
-            },
-            ).then((value) => print('User data updated successfully'))
-                .catchError((error) => print('Failed to update user data'));
-          });
-        }
-      }
-
-      if(dropdownValue == otherType){
-        if(currentPi.finder['email'] == userX.email){
-          final QuerySnapshot snapshot = await docRef.where(
-              'modelNumber', isEqualTo: mn).get();
-          snapshot.docs.forEach((DocumentSnapshot doc){
-            docRef.doc(doc.id).update({
-              "finder":null,
-            },
-            ).then((value) => print('User data is removed from this pi'))
-                .catchError((error) => print('Failed to update user data'));
-          });
-        }
-
-        else if(currentPi.user['email'] == userX.email){
-          final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
-          snapshot.docs.forEach((DocumentSnapshot doc) {
-            docRef.doc(doc.id).update({
-              "user": null,
-            },
-            ).then((value) => print('User data is removed from this pi'))
-                .catchError((error) => print('Failed to update user data'));
-          });
-        }
-
-        else{
-          final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
-          snapshot.docs.forEach((DocumentSnapshot doc) {
-            docRef.doc(doc.id).update({
-              "owner": null,
-            },
-            ).then((value) => print('User data is removed from this pi'))
-                .catchError((error) => print('Failed to update user data'));
-          });
-        }
-      }
       stayOrLeave();
       print('userType=' + dropdownValue);
     }
-
-
-    final QuerySnapshot snapshot = await docRef.where(
-        'modelNumber', isEqualTo: mn).get();
-    snapshot.docs.forEach((DocumentSnapshot doc) {
-      docRef.doc(doc.id).update({
-        "geoPoint": GeoPoint(position.latitude, position.longitude),
-        "address": myController1.text,
-        "software": myController2.text,
-        "other": myController3.text,
-      },
-      ).then((value) => print('Pi data updated successfully'))
-          .catchError((error) => print('Failed to update pi data'));
-      clearDropdownValue();
-    });
   }
 
   void navToMap(BuildContext context) {
