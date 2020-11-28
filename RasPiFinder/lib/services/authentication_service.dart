@@ -68,8 +68,9 @@ class AuthenticationService {
     }
   }
 
-  Future updateEmailPassword(String currentEmail, String currentPassword,
-      String email, String password) async {
+  Future updateEmailPassword(String uid, String currentEmail,
+      String oldPassword, String email, String password) async {
+    String currentPassword = oldPassword;
     try {
       // Create a credential
       EmailAuthCredential credential = EmailAuthProvider.credential(
@@ -77,16 +78,17 @@ class AuthenticationService {
       // Reauthenticate
       await _firebaseAuth.currentUser.reauthenticateWithCredential(credential);
 
-      if (email != null) {
+      if (email != null && email != '' && email != currentEmail) {
         await _firebaseAuth.currentUser.updateEmail(email);
+        await DatabaseService(uid: uid).updateUserData(null, email, null);
       }
-      if (password != null) {
+      if (password != null && password != '' && password != oldPassword) {
         await _firebaseAuth.currentUser.updatePassword(password);
-        credential =
-            EmailAuthProvider.credential(email: email, password: password);
-        await _firebaseAuth.currentUser
-            .reauthenticateWithCredential(credential);
+        currentPassword = password;
       }
+      credential =
+          EmailAuthProvider.credential(email: email, password: currentPassword);
+      await _firebaseAuth.currentUser.reauthenticateWithCredential(credential);
     } catch (e) {
       throw e;
     }

@@ -27,7 +27,6 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
     UserData userData = Provider.of<UserData>(context);
-    print(userData.email);
     Size size = MediaQuery.of(context).size;
     return Scaffold(
         appBar: PiAppBar(title: 'Profile').build(context),
@@ -115,7 +114,7 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                         navigateToPage(
                             context,
                             Settings(
-                              userData: this.userData,
+                              userData: userData,
                             ));
                       },
                       icon: Icon(

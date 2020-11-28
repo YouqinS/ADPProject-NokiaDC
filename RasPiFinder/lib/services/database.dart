@@ -87,4 +87,17 @@ class DatabaseService {
   Stream<List<UserData>> get users {
     return userCollection.snapshots().map(_userListFromSnapshots);
   }
+
+  Future updateUserData(
+      String username, String email, String phoneNumber) async {
+    if (username != null && username != '') {
+      await userCollection.doc(uid).update({'username': username});
+    }
+    if (email != null && email != '') {
+      await userCollection.doc(uid).update({'email': email});
+    }
+    if (phoneNumber != null && phoneNumber != '') {
+      await userCollection.doc(uid).update({'phoneNumber': phoneNumber});
+    }
+  }
 }
