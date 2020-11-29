@@ -47,6 +47,7 @@ class _PiDataState extends State<PiData> {
 
     getPiByModelNumber(modelNumber);
 
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -160,7 +161,7 @@ class _PiDataState extends State<PiData> {
                   onPressed: openAlertBox,
                   tooltip: 'Update Pi data',
                 ),
-                visible: showUpdateBtn,
+                visible: showUpdateBtn
               ),
             ],
           ),
@@ -176,7 +177,7 @@ class _PiDataState extends State<PiData> {
 
     var snapshot = querySnapshot.docs[0];
 
-    setState(() {
+    setState((){
       currentPi = Rasp(
           modelNumber: snapshot.data()['modelNumber'] ?? "",
           address: snapshot.data()['address'] ?? "",
@@ -191,12 +192,14 @@ class _PiDataState extends State<PiData> {
   }
 
 
-  final myController1 = TextEditingController();
-  final myController2 = TextEditingController();
-  final myController3 = TextEditingController();
+  TextEditingController myController1 = TextEditingController();
+  TextEditingController myController2 = TextEditingController();
+  TextEditingController myController3 = TextEditingController();
+
+
 
   @override
-  void dispose() {
+  void dispose(){
     myController1.dispose();
     myController2.dispose();
     myController3.dispose();
@@ -204,21 +207,61 @@ class _PiDataState extends State<PiData> {
     super.dispose();
   }
 
-  clearTextInput(){
-    dropdownValue = select;
-    myController1.clear();
-    myController2.clear();
-    myController3.clear();
+  clearDropdownValue(){
+    dropdownValue = getCurrentRole();
   }
 
-  String select = 'Select a type', piOwnerText = "Owner", piUserText = "User", piFinderText = "Finder", otherType = "Unregister";
-  Map<String, String> userA, ownerA, finderA;
 
-  String dropdownValue = 'Select a type';
+  String piOwnerText = "Owner", piUserText = "User", piFinderText = "Finder", otherType = "Unregister";
+  String dropdownValue = "User";
+
+  String getCurrentRole(){
+    final currentUser = auth.currentUser;
+    String currentRole = "";
+    if (currentPi.owner != null && currentPi.owner["uid"] == currentUser.uid) {
+      currentRole = piOwnerText;
+    } else if (currentPi.user != null && currentPi.user["uid"] == currentUser.uid) {
+      currentRole = piUserText;
+    } else if (currentPi.finder != null && currentPi.finder["uid"] == currentUser.uid) {
+      currentRole = piFinderText;
+    }
+    setState(() {
+      dropdownValue = currentRole;
+    });
+    return currentRole;
+  }
+
+  List<String> getDropdownValues() {
+    List<String> values = [];
+    String currentRole = getCurrentRole();
+    print("currentRole=" + currentRole);
+    print("piUserText=" + piUserText);
+    values.add(currentRole);
+    values.add(piOwnerText);
+    values.add(piUserText);
+    values.add(piFinderText);
+    values.add(otherType);
+    if (currentRole == piOwnerText) {
+      values.remove(piOwnerText);
+    } else if (currentRole == piUserText) {
+      values.remove(piUserText);
+    } else if (currentRole == piFinderText) {
+      values.remove(piFinderText);
+    }
+    print("********");
+    print(values);
+    return values;
+  }
+
   openAlertBox () {
+    List<String> values = getDropdownValues();
+    myController1 = TextEditingController(text: (currentPi == null || currentPi.address.isEmpty) ? "":currentPi.address);
+    myController2 = TextEditingController(text: (currentPi == null || currentPi.software.isEmpty) ? "":currentPi.software);
+    myController3 = TextEditingController(text: (currentPi == null || currentPi.other.isEmpty) ? "":currentPi.other);
+
     showDialog(
         context: context,
-        builder: (context) {
+        builder: (context){
           return StatefulBuilder(
             builder:(context, setState){
               return AlertDialog(
@@ -232,47 +275,58 @@ class _PiDataState extends State<PiData> {
                           dropdownValue = newValue;
                           validateUserTypeInput();
                         });},
-                      items: <String>[select, piOwnerText, piUserText, piFinderText, otherType]
-                          .map<DropdownMenuItem<String>>((String value) {
+                      items: values.map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(value),
                         );
                       }).toList(),
                     ),
-                    Expanded(
-                      child: TextFormField(
-                        controller: myController1,
-                        decoration: InputDecoration(
-                            hintText: 'Enter address'),
-                      ),
-                      flex: 1,
+                    Visibility(
+                      child: Expanded(
+                        child: TextFormField(
+                          controller: myController2,
+                          decoration: InputDecoration(
+                              labelText: 'Software',
+                              hintText: 'Enter software name'
+                          ),
+                        ),
+                        flex: 1,),
+                      visible: dropdownValue != otherType,
                     ),
-                    Expanded(
-                      child: TextFormField(
-                        controller: myController2,
-                        decoration: InputDecoration(
-                            hintText: 'Enter software name'),
-                      ),
-                      flex: 1,),
-                    Expanded(
-                      child: TextFormField(
+                    Visibility(
+                      child: Expanded(
+                        child: TextFormField(
+                          controller: myController1,
+                          decoration: InputDecoration(
+                            labelText: 'Address',
+                              hintText: 'Enter address'
+                           ),
+                        ),
+                        flex: 1),
+                      visible: dropdownValue != otherType,
+                    ),
+                    Visibility(
+                      child: Expanded(
+                        child: TextFormField(
                         controller: myController3,
                         decoration: InputDecoration(
-                            hintText: 'Enter additional information'),
-                      ),
-                      flex: 1,),
+                          labelText: 'Additional Information',
+                            hintText: 'Enter additional information'
+                        ),
+                        ),
+                        flex: 1,),
+                      visible: dropdownValue != otherType,
+                    )
                   ],
                 ),
                 actions: [
-                  Visibility(visible:dropdownValue!=select
-                      ,child: RaisedButton(
-                        onPressed: updateData,
-                        textColor: Colors.white,
-                        color: Colors.blue,
-                        padding: const EdgeInsets.all(10.0),
-                        child: const Text('Update', style: TextStyle(fontSize: 20)),
-                      )
+                  RaisedButton(
+                    onPressed: updateData,
+                    textColor: Colors.white,
+                    color: Colors.blue,
+                    padding: const EdgeInsets.all(8.0),
+                    child: const Text('SUBMIT', style: TextStyle(fontSize: 20)),
                   )
                 ],
               );
@@ -282,14 +336,13 @@ class _PiDataState extends State<PiData> {
     );
   }
 
-  
 
   CollectionReference docRef = FirebaseFirestore.instance.collection('pi');
   CollectionReference userRef = FirebaseFirestore.instance.collection('users');
   FirebaseAuth auth = FirebaseAuth.instance;
 
 
-  void updateData()async{
+  void updateData()async {
 
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
@@ -301,99 +354,54 @@ class _PiDataState extends State<PiData> {
     String username = result.data()['username'];
     String phone = result.data()['phoneNumber'];
 
-    if (dropdownValue == select){
-      validateUserTypeInput();
-    }
-    if(dropdownValue != select) {
-      if (dropdownValue == piUserText) {
-        userA = new Map();
-        userA['username'] = username;
-        userA['email'] = userX.email;
-        userA['phoneNumber'] = phone;
-        userA['uid'] = userX.uid;
+    if(dropdownValue.isNotEmpty) {
+      Map appUser = new Map();
+      appUser['username'] = username;
+      appUser['email'] = userX.email;
+      appUser['phoneNumber'] = phone;
+      appUser['uid'] = userX.uid;
 
-        final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
-        snapshot.docs.forEach((DocumentSnapshot doc) {
-          docRef.doc(doc.id).update({
-            "user":userA,
-            "owner": null,
-            "finder": null
-          },
-          ).then((value) => print('User data updated successfully'))
-              .catchError((error)=> print('Failed to update user data'));
-        });
+      Rasp dataToUpdate = currentPi;
 
+      if(dropdownValue == piUserText) {
+        dataToUpdate.user = appUser;
+        dataToUpdate.finder = (currentPi.finder != null && currentPi.finder["uid"] == appUser["uid"]) ? null : currentPi.finder;
+        dataToUpdate.owner = (currentPi.owner != null && currentPi.owner["uid"] == appUser["uid"]) ? null : currentPi.owner;
+      } else if (dropdownValue == piOwnerText) {
+        dataToUpdate.owner = appUser;
+        dataToUpdate.finder = (currentPi.finder != null && currentPi.finder["uid"] == appUser["uid"]) ? null : currentPi.finder;
+        dataToUpdate.user = (currentPi.user != null && currentPi.user["uid"] == appUser["uid"]) ? null : currentPi.user;
+      } else if (dropdownValue == piFinderText) {
+        dataToUpdate.finder = appUser;
+        dataToUpdate.user = (currentPi.user != null && currentPi.user["uid"] == appUser["uid"]) ? null : currentPi.user;
+        dataToUpdate.owner = (currentPi.owner != null && currentPi.owner["uid"] == appUser["uid"]) ? null : currentPi.owner;
+      } else if (dropdownValue == otherType) {
+        dataToUpdate.user = (currentPi.user != null && currentPi.user["uid"] == appUser["uid"]) ? null : currentPi.user;
+        dataToUpdate.owner = (currentPi.owner != null && currentPi.owner["uid"] == appUser["uid"]) ? null : currentPi.owner;
+        dataToUpdate.finder = (currentPi.finder != null && currentPi.finder["uid"] == appUser["uid"]) ? null : currentPi.finder;
       }
-      if (dropdownValue == piOwnerText) {
-        ownerA = new Map();
-        ownerA['username'] = username;
-        ownerA['email'] = userX.email;
-        ownerA['phoneNumber'] = phone;
-        ownerA['uid'] = userX.uid;
 
-        final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
-        snapshot.docs.forEach((DocumentSnapshot doc) {
-          docRef.doc(doc.id).update({
-            "user": null,
-            "owner": ownerA,
-            "finder": null
-          },
-          ).then((value) => print('User data updated successfully'))
-              .catchError((error)=> print('Failed to update user data'));
-        });
+      final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
+      snapshot.docs.forEach((DocumentSnapshot doc) {
+        docRef.doc(doc.id).update({
+          "user": dataToUpdate.user,
+          "owner": dataToUpdate.owner,
+          "finder": dataToUpdate.finder,
+          "geoPoint": (position == null) ? null : GeoPoint(position.latitude, position.longitude),
+          "address": myController1.text,
+          "software": myController2.text,
+          "other": myController3.text,
+        },
+        ).then((value) => print('User data updated successfully'))
+            .catchError((error) => print('Failed to update user data'));
 
-      }
-      if (dropdownValue == piFinderText) {
-        finderA = new Map();
-        finderA['username'] = username;
-        finderA['email'] = userX.email;
-        finderA['phoneNumber'] = phone;
-        finderA['uid'] = userX.uid;
+        stayOrLeave();
+        clearDropdownValue();
+      });
 
-        final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
-        snapshot.docs.forEach((DocumentSnapshot doc) {
-          docRef.doc(doc.id).update({
-            "user": null,
-            "owner": null,
-            "finder": finderA
-          },
-          ).then((value) => print('User data updated successfully'))
-              .catchError((error)=> print('Failed to update user data'));
-        });
-
-      }
-      if (dropdownValue == otherType) {
-        validateUserTypeInput();
-        final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
-        snapshot.docs.forEach((DocumentSnapshot doc) {
-          docRef.doc(doc.id).update({
-            "user": null,
-            "owner": null,
-            "finder": null
-          },
-          ).then((value) => print('User data updated successfully'))
-              .catchError((error)=> print('Failed to update user data'));
-        });
-      }
       print('userType=' + dropdownValue);
     }
-
-
-    final QuerySnapshot snapshot = await docRef.where('modelNumber', isEqualTo: mn).get();
-    snapshot.docs.forEach((DocumentSnapshot doc) {
-      docRef.doc(doc.id).update({
-        "geoPoint": GeoPoint(position.latitude, position.longitude),
-        "address": myController1.text,
-        "software": myController2.text,
-        "other": myController3.text,
-      },
-      ).then((value) => print('Pi data updated successfully'))
-          .catchError((error)=> print('Failed to update pi data'));
-      clearTextInput();
-    });
-    Navigator.of(context).pop();
   }
-
 
   void navToMap(BuildContext context) {
     if (currentPi.geoPoint == null) {
@@ -434,11 +442,18 @@ class _PiDataState extends State<PiData> {
 
 
   void validateUserTypeInput() {
-    if (dropdownValue == select) {
-      Validator.showAlert(context, "Alert", "Please select a User Type", "OK");
-    }
     if (dropdownValue == otherType) {
       Validator.showAlert(context, "Alert", "Selecting Unregister will delete all your data from this pi!", "OK");
+    }
+  }
+
+  void stayOrLeave(){
+    if (dropdownValue == otherType) {
+      Navigator.of(context).popUntil(ModalRoute.withName('/')); // back to MyRasPie page
+//    Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false); // back to homepage
+    }
+    else {
+      Navigator.of(context).pop();
     }
   }
 }

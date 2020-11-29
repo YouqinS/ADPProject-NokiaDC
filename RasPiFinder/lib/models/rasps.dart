@@ -2,13 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Rasp {
   final String modelNumber; //uid
-  final String address;
-  final String software;
-  final Map finder;
-  final Map user;
-  final Map owner;
-  final String other;
-  final GeoPoint geoPoint;
+  String address;
+  String software;
+  Map finder;
+  Map user;
+  Map owner;
+  String other;
+  GeoPoint geoPoint;
 
   String _getUserString(Map user) {
     var result = '';
