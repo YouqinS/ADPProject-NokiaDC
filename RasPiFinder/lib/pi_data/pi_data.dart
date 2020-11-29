@@ -1,6 +1,9 @@
 import 'dart:async';
 
+import 'package:RasPiFinder/components/app_bar.dart';
+import 'package:RasPiFinder/components/loading.dart';
 import 'package:RasPiFinder/components/navigate.dart';
+import 'package:RasPiFinder/map/map_only.dart';
 import 'package:RasPiFinder/map/map_view.dart';
 import 'package:RasPiFinder/models/rasps.dart';
 import 'package:RasPiFinder/pi_data/dataContainer.dart';
@@ -32,11 +35,41 @@ class _PiDataState extends State<PiData> {
   final String modelNumber;
   Rasp currentPi;
   _PiDataState(this.modelNumber, this.showUpdateBtn);
+  bool loading = false;
 
 
+   Future loadMap() async {
+    if (currentPi == null || currentPi.geoPoint == null) {
+        setState(() => loading = true);
+    } else {
+      setState(() {
+          loading = false;
+        });
+     return MapOnly(lastKnownGeopoint: new LatLng(currentPi.geoPoint.latitude, currentPi.geoPoint.longitude),);
+    }  
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    var futureBuilder = new FutureBuilder(
+      future: loadMap(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+          case ConnectionState.waiting:
+            // return new Text('loading...');
+          default:
+            if (snapshot.hasError)
+              return new Text('Error: ${snapshot.error}');
+            else
+              return Container(
+                child:MapOnly(lastKnownGeopoint: new LatLng(currentPi.geoPoint.latitude, currentPi.geoPoint.longitude)),
+                height: MediaQuery.of(context).size.height / 4.0,
+            );
+        } 
+      },
+    );
     Size size = MediaQuery.of(context).size;
     final String user = (null == currentPi || currentPi.user == null) ? none : currentPi.user['email'];
     final String owner = (null == currentPi || currentPi.owner == null) ? none : currentPi.owner['email'];
@@ -47,22 +80,8 @@ class _PiDataState extends State<PiData> {
 
     getPiByModelNumber(modelNumber);
 
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Pi Data",
-          style: TextStyle(
-              color: Colors.white,
-              letterSpacing: 2,
-              fontWeight: FontWeight.bold,
-              fontSize: 20
-          ),
-        ),
-        backgroundColor: Colors.blue,
-        centerTitle: true,
-        actions: <Widget>[ ],
-      ),
+    return loading ? Loading() : Scaffold(
+      appBar: PiAppBar(title: 'Pi Data').build(context),
       body: SingleChildScrollView(
         child: Container(
           height: size.height,
@@ -70,8 +89,14 @@ class _PiDataState extends State<PiData> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Card(
+            children: <Widget>[
+              futureBuilder,
+              Container(
+                // borderRadius: BorderRadius.circular(5.0),
+                decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+                child:   Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(80), topRight: Radius.circular(90))),
                 elevation: 0,
                 color: Colors.white,
                 child: Column(
@@ -146,6 +171,8 @@ class _PiDataState extends State<PiData> {
                   ],
                 ),
               ),
+              ),
+            
               Visibility(
                 child: FloatingActionButton.extended(
                   backgroundColor: Colors.blue[800],
