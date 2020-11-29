@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
 class Validator {
-
   static String validateUsername(String username) {
-    if (username== null || username.isEmpty || username.length < 4) {
+    if (username == null || username.isEmpty || username.length < 4) {
       return 'Min length: 4';
     }
     return null;
@@ -29,19 +28,23 @@ class Validator {
     return null;
   }
 
-  static String validatePasswdInput(String password) {
-    if (null == password || password.isEmpty) {
+  static String validatePasswdInput(String password, {bool isRequired = true}) {
+    if ((null == password || password.isEmpty) && isRequired) {
       return 'Password empty';
-    }
-    String  pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
-    RegExp regExp = new RegExp(pattern);
-    if (!regExp.hasMatch(password)) {
-      return 'e.g.: 123Abc!#';
+    } else if (password != null && password.isNotEmpty) {
+      String pattern =
+          r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+      RegExp regExp = new RegExp(pattern);
+      if (!regExp.hasMatch(password)) {
+        return 'e.g.: 123Abc!#';
+      }
+      return null;
     }
     return null;
   }
 
-  static Future<void> showAlert(BuildContext context, String title, String bodyText, String btnText) async {
+  static Future<void> showAlert(BuildContext context, String title,
+      String bodyText, String btnText) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!

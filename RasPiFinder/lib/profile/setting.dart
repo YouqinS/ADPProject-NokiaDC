@@ -104,7 +104,8 @@ class SettingsState extends State<Settings> {
                           onSaved: (value) {
                             username = value;
                           },
-                          validateInput: validateUsernameInput,
+                          validateInput: (username) =>
+                              Validator.validateUsername(username.trim()),
                         ),
                         TextInputField(
                           hintText: "New Phone Number",
@@ -113,7 +114,8 @@ class SettingsState extends State<Settings> {
                           onSaved: (value) {
                             phone = value;
                           },
-                          validateInput: validatePhoneInput,
+                          validateInput: (phone) =>
+                              Validator.validatePhoneInput(phone.trim()),
                         ),
                         RoundedButton(
                           text: "Save",
@@ -151,7 +153,8 @@ class SettingsState extends State<Settings> {
                           onSaved: (value) {
                             email = value;
                           },
-                          validateInput: validateEmailInput,
+                          validateInput: (email) =>
+                              Validator.validateEmailInput(email.trim()),
                         ),
                         PasswordInputField(
                           hintText: 'Current Password',
@@ -161,7 +164,8 @@ class SettingsState extends State<Settings> {
                           onSaved: (value) {
                             currentPassword = value;
                           },
-                          validateInput: validatePasswdInput,
+                          validateInput: (password) =>
+                              Validator.validatePasswdInput(password),
                         ),
                         PasswordInputField(
                           hintText: 'New Password',
@@ -171,7 +175,9 @@ class SettingsState extends State<Settings> {
                           onSaved: (value) {
                             password = value;
                           },
-                          validateInput: validatePasswdInput,
+                          validateInput: (password) =>
+                              Validator.validatePasswdInput(password,
+                                  isRequired: false),
                         ),
                         PasswordInputField(
                           hintText: 'Confirm Password',
@@ -196,43 +202,9 @@ class SettingsState extends State<Settings> {
     );
   }
 
-  String validateUsernameInput(String username) {
-    return username != null && username != '' ? null : 'Invalid username';
-  }
-
-  String validateEmailInput(String email) {
-    Pattern pattern =
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    RegExp regex = new RegExp(pattern);
-
-    if (null != email && email.isNotEmpty && !regex.hasMatch(email)) {
-      return 'Please enter a valid email !';
-    }
-    return null;
-  }
-
-  String validatePasswdInput(String password) {
-    String pattern =
-        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
-    RegExp regExp = new RegExp(pattern);
-    if (null != password && password.isNotEmpty && !regExp.hasMatch(password)) {
-      return 'Password needs to contain at least 8 characters,\n'
-          'with at least one big letter, one small letter,\n'
-          'one special character and one number!';
-    }
-    return null;
-  }
-
   String confirmPasswdInput(String password2) {
     if (null != password && password.isNotEmpty && password != password2) {
       return 'Passwords do not match!';
-    }
-    return null;
-  }
-
-  String validatePhoneInput(String phone) {
-    if (null != phone && phone.isNotEmpty && phone.length < 10) {
-      return 'A valid Finnish phone number contains at least 10 numbers!';
     }
     return null;
   }
