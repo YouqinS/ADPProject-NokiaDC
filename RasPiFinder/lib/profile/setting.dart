@@ -1,123 +1,203 @@
+import 'package:RasPiFinder/auth/Validator.dart';
 import 'package:RasPiFinder/components/app_bar.dart';
-import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/components/password_input_field.dart';
 import 'package:RasPiFinder/components/rounded_button.dart';
 import 'package:RasPiFinder/components/text_input_field.dart';
-import 'package:RasPiFinder/home/home_page.dart';
+import 'package:RasPiFinder/models/user.dart';
+import 'package:RasPiFinder/services/authentication_service.dart';
+import 'package:RasPiFinder/services/database.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Settings extends StatefulWidget {
-  Settings({Key key}) : super(key: key);
+  final UserData userData;
+  Settings({Key key, this.userData}) : super(key: key);
 
   @override
-  SettingsState createState() => new SettingsState();
+  SettingsState createState() => new SettingsState(userData);
 }
 
 class SettingsState extends State<Settings> {
-  final formKey = GlobalKey<FormState>();
-  String username, email, phone, password;
+  final UserData userData;
+  String username, email, phone, password, currentEmail, currentPassword;
+  SettingsState(this.userData) {
+    currentEmail = userData.email;
+    email = userData.email;
+    username = userData.username;
+    phone = userData.phoneNumber;
+  }
+
+  final basicFormKey = GlobalKey<FormState>();
+  final authFormKey = GlobalKey<FormState>();
+  final AuthenticationService _authenticationService = AuthenticationService();
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: PiAppBar(title: 'Settings').build(context),
+      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
-        child: Container(
-          color: Colors.grey[100],
-          width: size.width,
-          height: size.height,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  CircleAvatar(
-                    radius: 55,
-                    backgroundColor: Colors.blue[100],
-                    child: Icon(
-                      Icons.person,
-                      color: Colors.blue[900],
-                      size: size.height * 0.1,
+          reverse: true,
+          child: Padding(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CircleAvatar(
+                      radius: 55,
+                      backgroundColor: Colors.blue[100],
+                      child: Icon(
+                        Icons.person,
+                        color: Colors.blue[900],
+                        size: size.height * 0.1,
+                      ),
                     ),
-                  ),
-
-                  SizedBox(width: size.width * 0.05,),
-                  Text(
-                    'Edit Profile',
-                    style: TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
-                      fontSize: 22,
+                    SizedBox(
+                      width: size.width * 0.05,
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: size.height * 0.05,),
-              Card(
-                elevation: 0,
-                color: Colors.grey[100],
-                child:  Form(
-                  key: formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      TextInputField(
-                        hintText: "New Email",
-                        icon: Icons.email,
-                        onSaved: (value) {
-                          email = value;
-                        },
-                        validateInput: validateEmailInput,
+                    Text(
+                      'Edit Profile',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                        fontSize: 22,
                       ),
-                      TextInputField(
-                        hintText: "New Phone Number",
-                        icon: Icons.phone_android,
-                        onSaved: (value) {
-                          phone = value;
-                        },
-                        validateInput: validatePhoneInput,
-                      ),
-                      PasswordInputField(
-                        hintText: 'New Password',
-                        onChanged: (value) {
-                          password = value;
-                        },
-                        onSaved: (value) {
-                          password = value;
-                        },
-                        validateInput: validatePasswdInput,
-                      ),
-                      PasswordInputField(
-                        hintText: 'Confirm Password',
-                        onSaved: (value) {
-                          password = value;
-                        },
-                        validateInput: confirmPasswdInput,
-                      ),
-                      RoundedButton(
-                        text: "Save",
-                        //TODO connect to DB to store user credentials and status
-                        press: () {
-                          submit();
-                        },
-                      ),
-                    ],
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: size.height * 0.05,
+                ),
+                Card(
+                  elevation: 0,
+                  color: Colors.grey[100],
+                  child: Form(
+                    key: basicFormKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          'Update basic information',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                            fontSize: 18,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        TextInputField(
+                          hintText: "Username",
+                          icon: Icons.person,
+                          initialValue: username,
+                          onSaved: (value) {
+                            username = value;
+                          },
+                          validateInput: validateUsernameInput,
+                        ),
+                        TextInputField(
+                          hintText: "New Phone Number",
+                          icon: Icons.phone_android,
+                          initialValue: phone,
+                          onSaved: (value) {
+                            phone = value;
+                          },
+                          validateInput: validatePhoneInput,
+                        ),
+                        RoundedButton(
+                          text: "Save",
+                          press: () {
+                            submitBasicInfo();
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-
-              ),
-            ],
-          ),
-        ),
-      ),
+                Card(
+                  elevation: 0,
+                  color: Colors.grey[100],
+                  child: Form(
+                    key: authFormKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Update authentication information',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                            fontSize: 18,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        TextInputField(
+                          hintText: "New Email",
+                          icon: Icons.email,
+                          initialValue: email,
+                          onSaved: (value) {
+                            email = value;
+                          },
+                          validateInput: validateEmailInput,
+                        ),
+                        PasswordInputField(
+                          hintText: 'Current Password',
+                          onChanged: (value) {
+                            currentPassword = value;
+                          },
+                          onSaved: (value) {
+                            currentPassword = value;
+                          },
+                          validateInput: validatePasswdInput,
+                        ),
+                        PasswordInputField(
+                          hintText: 'New Password',
+                          onChanged: (value) {
+                            password = value;
+                          },
+                          onSaved: (value) {
+                            password = value;
+                          },
+                          validateInput: validatePasswdInput,
+                        ),
+                        PasswordInputField(
+                          hintText: 'Confirm Password',
+                          onSaved: (value) {
+                            password = value;
+                          },
+                          validateInput: confirmPasswdInput,
+                        ),
+                        RoundedButton(
+                          text: "Save",
+                          press: () {
+                            submitAuthInfo();
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )),
     );
+  }
+
+  String validateUsernameInput(String username) {
+    return username != null && username != '' ? null : 'Invalid username';
   }
 
   String validateEmailInput(String email) {
@@ -132,7 +212,8 @@ class SettingsState extends State<Settings> {
   }
 
   String validatePasswdInput(String password) {
-    String  pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+    String pattern =
+        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
     RegExp regExp = new RegExp(pattern);
     if (null != password && password.isNotEmpty && !regExp.hasMatch(password)) {
       return 'Password needs to contain at least 8 characters,\n'
@@ -156,16 +237,32 @@ class SettingsState extends State<Settings> {
     return null;
   }
 
-  void submit(){
-    if(formKey.currentState.validate()){
-      formKey.currentState.save();
-      //TODO get current GPS data and store to DB
-      //TODO connect to DB to store user input
-      print(username);
-      print(phone);
-      print(email);
-      print(password);
-      navigateToPage(context, HomePage());
+  void submitBasicInfo() async {
+    if (basicFormKey.currentState.validate()) {
+      basicFormKey.currentState.save();
+      try {
+        //TODO get current GPS data and store to DB
+        await DatabaseService(uid: userData.uid)
+            .updateUserData(username, null, phone);
+        Validator.showAlert(
+            context, "Success", "Your changes have been saved", "OK");
+      } on FirebaseAuthException catch (e) {
+        print(e.toString());
+      }
+    }
+  }
+
+  void submitAuthInfo() async {
+    if (authFormKey.currentState.validate()) {
+      authFormKey.currentState.save();
+      try {
+        await _authenticationService.updateEmailPassword(
+            userData.uid, currentEmail, currentPassword, email, password);
+        Navigator.pop(context);
+      } on FirebaseAuthException catch (e) {
+        print(e.toString());
+        Validator.showAlert(context, "Alert", "Wrong current password", "OK");
+      }
     }
   }
 }

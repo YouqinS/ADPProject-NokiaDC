@@ -26,7 +26,8 @@ class DatabaseService {
     });
   }
 
-  Future createUser(String username, String email, String phoneNumber) async {
+  Future createOrEditUser(
+      String username, String email, String phoneNumber) async {
     return await userCollection.doc(uid).set({
       'uid': uid,
       'phoneNumber': phoneNumber,
@@ -85,5 +86,18 @@ class DatabaseService {
 
   Stream<List<UserData>> get users {
     return userCollection.snapshots().map(_userListFromSnapshots);
+  }
+
+  Future updateUserData(
+      String username, String email, String phoneNumber) async {
+    if (username != null && username != '') {
+      await userCollection.doc(uid).update({'username': username});
+    }
+    if (email != null && email != '') {
+      await userCollection.doc(uid).update({'email': email});
+    }
+    if (phoneNumber != null && phoneNumber != '') {
+      await userCollection.doc(uid).update({'phoneNumber': phoneNumber});
+    }
   }
 }

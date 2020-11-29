@@ -12,7 +12,6 @@ class NavigationPage extends StatefulWidget {
 }
 
 class _NavigationPageState extends State<NavigationPage> {
-
   PageController _pageController = PageController();
 
   int _selectedIndex = 0;
@@ -35,8 +34,7 @@ class _NavigationPageState extends State<NavigationPage> {
       uid = userData.uid;
     }
 
-    List<Widget> _screens = [HomePage(), Profile(userData: userData,), MyRasPi(uid: uid,)];
-
+    List<Widget> _screens = [HomePage(), Profile(), MyRasPi(uid: uid,)];
 
     return Scaffold(
         body: PageView(

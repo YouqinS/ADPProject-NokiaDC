@@ -5,18 +5,19 @@ import 'package:RasPiFinder/services/authentication_service.dart';
 import 'package:RasPiFinder/profile/setting.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Profile extends StatefulWidget {
-  final UserData userData;
-  Profile({Key key, this.userData}) : super(key: key);
+  // final UserData userData;
+  // Profile({Key key, this.userData}) : super(key: key);
 
   @override
-  ProfileState createState() => new ProfileState(userData);
+  ProfileState createState() => new ProfileState();
 }
 
 class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
-  final UserData userData;
-  ProfileState(this.userData);
+  // final UserData userData;
+  // ProfileState(this.userData);
 
   final formKey = GlobalKey<FormState>();
   final String notAvail = 'not available';
@@ -25,6 +26,7 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    UserData userData = Provider.of<UserData>(context);
     Size size = MediaQuery.of(context).size;
     return Scaffold(
         appBar: PiAppBar(title: 'Profile').build(context),
@@ -52,7 +54,9 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                     child: Column(
                       children: [
                         Text(
-                          userData.username.isEmpty ? notAvail : userData.username,
+                          userData == null || userData.username.isEmpty
+                              ? notAvail
+                              : userData.username,
                           style: TextStyle(
                             color: Colors.blue,
                             fontWeight: FontWeight.bold,
@@ -67,7 +71,9 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                           height: size.height * 0.006,
                         ),
                         Text(
-                          userData.email.isEmpty ? notAvail : userData.email,
+                          userData == null || userData.email.isEmpty
+                              ? notAvail
+                              : userData.email,
                           style: TextStyle(
                             color: Colors.blue,
                             fontSize: 18,
@@ -80,7 +86,9 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                           height: size.height * 0.006,
                         ),
                         Text(
-                          userData.phoneNumber.isEmpty ? notAvail : userData.phoneNumber,
+                          userData == null || userData.phoneNumber.isEmpty
+                              ? notAvail
+                              : userData.phoneNumber,
                           style: TextStyle(
                             color: Colors.blue,
                             fontSize: 18,
@@ -103,7 +111,11 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                     child: RaisedButton.icon(
                       color: Colors.grey[200],
                       onPressed: () {
-                        navigateToPage(context, Settings());
+                        navigateToPage(
+                            context,
+                            Settings(
+                              userData: userData,
+                            ));
                       },
                       icon: Icon(
                         Icons.settings,
@@ -114,8 +126,7 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                             color: Colors.blue,
                             letterSpacing: 1.2,
                             fontSize: 18,
-                          )
-                      ),
+                          )),
                     ),
                   ),
                   SizedBox(
