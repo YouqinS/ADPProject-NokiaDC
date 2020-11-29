@@ -1,4 +1,5 @@
 import 'package:RasPiFinder/profile/my_pi.dart';
+import 'package:RasPiFinder/widgets/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:RasPiFinder/home/home_page.dart';
 import 'package:RasPiFinder/profile/profile.dart';
@@ -36,31 +37,31 @@ class _NavigationPageState extends State<NavigationPage> {
     List<Widget> _screens = [HomePage(), Profile(), MyRasPi(uid: uid,)];
 
     return Scaffold(
-      body: PageView(
-        controller: _pageController,
-        children: _screens,
-        onPageChanged: _onPageChanged,
-        physics: NeverScrollableScrollPhysics(),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: new Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: new Icon(Icons.person),
-            label: 'Profile',
-          ),
-          BottomNavigationBarItem(
-            icon: new Icon(Icons.pie_chart_outline_outlined),
-            label: 'MyPies',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
-        onTap: _onItemTapped,
-      ),
+        body: PageView(
+          controller: _pageController,
+          children: _screens,
+          onPageChanged: _onPageChanged,
+          physics: NeverScrollableScrollPhysics(),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: [
+            BottomNavigationBarItem(
+              icon: new Icon(Icons.home),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: new Icon(Icons.person),
+              label: 'Profile',
+            ),
+            BottomNavigationBarItem(
+              icon: new Icon(Icons.pie_chart_outline_outlined),
+              label: 'MyPies',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: AppTheme.iconColors[0],
+          onTap: _onItemTapped,
+        ),
     );
   }
 }

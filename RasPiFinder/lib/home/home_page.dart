@@ -5,6 +5,7 @@ import 'package:RasPiFinder/home/rasp_list.dart';
 import 'package:RasPiFinder/models/rasps.dart';
 import 'package:RasPiFinder/models/user.dart';
 import 'package:RasPiFinder/pi_data/pi_data.dart';
+import 'package:RasPiFinder/widgets/theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -41,7 +42,20 @@ class _HomePageState extends State<HomePage>
               fontWeight: FontWeight.bold,
               fontSize: 20),
         ),
-        backgroundColor: Colors.blue,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: new LinearGradient(
+              colors: <Color>[
+                const Color(0xFF124191),
+                const Color(0xFF124191),
+              ],
+              begin: const FractionalOffset(0.0, 0.0),
+              end: const FractionalOffset(0.0, 0.0),
+              stops: [0.0, 0.0],
+              tileMode: TileMode.clamp              
+            ),
+          ),
+        ),
         centerTitle: true,
         actions: <Widget>[
           FlatButton.icon(
@@ -62,15 +76,15 @@ class _HomePageState extends State<HomePage>
               showSearch: value,
             );
           }),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: FloatingActionButton(
+          backgroundColor: AppTheme.primary,
           onPressed: () => {
                 getModelNumberAndNavigate(rasPiList, userData)
               },
-          icon: Icon(
+          child: Icon(
             Icons.camera_alt_rounded,
           ),
-          label: Text('Scan QR')),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      ),
     );
   }
 

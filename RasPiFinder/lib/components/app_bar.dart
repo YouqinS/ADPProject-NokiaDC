@@ -18,8 +18,23 @@ class PiAppBar extends StatelessWidget {
             fontSize: 20
         ),
       ),
-      backgroundColor: Colors.blue,
+      flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: new LinearGradient(
+              colors: <Color>[
+                const Color(0xFF124191),
+                const Color(0xFF124191),
+              ],
+              begin: const FractionalOffset(0.0, 0.0),
+              end: const FractionalOffset(0.8, 0.0),
+              stops: [0.0, 1.0],
+              tileMode: TileMode.clamp              
+            ),
+          ),
+        ),
+      // backgroundColor: Colors.blue,
       centerTitle: true,
+      actions: <Widget>[],
     );
   }
 }
