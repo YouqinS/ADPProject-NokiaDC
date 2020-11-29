@@ -60,7 +60,17 @@ class SettingsState extends State<Settings> {
                 ],
               ),
               SizedBox(height: size.height * 0.05,),
-              FlatButton(onPressed: usernamePressed, child: Text('update username'), color: Colors.grey[200],),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  FlatButton(onPressed: usernamePressed, child: Text('username'), color: Colors.grey[200],),
+                  FlatButton(onPressed: emailPressed, child: Text('email'), color: Colors.grey[200],),
+                  FlatButton(onPressed: phonePressed, child: Text('phone'), color: Colors.grey[200],),
+                  FlatButton(onPressed: passwordPressed, child: Text('password'), color: Colors.grey[200],),
+                ],
+              ),
+
+              SizedBox(height: size.height * 0.02,),
               Visibility(
                 visible: showUsernameField,
                 child: TextInputField(
@@ -72,19 +82,31 @@ class SettingsState extends State<Settings> {
                   validateInput: validateUsername,
                 ),
               ),
-              FlatButton(onPressed: emailPressed, child: Text('update email'), color: Colors.grey[200],),
               Visibility(
                 visible: showEmailField,
-                child: TextInputField(
-                  hintText: "New Email",
-                  icon: Icons.email,
-                  onSaved: (value) {
-                    email = value.trim();
-                  },
-                  validateInput: validateEmailInput,
+                child: Column(
+                  children: [
+                    TextInputField(
+                      hintText: "New Email",
+                      icon: Icons.email,
+                      onSaved: (value) {
+                        email = value.trim();
+                      },
+                      validateInput: validateEmailInput,
+                    ),
+                    PasswordInputField(
+                      hintText: 'Enter password to confirm',
+                      onChanged: (value) {
+                        password = value;
+                      },
+                      onSaved: (value) {
+                        password = value;
+                      },
+                      validateInput: validatePasswdInput,
+                    ),
+                  ],
                 ),
               ),
-              FlatButton(onPressed: phonePressed, child: Text('update phone'), color: Colors.grey[200],),
               Visibility(
                 visible: showPhoneField,
                 child: TextInputField(
@@ -96,11 +118,20 @@ class SettingsState extends State<Settings> {
                   validateInput: validatePhoneInput,
                 ),
               ),
-              FlatButton(onPressed: passwordPressed, child: Text('update password'), color: Colors.grey[200],),
               Visibility(
                 visible: showPassField,
                 child: Column(
                   children: [
+                    PasswordInputField(
+                      hintText: 'Current Password',
+                      onChanged: (value) {
+                        password = value;
+                      },
+                      onSaved: (value) {
+                        password = value;
+                      },
+                      validateInput: validatePasswdInput,
+                    ),
                     PasswordInputField(
                       hintText: 'New Password',
                       onChanged: (value) {
@@ -121,32 +152,10 @@ class SettingsState extends State<Settings> {
                   ],
                 ),
               ),
-              SizedBox(height: size.height * 0.03),
               Visibility(
                 visible: showPassField || showUsernameField || showPhoneField || showEmailField,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    RaisedButton(
-                      color: Colors.red[600],
-                      child: Text('Cancel',
-                          style: TextStyle(color: Colors.white)),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    RaisedButton(
-                      color: Colors.blue[700],
-                      child: Text('Save',
-                          style: TextStyle(color: Colors.white)),
-                      onPressed: () {
-                        submit();
-                      },
-                    ),
-                  ],
-                ),
+                child: RoundedButton(text: "Save", press: (){},),
               ),
-              SizedBox(height: size.height * 0.02,),
             ],
           ),
         ),
