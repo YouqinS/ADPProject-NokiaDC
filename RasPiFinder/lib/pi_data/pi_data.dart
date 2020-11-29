@@ -208,15 +208,53 @@ class _PiDataState extends State<PiData> {
   }
 
   clearDropdownValue(){
-    dropdownValue = select;
+    dropdownValue = getCurrentRole();
   }
 
 
-  String select = 'Select a type', piOwnerText = "Owner", piUserText = "User", piFinderText = "Finder", otherType = "Unregister";
-  Map<String, String> userA, ownerA, finderA;
-  String dropdownValue = 'Select a type';
+  String piOwnerText = "Owner", piUserText = "User", piFinderText = "Finder", otherType = "Unregister";
+  String dropdownValue = "User";
+
+  String getCurrentRole(){
+    final currentUser = auth.currentUser;
+    String currentRole = "";
+    if (currentPi.owner != null && currentPi.owner["uid"] == currentUser.uid) {
+      currentRole = piOwnerText;
+    } else if (currentPi.user != null && currentPi.user["uid"] == currentUser.uid) {
+      currentRole = piUserText;
+    } else if (currentPi.finder != null && currentPi.finder["uid"] == currentUser.uid) {
+      currentRole = piFinderText;
+    }
+    setState(() {
+      dropdownValue = currentRole;
+    });
+    return currentRole;
+  }
+
+  List<String> getDropdownValues() {
+    List<String> values = [];
+    String currentRole = getCurrentRole();
+    print("currentRole=" + currentRole);
+    print("piUserText=" + piUserText);
+    values.add(currentRole);
+    values.add(piOwnerText);
+    values.add(piUserText);
+    values.add(piFinderText);
+    values.add(otherType);
+    if (currentRole == piOwnerText) {
+      values.remove(piOwnerText);
+    } else if (currentRole == piUserText) {
+      values.remove(piUserText);
+    } else if (currentRole == piFinderText) {
+      values.remove(piFinderText);
+    }
+    print("********");
+    print(values);
+    return values;
+  }
 
   openAlertBox () {
+    List<String> values = getDropdownValues();
     myController1 = TextEditingController(text: (currentPi == null || currentPi.address.isEmpty) ? "":currentPi.address);
     myController2 = TextEditingController(text: (currentPi == null || currentPi.software.isEmpty) ? "":currentPi.software);
     myController3 = TextEditingController(text: (currentPi == null || currentPi.other.isEmpty) ? "":currentPi.other);
@@ -237,13 +275,24 @@ class _PiDataState extends State<PiData> {
                           dropdownValue = newValue;
                           validateUserTypeInput();
                         });},
-                      items: <String>[select, piOwnerText, piUserText, piFinderText, otherType]
-                          .map<DropdownMenuItem<String>>((String value) {
+                      items: values.map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(value),
                         );
                       }).toList(),
+                    ),
+                    Visibility(
+                      child: Expanded(
+                        child: TextFormField(
+                          controller: myController2,
+                          decoration: InputDecoration(
+                              labelText: 'Software',
+                              hintText: 'Enter software name'
+                          ),
+                        ),
+                        flex: 1,),
+                      visible: dropdownValue != otherType,
                     ),
                     Visibility(
                       child: Expanded(
@@ -255,18 +304,6 @@ class _PiDataState extends State<PiData> {
                            ),
                         ),
                         flex: 1),
-                      visible: dropdownValue != otherType,
-                    ),
-                    Visibility(
-                      child: Expanded(
-                        child: TextFormField(
-                          controller: myController2,
-                          decoration: InputDecoration(
-                            labelText: 'Software',
-                              hintText: 'Enter software name'
-                              ),
-                        ),
-                        flex: 1,),
                       visible: dropdownValue != otherType,
                     ),
                     Visibility(
@@ -284,14 +321,12 @@ class _PiDataState extends State<PiData> {
                   ],
                 ),
                 actions: [
-                  Visibility(visible:dropdownValue!=select
-                      ,child: RaisedButton(
-                        onPressed: updateData,
-                        textColor: Colors.white,
-                        color: Colors.blue,
-                        padding: const EdgeInsets.all(8.0),
-                        child: const Text('SUBMIT', style: TextStyle(fontSize: 20)),
-                      )
+                  RaisedButton(
+                    onPressed: updateData,
+                    textColor: Colors.white,
+                    color: Colors.blue,
+                    padding: const EdgeInsets.all(8.0),
+                    child: const Text('SUBMIT', style: TextStyle(fontSize: 20)),
                   )
                 ],
               );
@@ -319,11 +354,7 @@ class _PiDataState extends State<PiData> {
     String username = result.data()['username'];
     String phone = result.data()['phoneNumber'];
 
-    if(dropdownValue == select) {
-      validateUserTypeInput();
-    }
-
-    if(dropdownValue != select) {
+    if(dropdownValue.isNotEmpty) {
       Map appUser = new Map();
       appUser['username'] = username;
       appUser['email'] = userX.email;
@@ -356,17 +387,18 @@ class _PiDataState extends State<PiData> {
           "user": dataToUpdate.user,
           "owner": dataToUpdate.owner,
           "finder": dataToUpdate.finder,
-          "geoPoint": GeoPoint(position.latitude, position.longitude),
+          "geoPoint": (position == null) ? null : GeoPoint(position.latitude, position.longitude),
           "address": myController1.text,
           "software": myController2.text,
           "other": myController3.text,
         },
         ).then((value) => print('User data updated successfully'))
             .catchError((error) => print('Failed to update user data'));
+
+        stayOrLeave();
         clearDropdownValue();
       });
 
-      stayOrLeave();
       print('userType=' + dropdownValue);
     }
   }
@@ -410,9 +442,6 @@ class _PiDataState extends State<PiData> {
 
 
   void validateUserTypeInput() {
-    if (dropdownValue == select) {
-      Validator.showAlert(context, "Alert", "Please select a User Type", "OK");
-    }
     if (dropdownValue == otherType) {
       Validator.showAlert(context, "Alert", "Selecting Unregister will delete all your data from this pi!", "OK");
     }
