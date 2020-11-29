@@ -32,7 +32,8 @@ class Rasp {
             this.modelNumber +
             _getUserString(this.finder) +
             _getUserString(this.user) +
-            _getUserString(this.owner))
+            _getUserString(this.owner) +
+            this.other)
         .toLowerCase();
   }
 
