@@ -1,3 +1,4 @@
+import 'package:RasPiFinder/models/rasps.dart';
 import 'package:shared_preferences/shared_preferences.dart';
  
 class MSharedPreferences {
@@ -5,6 +6,16 @@ class MSharedPreferences {
  
   static final MSharedPreferences instance =
       MSharedPreferences._privateConstructor();
+
+  addIntToSF(String s, List<Rasp> myPies) async {
+  SharedPreferences myPrefs = await SharedPreferences.getInstance();
+  myPrefs.setInt('intValue', 123);
+  }
+
+  Future<bool> getIntValue(String key) async {
+    SharedPreferences myPrefs = await SharedPreferences.getInstance();
+    return myPrefs.getInt(key) ?? false;
+  }
  
   setBooleanValue(String key, bool value) async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();

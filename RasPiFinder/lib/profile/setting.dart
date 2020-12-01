@@ -6,22 +6,25 @@ import 'package:RasPiFinder/components/text_input_field.dart';
 import 'package:RasPiFinder/models/user.dart';
 import 'package:RasPiFinder/services/authentication_service.dart';
 import 'package:RasPiFinder/services/database.dart';
+import 'package:RasPiFinder/widgets/theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class Settings extends StatefulWidget {
+class SettingsPage extends StatefulWidget {
   final UserData userData;
-  Settings({Key key, this.userData}) : super(key: key);
+  SettingsPage({Key key, this.userData}) : super(key: key);
 
   @override
-  SettingsState createState() => new SettingsState(userData);
+  SettingsPageState createState() => new SettingsPageState(userData);
 }
 
-class SettingsState extends State<Settings> {
+class SettingsPageState extends State<SettingsPage> with AutomaticKeepAliveClientMixin {
+  bool viewVisible = false ;
+  String mText = "Update authenticate information >";
   final UserData userData;
   String username, email, phone, password, currentEmail, currentPassword;
-  SettingsState(this.userData) {
+  SettingsPageState(this.userData) {
     currentEmail = userData.email;
     email = userData.email;
     username = userData.username;
@@ -32,8 +35,21 @@ class SettingsState extends State<Settings> {
   final authFormKey = GlobalKey<FormState>();
   final AuthenticationService _authenticationService = AuthenticationService();
 
+  void showWidget(){
+    setState(() {
+     viewVisible = true ; 
+    });
+  }
+ 
+  void hideWidget(){
+    setState(() {
+     viewVisible = false ; 
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: PiAppBar(title: 'Settings').build(context),
@@ -44,6 +60,7 @@ class SettingsState extends State<Settings> {
           child: Padding(
             padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom),
+              // padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -52,22 +69,22 @@ class SettingsState extends State<Settings> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    CircleAvatar(
-                      radius: 55,
+                    Container(
+                      margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
+                      child: CircleAvatar(
+                      radius: 50,
                       backgroundColor: Colors.blue[100],
-                      child: Icon(
-                        Icons.person,
-                        color: Colors.blue[900],
-                        size: size.height * 0.1,
+                        child: Icon(
+                          Icons.person,
+                          color: Colors.blue[900],
+                          size: size.height * 0.1,
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      width: size.width * 0.05,
                     ),
                     Text(
                       'Edit Profile',
                       style: TextStyle(
-                        color: Colors.blue,
+                        color: AppTheme.text,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.2,
                         fontSize: 22,
@@ -80,7 +97,7 @@ class SettingsState extends State<Settings> {
                 ),
                 Card(
                   elevation: 0,
-                  color: Colors.grey[100],
+                  color: Colors.grey[50],
                   child: Form(
                     key: basicFormKey,
                     child: Column(
@@ -90,7 +107,7 @@ class SettingsState extends State<Settings> {
                         Text(
                           'Update basic information',
                           style: TextStyle(
-                            color: Colors.blue,
+                            color: AppTheme.text,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
                             fontSize: 18,
@@ -118,6 +135,7 @@ class SettingsState extends State<Settings> {
                               Validator.validatePhoneInput(phone.trim()),
                         ),
                         RoundedButton(
+                          color: AppTheme.text,
                           text: "Save",
                           press: () {
                             submitBasicInfo();
@@ -127,74 +145,91 @@ class SettingsState extends State<Settings> {
                     ),
                   ),
                 ),
-                Card(
-                  elevation: 0,
-                  color: Colors.grey[100],
-                  child: Form(
-                    key: authFormKey,
+                SingleChildScrollView(
+                  child:Container(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Update authentication information',
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
-                            fontSize: 18,
-                          ),
-                          textAlign: TextAlign.center,
+                      children: <Widget>[
+                        FlatButton(
+                          color: Colors.transparent,
+                          onPressed: _visibilitymethod , child: new Text(mText,
+                                      style: TextStyle(
+                                        color: AppTheme.text,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 1.2,
+                                        fontSize: 18,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
                         ),
-                        TextInputField(
-                          hintText: "New Email",
-                          icon: Icons.email,
-                          initialValue: email,
-                          onSaved: (value) {
-                            email = value;
-                          },
-                          validateInput: (email) =>
-                              Validator.validateEmailInput(email.trim()),
-                        ),
-                        PasswordInputField(
-                          hintText: 'Current Password',
-                          onChanged: (value) {
-                            currentPassword = value;
-                          },
-                          onSaved: (value) {
-                            currentPassword = value;
-                          },
-                          validateInput: (password) =>
-                              Validator.validatePasswdInput(password),
-                        ),
-                        PasswordInputField(
-                          hintText: 'New Password',
-                          onChanged: (value) {
-                            password = value;
-                          },
-                          onSaved: (value) {
-                            password = value;
-                          },
-                          validateInput: (password) =>
-                              Validator.validatePasswdInput(password,
-                                  isRequired: false),
-                        ),
-                        PasswordInputField(
-                          hintText: 'Confirm Password',
-                          onSaved: (value) {
-                            password = value;
-                          },
-                          validateInput: confirmPasswdInput,
-                        ),
-                        RoundedButton(
-                          text: "Save",
-                          press: () {
-                            submitAuthInfo();
-                          },
+                        Visibility(
+                          maintainSize: true, 
+                          maintainAnimation: true,
+                          maintainState: true,
+                          visible: viewVisible, 
+                          child: Card(
+                            elevation: 0,
+                            color: Colors.grey[50],
+                            child: Form(
+                              key: authFormKey,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  TextInputField(
+                                    hintText: "New Email",
+                                    icon: Icons.email,
+                                    initialValue: email,
+                                    onSaved: (value) {
+                                      email = value;
+                                    },
+                                    validateInput: (email) =>
+                                        Validator.validateEmailInput(email.trim()),
+                                  ),
+                                  PasswordInputField(
+                                    hintText: 'Current Password',
+                                    onChanged: (value) {
+                                      currentPassword = value;
+                                    },
+                                    onSaved: (value) {
+                                      currentPassword = value;
+                                    },
+                                    validateInput: (password) =>
+                                        Validator.validatePasswdInput(password),
+                                  ),
+                                  PasswordInputField(
+                                    hintText: 'New Password',
+                                    onChanged: (value) {
+                                      password = value;
+                                    },
+                                    onSaved: (value) {
+                                      password = value;
+                                    },
+                                    validateInput: (password) =>
+                                        Validator.validatePasswdInput(password,
+                                            isRequired: false),
+                                  ),
+                                  PasswordInputField(
+                                    hintText: 'Confirm Password',
+                                    onSaved: (value) {
+                                      password = value;
+                                    },
+                                    validateInput: confirmPasswdInput,
+                                  ),
+                                  RoundedButton(
+                                    color: AppTheme.text,
+                                    text: "Save",
+                                    press: () {
+                                      submitAuthInfo();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
                         ),
                       ],
                     ),
-                  ),
+                  )
                 ),
               ],
             ),
@@ -213,7 +248,6 @@ class SettingsState extends State<Settings> {
     if (basicFormKey.currentState.validate()) {
       basicFormKey.currentState.save();
       try {
-        //TODO get current GPS data and store to DB
         await DatabaseService(uid: userData.uid)
             .updateUserData(username, null, phone);
         Validator.showAlert(
@@ -237,4 +271,19 @@ class SettingsState extends State<Settings> {
       }
     }
   }
+
+  void _visibilitymethod() {
+    setState(() {
+      if (viewVisible) {
+        hideWidget();
+        mText = "Update authenticate information >";
+      } else {
+        showWidget();
+        mText = "Update authenticate information";
+      }
+    });
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 }

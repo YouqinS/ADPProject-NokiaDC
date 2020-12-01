@@ -7,6 +7,7 @@ import 'package:RasPiFinder/map/map_only.dart';
 import 'package:RasPiFinder/map/map_view.dart';
 import 'package:RasPiFinder/models/rasps.dart';
 import 'package:RasPiFinder/pi_data/dataContainer.dart';
+import 'package:RasPiFinder/widgets/theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -75,7 +76,7 @@ class _PiDataState extends State<PiData> {
     final String owner = (null == currentPi || currentPi.owner == null) ? none : currentPi.owner['email'];
     final String finder = (null == currentPi || currentPi.finder == null) ? none : currentPi.finder['email'];
     var divider = Divider(
-      color: Colors.red,
+      color: AppTheme.primary,
     );
 
     getPiByModelNumber(modelNumber);
@@ -83,112 +84,120 @@ class _PiDataState extends State<PiData> {
     return loading ? Loading() : Scaffold(
       appBar: PiAppBar(title: 'Pi Data').build(context),
       body: SingleChildScrollView(
-        child: Container(
-          height: size.height,
-          color: Colors.white,
+        physics: BouncingScrollPhysics(),
+        child:Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              futureBuilder,
-              Container(
-                // borderRadius: BorderRadius.circular(5.0),
-                decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
-                child:   Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(80), topRight: Radius.circular(90))),
-                elevation: 0,
+            children: [
+              Container(                    
+                height: size.height,
                 color: Colors.white,
                 child: Column(
-                  children: [
-                    DataContainer(
-                      label: 'Model No.',
-                      content: (null == currentPi || currentPi.modelNumber.isEmpty) ? notAvailable : currentPi.modelNumber,
-                      maxLine: 2,
-                      isUser: false,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    // futureBuilder,
+                    Container(
+                      // borderRadius: BorderRadius.circular(5.0),
+                      decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+                      child:   Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(topLeft: Radius.circular(80), topRight: Radius.circular(90))),
+                      elevation: 0,
+                      color: Colors.white,
+                      child: Column(
+                        children: [
+                          DataContainer(
+                            label: 'Model No.',
+                            content: (null == currentPi || currentPi.modelNumber.isEmpty) ? notAvailable : currentPi.modelNumber,
+                            maxLine: 2,
+                            isUser: false,
+                          ),
+                          divider,
+                          DataContainer(
+                            label: 'Software',
+                            content: (null == currentPi || currentPi.software.isEmpty) ? notAvailable : currentPi.software,
+                            maxLine: 2,
+                            isUser: false,
+                          ),
+                          divider,
+                          DataContainer(
+                            label: 'Owner',
+                            content: owner,
+                            maxLine: 1,
+                            isUser: true,
+                            user: null == currentPi ? null : currentPi.owner,),
+                          divider,
+                          DataContainer(label: 'User',
+                              content:  user,
+                              maxLine: 1,
+                              isUser: true,
+                              user:null == currentPi ? null : currentPi.user
+                          ),
+                          divider,
+                          DataContainer(
+                            label: 'Finder',
+                            content: finder,
+                            maxLine: 1,
+                            isUser: true,
+                            user:null == currentPi ? null : currentPi.finder,
+                          ),
+                          divider,
+                          DataContainer(
+                            label: 'Address',
+                            content: (null == currentPi || currentPi.address == null || currentPi.address.isEmpty) ? notAvailable : currentPi.address,
+                            maxLine: 3,
+                            isUser: false,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Tooltip(
+                                message: 'GPS when last scanned',
+                                child: RaisedButton.icon(
+                                    onPressed: () {
+                                      navToMap(context);
+                                    },
+                                    label: Text('GPS',
+                                        style: TextStyle(
+                                          color: Colors.blue[800],
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                        )),
+                                    icon: Icon(
+                                      Icons.map,
+                                      color: Colors.blue,
+                                    )),
+                              ),
+                            ],
+                          ),
+                          divider,
+                          DataContainer(label: 'Other', content: '', maxLine: 1, isUser: false,),
+                          DataContainer(label: '', content: (null == currentPi || currentPi.other == null || currentPi.other.isEmpty) ? notAvailable : currentPi.other, maxLine: 20, isUser: false,),
+                        ],
+                      ),
                     ),
-                    divider,
-                    DataContainer(
-                      label: 'Software',
-                      content: (null == currentPi || currentPi.software.isEmpty) ? notAvailable : currentPi.software,
-                      maxLine: 2,
-                      isUser: false,
                     ),
-                    divider,
-                    DataContainer(
-                      label: 'Owner',
-                      content: owner,
-                      maxLine: 1,
-                      isUser: true,
-                      user: null == currentPi ? null : currentPi.owner,),
-                    divider,
-                    DataContainer(label: 'User',
-                        content:  user,
-                        maxLine: 1,
-                        isUser: true,
-                        user:null == currentPi ? null : currentPi.user
-                    ),
-                    divider,
-                    DataContainer(
-                      label: 'Finder',
-                      content: finder,
-                      maxLine: 1,
-                      isUser: true,
-                      user:null == currentPi ? null : currentPi.finder,
-                    ),
-                    divider,
-                    DataContainer(
-                      label: 'Address',
-                      content: (null == currentPi || currentPi.address == null || currentPi.address.isEmpty) ? notAvailable : currentPi.address,
-                      maxLine: 3,
-                      isUser: false,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Tooltip(
-                          message: 'GPS when last scanned',
-                          child: RaisedButton.icon(
-                              onPressed: () {
-                                navToMap(context);
-                              },
-                              label: Text('GPS',
-                                  style: TextStyle(
-                                    color: Colors.blue[800],
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  )),
-                              icon: Icon(
-                                Icons.map,
-                                color: Colors.blue,
-                              )),
+                  
+                    Visibility(
+                      child: FloatingActionButton.extended(
+                        backgroundColor: Colors.blue[800],
+                        elevation: 0,
+                        label: Text(
+                          "UPDATE",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                          ),
                         ),
-                      ],
+                        onPressed: openAlertBox,
+                        tooltip: 'Update Pi data',
+                      ),
+                      visible: showUpdateBtn
                     ),
-                    divider,
-                    DataContainer(label: 'Other', content: '', maxLine: 1, isUser: false,),
-                    DataContainer(label: '', content: (null == currentPi || currentPi.other == null || currentPi.other.isEmpty) ? notAvailable : currentPi.other, maxLine: 20, isUser: false,),
                   ],
                 ),
-              ),
-              ),
-            
-              Visibility(
-                child: FloatingActionButton.extended(
-                  backgroundColor: Colors.blue[800],
-                  elevation: 0,
-                  label: Text(
-                    "UPDATE",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                  onPressed: openAlertBox,
-                  tooltip: 'Update Pi data',
-                ),
-                visible: showUpdateBtn
               ),
             ],
           ),

@@ -26,14 +26,14 @@ class ProductTile extends StatelessWidget {
             height: 130,
             margin: new EdgeInsets.only(left: 33.0),
             decoration: new BoxDecoration(
-              color: AppTheme.cardColor,//new Color(0xFF526BC2),//new Color(0xFF333366),
+              color: Colors.white,//new Color(0xFF526BC2),//new Color(0xFF333366),
               shape: BoxShape.rectangle,
               borderRadius: new BorderRadius.circular(8.0),
               boxShadow: <BoxShadow>[
                 new BoxShadow(  
-                  color: Colors.blue,
-                  blurRadius: 10.0,
-                  offset: new Offset(4.0, 4.0),
+                  // color: Colors.blue,
+                  // blurRadius: 10.0,
+                  // offset: new Offset(4.0, 4.0),
                 ),
               ],
           ),
@@ -42,13 +42,13 @@ class ProductTile extends StatelessWidget {
                 children: <Widget>[
                   ListTile(
                     title: Padding(
-                      padding: EdgeInsets.fromLTRB(50.0, 15.0, 0.0, 0.0),
+                      padding: EdgeInsets.fromLTRB(50.0, 5.0, 0.0, 0.0),
                       child: Text("Model: "+ rasp.modelNumber, style: TextStyle(
-                    color: Colors.white, fontSize: 18.0,), textAlign: TextAlign.left),
+                    color: AppTheme.text, fontSize: 18.0,), textAlign: TextAlign.left),
                     ),
                     isThreeLine: true,
                     subtitle: Padding(
-                      padding: EdgeInsets.fromLTRB(50.0, 15.0, 0.0,0.0),
+                      padding: EdgeInsets.fromLTRB(50.0, 5.0, 0.0,0.0),
                       child: Column(
                       // mainAxisAlignment: MainAxisAlignment.center,
                       // crossAxisAlignment: CrossAxisAlignment.center,
@@ -56,7 +56,7 @@ class ProductTile extends StatelessWidget {
                               child: Row(
                                 children: [Icon(Icons.app_settings_alt, size: 25, color: Colors.lightBlueAccent,),
                                   Padding(child: Text(  (rasp.software==null ? "software" : rasp.software), style: TextStyle(
-                                    color: Colors.white, fontSize: 15.0), 
+                                    color: AppTheme.text, fontSize: 15.0), 
                                     textAlign: TextAlign.left,),
                                     padding: EdgeInsets.only(left: 10)),]
                               ),
@@ -64,7 +64,7 @@ class ProductTile extends StatelessWidget {
                           child: Row(
                                 children: [Icon(Icons.pin_drop_sharp, size: 25, color: Colors.lightGreenAccent,),
                                   Padding(child: Text( (rasp.address==null ? "Address" : rasp.address), style: TextStyle(
-                                    color: Colors.white, fontSize: 15.0), 
+                                    color: AppTheme.text, fontSize: 15.0), 
                                     textAlign: TextAlign.left,),
                                     padding: EdgeInsets.only(left: 10)),]
                               ),

@@ -27,11 +27,6 @@ class _MyRasPiState extends State<MyRasPi> {
 
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void dispose() {
     super.dispose();
   }
@@ -51,65 +46,83 @@ class _MyRasPiState extends State<MyRasPi> {
   Widget build(BuildContext context) {
     getMyPies();
   
-    return loading ? Loading() :  new Scaffold(
-      appBar: PiAppBar(title: 'My RasPies').build(context),
-      // body: futureBuilder,
-      body: ListView.builder(
-        itemCount: myPies.length,
-        itemBuilder: (BuildContext context, int index) {
-          return GestureDetector(
-            onTap: () async {
-              if (currentPi != null && currentPi.geoPoint != null ) {
-                    // setState(() => loading = true);
-                    // await new Future.delayed(new Duration(seconds: 4));
-                    navigateToPage(context, PiData(rasp: myPies[index], showUpdateBtn: true,));
-                    // getMyPies();
-                } else {
-                  setState(() {
-                      loading = false;
-                    });
-                  // await new Future.delayed(new Duration(seconds: 4));
-                  navigateToPage(context, PiData(rasp: myPies[index], showUpdateBtn: true,));
-                }
-            },
-            child: Card(
-              margin: new EdgeInsets.fromLTRB(20,10,20,10),
-              elevation: 0.50,
-              color: Colors.blue[100],
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CircleAvatar(
-                    radius: 13,
-                    backgroundColor: AppTheme.primary,
-                    child: Text(
-                      (index + 1).toString(),
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-
-                  DataContainer(
-                    label: 'Model No.',
-                    content: myPies[index].modelNumber,
-                    maxLine: 2,
-                    isUser: false,
-                  ),
-                  DataContainer(
-                    label: 'Software',
-                    content: myPies[index].software == null ? "NA" : myPies[index].software,
-                    maxLine: 2,
-                    isUser: false,
-                  ),
-                ],
-              ),
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color.fromRGBO(4, 9, 35, 1),
+                Color.fromRGBO(39, 105, 171, 1),
+              ],
+              begin: FractionalOffset.bottomCenter,
+              end: FractionalOffset.topCenter,
             ),
-          );
-        },
-      ),
+          ),
+        ),
+        loading ? Loading() :  new Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: PiAppBar(title: 'My RasPies').build(context),
+          // body: futureBuilder,
+          body: ListView.builder(
+            itemCount: myPies.length,
+            itemBuilder: (BuildContext context, int index) {
+              return GestureDetector(
+                onTap: () async {
+                  if (currentPi != null && currentPi.geoPoint != null ) {
+                        // setState(() => loading = true);
+                        // await new Future.delayed(new Duration(seconds: 4));
+                        navigateToPage(context, PiData(rasp: myPies[index], showUpdateBtn: true,));
+                        // getMyPies();
+                    } else {
+                      setState(() {
+                          loading = false;
+                        });
+                      // await new Future.delayed(new Duration(seconds: 4));
+                      navigateToPage(context, PiData(rasp: myPies[index], showUpdateBtn: true,));
+                    }
+                },
+                child: Card(
+                  margin: new EdgeInsets.fromLTRB(20,15,20,10),
+                  elevation: 0.40,
+                  color: Colors.blue[100],
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        radius: 11,
+                        backgroundColor: AppTheme.primary,
+                        child: Text(
+                          (index + 1).toString(),
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+
+                      DataContainer(
+                        label: 'Model No.',
+                        content: myPies[index].modelNumber,
+                        maxLine: 2,
+                        isUser: false,
+                      ),
+                      DataContainer(
+                        label: 'Software',
+                        content: myPies[index].software == null ? "NA" : myPies[index].software,
+                        maxLine: 2,
+                        isUser: false,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 

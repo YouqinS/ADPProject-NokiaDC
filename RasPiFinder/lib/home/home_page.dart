@@ -32,60 +32,80 @@ class _HomePageState extends State<HomePage>
     super.build(context);
     final UserData userData = Provider.of<UserData>(context);
     final rasPiList = Provider.of<List<Rasp>>(context) ?? [];
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "RasPiFinder",
-          style: TextStyle(
-              color: Colors.white,
-              letterSpacing: 2,
-              fontWeight: FontWeight.bold,
-              fontSize: 20),
-        ),
-        flexibleSpace: Container(
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Container(
           decoration: BoxDecoration(
-            gradient: new LinearGradient(
-              colors: <Color>[
-                const Color(0xFF124191),
-                const Color(0xFF124191),
+            gradient: LinearGradient(
+              colors: [
+                Color.fromRGBO(4, 9, 35, 1),
+                Color.fromRGBO(39, 105, 171, 1),
               ],
-              begin: const FractionalOffset(0.0, 0.0),
-              end: const FractionalOffset(0.0, 0.0),
-              stops: [0.0, 0.0],
-              tileMode: TileMode.clamp              
+              begin: FractionalOffset.bottomCenter,
+              end: FractionalOffset.topCenter,
             ),
           ),
         ),
-        centerTitle: true,
-        actions: <Widget>[
-          FlatButton.icon(
-              icon: Icon(
-                Icons.search,
-                color: Colors.white,
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            title: Text(
+              "RasPiFinder",
+              style: TextStyle(
+                  color: Colors.white,
+                  letterSpacing: 2,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20),
+            ),
+            flexibleSpace: Container(
+              decoration: BoxDecoration(
+                gradient: new LinearGradient(
+                  colors: <Color>[
+                    const Color(0xFF124191),
+                    const Color(0xFF124191),
+                  ],
+                  begin: const FractionalOffset(0.0, 0.0),
+                  end: const FractionalOffset(0.0, 0.0),
+                  stops: [0.0, 0.0],
+                  tileMode: TileMode.clamp              
+                ),
               ),
-              label: Text(''),
-              onPressed: () {
-                showSearchNotifier.value = !showSearchNotifier.value;
-              })
-        ],
-      ),
-      body: ValueListenableBuilder(
-          valueListenable: showSearchNotifier,
-          builder: (context, value, child) {
-            return RaspList(
-              showSearch: value,
-            );
-          }),
-      floatingActionButton: FloatingActionButton(
-          backgroundColor: AppTheme.primary,
-          onPressed: () => {
-                getModelNumberAndNavigate(rasPiList, userData)
-              },
-          child: Icon(
-            Icons.camera_alt_rounded,
+            ),
+            centerTitle: true,
+            actions: <Widget>[
+              FlatButton.icon(
+                  icon: Icon(
+                    Icons.search,
+                    color: Colors.white,
+                  ),
+                  label: Text(''),
+                  onPressed: () {
+                    showSearchNotifier.value = !showSearchNotifier.value;
+                  })
+            ],
           ),
-      ),
+          body: ValueListenableBuilder(
+              valueListenable: showSearchNotifier,
+              builder: (context, value, child) {
+                return RaspList(
+                  showSearch: value,
+                );
+              }),
+          floatingActionButton: FloatingActionButton.extended(
+              backgroundColor: AppTheme.primary,
+              onPressed: () => {
+                    getModelNumberAndNavigate(rasPiList, userData)
+                  },
+              icon: Icon(
+                Icons.camera_alt_rounded,
+              ),
+              label: Text("ScanQR"),
+          ),
+        ),
+      ],
     );
+    
   }
 
   @override
