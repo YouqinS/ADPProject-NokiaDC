@@ -59,7 +59,7 @@ class _NavigationPageState extends State<NavigationPage> {
             ),
           ],
           currentIndex: _selectedIndex,
-          selectedItemColor: AppTheme.iconColors[0],
+          selectedItemColor: AppTheme.text,
           onTap: _onItemTapped,
         ),
     );
