@@ -4,7 +4,6 @@ import 'package:RasPiFinder/models/user.dart';
 import 'package:RasPiFinder/onboarding/sharedPreferences.dart';
 import 'package:RasPiFinder/services/authentication_service.dart';
 import 'package:RasPiFinder/profile/setting.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

@@ -1,5 +1,4 @@
 import 'package:RasPiFinder/components/app_bar.dart';
-import 'package:RasPiFinder/components/loading.dart';
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/pi_data/dataContainer.dart';
 import 'package:RasPiFinder/pi_data/pi_data.dart';
@@ -21,10 +20,6 @@ class _MyRasPiState extends State<MyRasPi> {
   List<Rasp> myPies = [];
   final String uid;
   _MyRasPiState(this.uid);
-  bool loading = false;
-  GeoPoint geoPoint;
-  Rasp currentPi;
-
 
   @override
   void dispose() {
@@ -34,7 +29,6 @@ class _MyRasPiState extends State<MyRasPi> {
   @override
   Widget build(BuildContext context) {
     getMyPies();
-  
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -50,27 +44,15 @@ class _MyRasPiState extends State<MyRasPi> {
             ),
           ),
         ),
-        loading ? Loading() :  new Scaffold(
+        Scaffold(
           backgroundColor: Colors.transparent,
           appBar: PiAppBar(title: 'My RasPies').build(context),
-          // body: futureBuilder,
           body: ListView.builder(
             itemCount: myPies.length,
             itemBuilder: (BuildContext context, int index) {
               return GestureDetector(
-                onTap: () async {
-                  if (currentPi != null && currentPi.geoPoint != null ) {
-                        // setState(() => loading = true);
-                        // await new Future.delayed(new Duration(seconds: 4));
-                        navigateToPage(context, PiData(rasp: myPies[index], showUpdateBtn: true,));
-                        // getMyPies();
-                    } else {
-                      setState(() {
-                          loading = false;
-                        });
-                      // await new Future.delayed(new Duration(seconds: 4));
-                      navigateToPage(context, PiData(rasp: myPies[index], showUpdateBtn: true,));
-                    }
+                onTap: () {
+                  navigateToPage(context, PiData(rasp: myPies[index], showUpdateBtn: true,));
                 },
                 child: Card(
                   margin: new EdgeInsets.fromLTRB(20,15,20,10),
@@ -93,7 +75,7 @@ class _MyRasPiState extends State<MyRasPi> {
                       ),
 
                       DataContainer(
-                        label: 'Model No.',
+                        label: 'Model',
                         content: myPies[index].modelNumber,
                         maxLine: 2,
                         isUser: false,
