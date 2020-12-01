@@ -4,30 +4,20 @@ import 'package:RasPiFinder/models/user.dart';
 import 'package:RasPiFinder/onboarding/sharedPreferences.dart';
 import 'package:RasPiFinder/services/authentication_service.dart';
 import 'package:RasPiFinder/profile/setting.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 
 class Profile extends StatefulWidget {
-  // final UserData userData;
-  final String uid;
-  Profile({Key key, this.uid}) : super(key: key);
-
+  Profile({Key key}) : super(key: key);
 
   @override
-  ProfileState createState() =>  ProfileState(uid);
+  ProfileState createState() =>  ProfileState();
 }
 
 class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
   final AuthenticationService _authenticationService = AuthenticationService();
-  List<Rasp> myPies = [];
-  final String uid;
-  ProfileState(this.uid);
-
-  // final UserData userData;
-  // ProfileState(this.userData);
 
   final formKey = GlobalKey<FormState>();
   final String notAvail = 'not available';
@@ -41,12 +31,12 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
 
   @override
   Widget build(BuildContext context) {
-    getMyPies();
     super.build(context);
     UserData userData = Provider.of<UserData>(context);
+    final rasPiList = Provider.of<List<Rasp>>(context) ?? [];
+    List<Rasp> myPies = getMyPies(rasPiList, userData.uid);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    // Size size = MediaQuery.of(context).size;
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -167,7 +157,7 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                                         Column(
                                           children: [
                                             Text(
-                                              'Total Rasps',
+                                              'Total Pies',
                                               style: TextStyle(
                                                 color: Colors.grey[700],
                                                 fontFamily: 'Nunito',
@@ -175,7 +165,7 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                                               ),
                                             ),
                                             Text(
-                                              myPies.length.toString(),
+                                              rasPiList.length.toString(),
                                               style: TextStyle(
                                                 color: Color.fromRGBO(
                                                     39, 105, 171, 1),
@@ -204,7 +194,7 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                                         Column(
                                           children: [
                                             Text(
-                                              'My Rasps',
+                                              'My Pies',
                                               style: TextStyle(
                                                 color: Colors.grey[700],
                                                 fontFamily: 'Nunito',
@@ -430,50 +420,18 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  Future<List<QueryDocumentSnapshot>> getPiesByUserId() async {
-    List<QueryDocumentSnapshot> snapshots = [];
-    CollectionReference docRef = FirebaseFirestore.instance.collection('pi');
-    QuerySnapshot querySnapshot = await docRef.where("owner.uid", isEqualTo: uid).get();
-    List<QueryDocumentSnapshot> snapshot = querySnapshot.docs;
-    snapshots.addAll(snapshot);
-
-    querySnapshot = await docRef.where("user.uid", isEqualTo: uid).get();
-    snapshot = querySnapshot.docs;
-    snapshots.addAll(snapshot);
-
-    querySnapshot = await docRef.where("finder.uid", isEqualTo: uid).get();
-    snapshot = querySnapshot.docs;
-    snapshots.addAll(snapshot);
-
-    return snapshots;
-  }
-
-  getMyPies() {
-    getPiesByUserId().then((snapshots) => {
-    setState(() {
-      myPies = snapshotsToPies(snapshots);
-    })
-    });
-  }
-
-  List<Rasp> snapshotsToPies(List<QueryDocumentSnapshot> snapshots) {
+  List<Rasp> getMyPies(List<Rasp> allPies, String uid) {
     List<Rasp> myPies = [];
-    for (QueryDocumentSnapshot snapshot in snapshots) {
-      Rasp pi = Rasp(
-        modelNumber: snapshot.data()['modelNumber'] ?? "",
-        address: snapshot.data()['address'] ?? "",
-        software: snapshot.data()['software'] ?? "",
-        other: snapshot.data()['other'] ?? "",
-        owner: snapshot.data()['owner'] ?? null,
-        user: snapshot.data()['user'] ?? null,
-        finder: snapshot.data()['finder'] ?? null,
-        geoPoint: snapshot.data()['geoPoint'] ?? null,
-      );
-      myPies.add(pi);
+    for (Rasp pi in allPies) {
+      if ((null != pi.owner && pi.owner["uid"] == uid) ||
+          (null != pi.user && pi.user["uid"] == uid) ||
+          (null != pi.finder && pi.finder["uid"] == uid)) {
+        myPies.add(pi);
+      }
     }
-
     return myPies;
   }
+
 
   @override
   bool get wantKeepAlive => true;

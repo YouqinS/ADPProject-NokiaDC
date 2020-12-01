@@ -10,7 +10,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
-// import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:qrscans/qrscan.dart' as scanner;
 
 
@@ -21,8 +20,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with AutomaticKeepAliveClientMixin {
-  //default value for testing: Nokia Espoo campus
-  //GeoPoint geoPoint = new GeoPoint(60.22479775, 24.756725373913383);
   GeoPoint geoPoint;
   String modelNumber = '';
   ValueNotifier<bool> showSearchNotifier = ValueNotifier(false);

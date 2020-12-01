@@ -1,9 +1,7 @@
 import 'dart:async';
 
 import 'package:RasPiFinder/components/app_bar.dart';
-import 'package:RasPiFinder/components/loading.dart';
 import 'package:RasPiFinder/components/navigate.dart';
-import 'package:RasPiFinder/map/map_only.dart';
 import 'package:RasPiFinder/map/map_view.dart';
 import 'package:RasPiFinder/models/rasps.dart';
 import 'package:RasPiFinder/pi_data/dataContainer.dart';
@@ -19,7 +17,6 @@ import 'package:geolocator/geolocator.dart';
 
 
 class PiData extends StatefulWidget {
-
   final Rasp rasp;
   final bool showUpdateBtn;
   PiData({Key key, this.rasp, this.showUpdateBtn}) : super(key: key);
@@ -36,42 +33,10 @@ class _PiDataState extends State<PiData> {
   final String modelNumber;
   Rasp currentPi;
   _PiDataState(this.modelNumber, this.showUpdateBtn);
-  bool loading = false;
-
-
-   Future loadMap() async {
-    if (currentPi == null || currentPi.geoPoint == null) {
-        setState(() => loading = true);
-    } else {
-      setState(() {
-          loading = false;
-        });
-     return MapOnly(lastKnownGeopoint: new LatLng(currentPi.geoPoint.latitude, currentPi.geoPoint.longitude),);
-    }  
-  }
 
   @override
   Widget build(BuildContext context) {
-
-    var futureBuilder = new FutureBuilder(
-      future: loadMap(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.none:
-          case ConnectionState.waiting:
-            // return new Text('loading...');
-          default:
-            if (snapshot.hasError)
-              return new Text('Error: ${snapshot.error}');
-            else
-              return Container(
-                child:MapOnly(lastKnownGeopoint: new LatLng(currentPi.geoPoint.latitude, currentPi.geoPoint.longitude)),
-                height: MediaQuery.of(context).size.height / 4.0,
-            );
-        } 
-      },
-    );
-    Size size = MediaQuery.of(context).size;
+     Size size = MediaQuery.of(context).size;
     final String user = (null == currentPi || currentPi.user == null) ? none : currentPi.user['email'];
     final String owner = (null == currentPi || currentPi.owner == null) ? none : currentPi.owner['email'];
     final String finder = (null == currentPi || currentPi.finder == null) ? none : currentPi.finder['email'];
@@ -81,7 +46,7 @@ class _PiDataState extends State<PiData> {
 
     getPiByModelNumber(modelNumber);
 
-    return loading ? Loading() : Scaffold(
+    return Scaffold(
       appBar: PiAppBar(title: 'Pi Data').build(context),
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
@@ -158,14 +123,14 @@ class _PiDataState extends State<PiData> {
                                     onPressed: () {
                                       navToMap(context);
                                     },
-                                    label: Text('GPS',
+                                    label: Text('MAP',
                                         style: TextStyle(
                                           color: Colors.blue[800],
                                           fontWeight: FontWeight.bold,
                                           fontSize: 18,
                                         )),
                                     icon: Icon(
-                                      Icons.map,
+                                      Icons.location_on_outlined,
                                       color: Colors.blue,
                                     )),
                               ),
@@ -270,8 +235,6 @@ class _PiDataState extends State<PiData> {
   List<String> getDropdownValues() {
     List<String> values = [];
     String currentRole = getCurrentRole();
-    print("currentRole=" + currentRole);
-    print("piUserText=" + piUserText);
     values.add(currentRole);
     values.add(piOwnerText);
     values.add(piUserText);
@@ -284,8 +247,6 @@ class _PiDataState extends State<PiData> {
     } else if (currentRole == piFinderText) {
       values.remove(piFinderText);
     }
-    print("********");
-    print(values);
     return values;
   }
 
@@ -434,59 +395,60 @@ class _PiDataState extends State<PiData> {
         stayOrLeave();
         clearDropdownValue();
       });
-
-      print('userType=' + dropdownValue);
     }
   }
 
   void navToMap(BuildContext context) {
     if (currentPi.geoPoint == null) {
-      showAlert();
+      Validator.showAlert(context, "Alert","No Gps info available!", "OK");
     } else {
       navigateToPage(context, MapView(lastKnownGeopoint: new LatLng(currentPi.geoPoint.latitude, currentPi.geoPoint.longitude),));
     }
   }
 
-  Future<void> showAlert() async {
+  void validateUserTypeInput() {
+    if (dropdownValue == otherType) {
+     // Validator.showAlert(context, "Alert", "Selecting Unregister will delete all your data from this pi!", "OK");
+      showUnregisterAlert(context);
+    }
+  }
+
+  Future<void> showUnregisterAlert(BuildContext context) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
-        return SingleChildScrollView(
-          child: AlertDialog(
-            title: Text('Alert'),
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  Text('No Gps info available!'),
-                ],
-              ),
+        return AlertDialog(
+          title: Text("Alert"),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text("Sure to Unregister from this pi?"),
+              ],
             ),
-            actions: <Widget>[
-              TextButton(
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
           ),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Yes"),
+              onPressed: () {
+                updateData();
+              },
+            ),
+            TextButton(
+              child: Text("No"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
         );
       },
     );
   }
 
-
-  void validateUserTypeInput() {
-    if (dropdownValue == otherType) {
-      Validator.showAlert(context, "Alert", "Selecting Unregister will delete all your data from this pi!", "OK");
-    }
-  }
-
   void stayOrLeave(){
     if (dropdownValue == otherType) {
       Navigator.of(context).popUntil(ModalRoute.withName('/')); // back to MyRasPie page
-//    Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false); // back to homepage
     }
     else {
       Navigator.of(context).pop();

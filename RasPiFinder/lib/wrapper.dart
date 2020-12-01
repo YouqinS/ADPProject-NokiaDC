@@ -1,6 +1,5 @@
 import 'package:RasPiFinder/models/user.dart';
 import 'package:RasPiFinder/auth/authenticate.dart';
-import 'package:RasPiFinder/onboarding/onboarding.dart';
 import 'package:RasPiFinder/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
