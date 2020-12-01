@@ -31,17 +31,6 @@ class _MyRasPiState extends State<MyRasPi> {
     super.dispose();
   }
 
-  Future loadMap() async {
-    if (currentPi == null) {
-        setState(() => loading = true);
-    } else {
-      setState(() {
-          loading = false;
-        });
-      await new Future.delayed(new Duration(seconds: 4));
-    }    
-  }
-
   @override
   Widget build(BuildContext context) {
     getMyPies();

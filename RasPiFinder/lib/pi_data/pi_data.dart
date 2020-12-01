@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:RasPiFinder/components/app_bar.dart';
 import 'package:RasPiFinder/components/loading.dart';
 import 'package:RasPiFinder/components/navigate.dart';
-import 'package:RasPiFinder/map/map_only.dart';
 import 'package:RasPiFinder/map/map_view.dart';
 import 'package:RasPiFinder/models/rasps.dart';
 import 'package:RasPiFinder/pi_data/dataContainer.dart';
@@ -38,40 +37,9 @@ class _PiDataState extends State<PiData> {
   _PiDataState(this.modelNumber, this.showUpdateBtn);
   bool loading = false;
 
-
-   Future loadMap() async {
-    if (currentPi == null || currentPi.geoPoint == null) {
-        setState(() => loading = true);
-    } else {
-      setState(() {
-          loading = false;
-        });
-     return MapOnly(lastKnownGeopoint: new LatLng(currentPi.geoPoint.latitude, currentPi.geoPoint.longitude),);
-    }  
-  }
-
   @override
   Widget build(BuildContext context) {
-
-    var futureBuilder = new FutureBuilder(
-      future: loadMap(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.none:
-          case ConnectionState.waiting:
-            // return new Text('loading...');
-          default:
-            if (snapshot.hasError)
-              return new Text('Error: ${snapshot.error}');
-            else
-              return Container(
-                child:MapOnly(lastKnownGeopoint: new LatLng(currentPi.geoPoint.latitude, currentPi.geoPoint.longitude)),
-                height: MediaQuery.of(context).size.height / 4.0,
-            );
-        } 
-      },
-    );
-    Size size = MediaQuery.of(context).size;
+     Size size = MediaQuery.of(context).size;
     final String user = (null == currentPi || currentPi.user == null) ? none : currentPi.user['email'];
     final String owner = (null == currentPi || currentPi.owner == null) ? none : currentPi.owner['email'];
     final String finder = (null == currentPi || currentPi.finder == null) ? none : currentPi.finder['email'];
@@ -270,8 +238,6 @@ class _PiDataState extends State<PiData> {
   List<String> getDropdownValues() {
     List<String> values = [];
     String currentRole = getCurrentRole();
-    print("currentRole=" + currentRole);
-    print("piUserText=" + piUserText);
     values.add(currentRole);
     values.add(piOwnerText);
     values.add(piUserText);
@@ -284,8 +250,6 @@ class _PiDataState extends State<PiData> {
     } else if (currentRole == piFinderText) {
       values.remove(piFinderText);
     }
-    print("********");
-    print(values);
     return values;
   }
 
@@ -434,8 +398,6 @@ class _PiDataState extends State<PiData> {
         stayOrLeave();
         clearDropdownValue();
       });
-
-      print('userType=' + dropdownValue);
     }
   }
 
@@ -486,7 +448,6 @@ class _PiDataState extends State<PiData> {
   void stayOrLeave(){
     if (dropdownValue == otherType) {
       Navigator.of(context).popUntil(ModalRoute.withName('/')); // back to MyRasPie page
-//    Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false); // back to homepage
     }
     else {
       Navigator.of(context).pop();
