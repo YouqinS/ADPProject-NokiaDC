@@ -1,4 +1,5 @@
 import 'package:RasPiFinder/components/app_bar.dart';
+import 'package:RasPiFinder/components/backButtonPress.dart';
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/pi_data/dataContainer.dart';
 import 'package:RasPiFinder/pi_data/pi_data.dart';
@@ -32,6 +33,7 @@ class _MyRasPiState extends State<MyRasPi> {
     return Stack(
       fit: StackFit.expand,
       children: [
+        BackButtonPress(),
         Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
