@@ -38,17 +38,23 @@ class ProductTile extends StatelessWidget {
               ],
           ),
           child: Container(
+              constraints: BoxConstraints(maxWidth: 200),
               child: new Stack(
                 children: <Widget>[
                   ListTile(
                     title: Padding(
-                      padding: EdgeInsets.fromLTRB(50.0, 5.0, 0.0, 0.0),
-                      child: Text("Model: "+ rasp.modelNumber, style: TextStyle(
+                      padding: EdgeInsets.fromLTRB(40.0, 5.0, 0.0, 0.0),
+                      child: Text(
+                        "Model: "+ rasp.modelNumber, 
+                        overflow: TextOverflow.ellipsis, 
+                        softWrap: false, 
+                        maxLines: 2,
+                        style: TextStyle(
                     color: AppTheme.text, fontSize: 18.0,), textAlign: TextAlign.left),
                     ),
                     isThreeLine: true,
                     subtitle: Padding(
-                      padding: EdgeInsets.fromLTRB(50.0, 5.0, 0.0,0.0),
+                      padding: EdgeInsets.fromLTRB(40.0, 5.0, 0.0,0.0),
                       child: Column(
                       // mainAxisAlignment: MainAxisAlignment.center,
                       // crossAxisAlignment: CrossAxisAlignment.center,

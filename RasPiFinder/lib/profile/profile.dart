@@ -1,3 +1,4 @@
+import 'package:RasPiFinder/components/backButtonPress.dart';
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/models/rasps.dart';
 import 'package:RasPiFinder/models/user.dart';
@@ -40,6 +41,7 @@ class ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
     return Stack(
       fit: StackFit.expand,
       children: [
+        BackButtonPress(),
         Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(

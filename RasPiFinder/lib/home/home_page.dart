@@ -1,5 +1,6 @@
 import 'package:RasPiFinder/add_pi/add_pi.dart';
 import 'package:RasPiFinder/auth/Validator.dart';
+import 'package:RasPiFinder/components/backButtonPress.dart';
 import 'package:RasPiFinder/components/navigate.dart';
 import 'package:RasPiFinder/home/rasp_list.dart';
 import 'package:RasPiFinder/models/rasps.dart';
@@ -32,6 +33,7 @@ class _HomePageState extends State<HomePage>
     return Stack(
       fit: StackFit.expand,
       children: [
+        BackButtonPress(),
         Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
