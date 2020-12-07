@@ -234,18 +234,27 @@ class _PiDataState extends State<PiData> {
 
   List<String> getDropdownValues() {
     List<String> values = [];
+    final userX = auth.currentUser;
+
     String currentRole = getCurrentRole();
     values.add(currentRole);
     values.add(piOwnerText);
     values.add(piUserText);
     values.add(piFinderText);
-    values.add(otherType);
+
     if (currentRole == piOwnerText) {
       values.remove(piOwnerText);
     } else if (currentRole == piUserText) {
       values.remove(piUserText);
     } else if (currentRole == piFinderText) {
       values.remove(piFinderText);
+    }
+    if (currentPi != null) {
+      if ((currentPi.user != null && currentPi.user["uid"] == userX.uid) ||
+          (currentPi.owner != null && currentPi.owner["uid"] == userX.uid) ||
+          (currentPi.finder != null && currentPi.finder["uid"] == userX.uid)) {
+        values.add(otherType);
+      }
     }
     return values;
   }
@@ -448,7 +457,8 @@ class _PiDataState extends State<PiData> {
 
   void stayOrLeave(){
     if (dropdownValue == otherType) {
-      Navigator.of(context).popUntil(ModalRoute.withName('/')); // back to MyRasPie page
+      //Navigator.of(context).popUntil(ModalRoute.withName('/'));
+      Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName));
     }
     else {
       Navigator.of(context).pop();
