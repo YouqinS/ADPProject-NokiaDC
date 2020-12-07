@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Rasp {
-  final String modelNumber; //uid
+  final String modelNumber;
   String address;
   String software;
   Map finder;

@@ -1,12 +1,12 @@
 import 'package:RasPiFinder/models/user.dart';
-import 'package:RasPiFinder/auth/authenticate.dart';
+import 'package:RasPiFinder/screens/auth/authenticate.dart';
+import 'package:RasPiFinder/screens/onboarding/sharedPreferences.dart';
 import 'package:RasPiFinder/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:RasPiFinder/navigation_screen.dart';
 
 import 'models/rasps.dart';
-import 'onboarding/sharedPreferences.dart';
 
 class Wrapper extends StatefulWidget {
   @override
@@ -34,19 +34,9 @@ class WrapperState extends State<Wrapper> {
     print("First time22");
     print(isFirstTimeOpen);
 
-    //return either onboarding or home or authenticate widget
-
-    // if (user == null) {
-    //   return OnBoardingPage();
-    // }
-    // if (isFirstTimeOpen || user == null){
-    //   return OnBoardingPage();
-    // }
     if ( user == null) {
       return Authenticate();
     }
-    // if (isFirstTimeOpen == false ) {
-    //   return Authenticate();}
     else {
       print('Wrapper user uid=' + user.uid);
       return MultiProvider(
