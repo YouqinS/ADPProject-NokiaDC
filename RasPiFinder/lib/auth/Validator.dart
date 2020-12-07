@@ -32,11 +32,32 @@ class Validator {
     if ((null == password || password.isEmpty) && isRequired) {
       return 'Password empty';
     } else if (password != null && password.isNotEmpty) {
-      String pattern =
-          r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+      if (password.length < 8) {
+        return 'min length: 8';
+      }
+      String pattern = r'(?=.*[A-Z])';
       RegExp regExp = new RegExp(pattern);
+
       if (!regExp.hasMatch(password)) {
-        return 'e.g.: 123Abc!#';
+        return 'require at least one uppercase';
+      }
+
+      pattern = r'(?=.*[a-z])';
+      regExp = new RegExp(pattern);
+      if (!regExp.hasMatch(password)) {
+        return 'require at least one lowercase';
+      }
+
+      pattern = r'(?=.*?[0-9])';
+      regExp = new RegExp(pattern);
+      if (!regExp.hasMatch(password)) {
+        return 'require at least one number';
+      }
+
+      pattern = r'(?=.*?[!@#\$&*~]).{8,}';
+      regExp = new RegExp(pattern);
+      if (!regExp.hasMatch(password)) {
+        return 'require at least one special character';
       }
       return null;
     }

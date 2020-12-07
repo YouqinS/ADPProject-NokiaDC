@@ -72,7 +72,7 @@ class SignupForm extends State<SignupPage> {
                               hintText: "Username",
                               icon: Icons.person,
                               onSaved: (value) {
-                                username = value.trim();
+                                username = value;
                               },
                               validateInput: (username) => Validator.validateUsername(username.trim()),
                             ),
@@ -88,14 +88,14 @@ class SignupForm extends State<SignupPage> {
                               hintText: "Phone Number",
                               icon: Icons.phone_android,
                               onSaved: (value) {
-                                phone = value.trim();
+                                phone = value;
                               },
                               validateInput: (phone) => Validator.validatePhoneInput(phone.trim()),
                             ),
                             PasswordInputField(
                               hintText: "Password",
                               onSaved: (value) {
-                                password = value.trim();
+                                password = value;
                               },
                               validateInput: (password) => Validator.validatePasswdInput(password),
                             ),

@@ -107,7 +107,6 @@ class AddPiState extends State<AddPi> {
                           labelStyle: textStyle,
                         ),
                         onSaved: (input) => address = input,
-                        validator: validateAddressInput,
                       ),
                       TextFormField(
                         decoration: InputDecoration(
@@ -194,14 +193,6 @@ class AddPiState extends State<AddPi> {
       Navigator.of(context).pop();
     }
   }
-
-  String validateAddressInput(String address) {
-    if (address.isNotEmpty && address.length < 5) {
-      return 'Please enter valid Pi location !';
-    }
-    return null;
-  }
-
 
   void validateUserTypeInput() {
     if (userType == 'Select :') {

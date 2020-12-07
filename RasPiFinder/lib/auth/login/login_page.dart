@@ -83,10 +83,10 @@ class LoginForm extends State<LoginPage> {
                             PasswordInputField(
                               hintText: "Password",
                               onSaved: (value) {
-                                password = value.trim();
+                                password = value;
                               },
                               validateInput: (password) =>
-                                  Validator.validatePasswdInput(password.trim()),
+                                  Validator.validatePasswdInput(password),
                             ),
                             RoundedButton(
                               color: AppTheme.text,
