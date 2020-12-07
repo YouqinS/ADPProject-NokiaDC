@@ -8,9 +8,9 @@ by students from Metropolia University of Applied Sciences for their Innovation 
 The project was offered and co-supervised by Metropolia and Nokia.
 
 ## Download APK and install it on your phone to test the App
-[app-arm64-v8a-release.apk](https://github.com/YouqinS/ADPProject-NokiaDC/blob/ReadMe/app-arm64-v8a-release.apk)
+[app-arm64-v8a-release.apk](https://github.com/YouqinS/ADPProject-NokiaDC/blob/master/app-arm64-v8a-release.apk)
 
-[app-armeabi-v7a-release.apk](https://github.com/YouqinS/ADPProject-NokiaDC/blob/ReadMe/app-armeabi-v7a-release.apk) 
+[app-armeabi-v7a-release.apk](https://github.com/YouqinS/ADPProject-NokiaDC/blob/master/app-armeabi-v7a-release.apk) 
 
 
 ## [How to setup Google firestore](https://github.com/YouqinS/ADPProject-NokiaDC)
@@ -34,36 +34,44 @@ The project was offered and co-supervised by Metropolia and Nokia.
 1. Camera (for qr code scanning)
 
 ## App Functionalities
-#### Home: list of all Pies stored in database
-<img src="home.jpg" height=500>  
 
-#### Pi Data 
+#### Scan to add if pi not stored in database
+<img src="scan_add.gif" height=500>   
+
+#### Scan to update pi if already stored in database
+<img src="scan_update.gif" height=500>  
+
+#### 
+#### Home: list of all RasberryPies stored in db     
+<img src="home.jpg" height=500>                     
+
+#### Pi Data: details of the RasberryPi
 <img src="pi_data_update.jpg" height=500>
 
-#### View user info from Pi Data 
-<img src="user_info.jpg" height=500>
+#### User info of the Pi                             
+<img src="user_info.jpg" height=500>  
 
 #### Map view of Pi location
 <img src="map.jpg" height=500>   
 
-#### My RasPies 
-<img src="my_pies.jpg" height=500>
+#### My RasPies: all Pies under "my account"         
+<img src="my_pies.jpg" height=500>                 
 
-#### Add a Pi
-<img src="add.jpg" height=500>   
+#### Search for a Pi
+<img src="search.jpg" height=500>   
 
-#### Update Pi data
-<img src="update.jpg" height=500>    
+#### Update Pi data                                  
+<img src="update.jpg" height=500>                   
 
-#### Unregister from a Pi 
+#### Unregister from this Pi
 <img src="unregister.jpg" height=500> 
 
-#### Search 
-<img src="search.jpg" height=500>
 
+
+##
 #### [Watch Demo video](https://www.youtube.com/watch?v=u8rikaPHONU)
 
-#### [Download Demo video](https://github.com/YouqinS/ADPProject-NokiaDC/blob/ReadMe/app-demo.mp4)
+#### [Download Demo video](https://github.com/YouqinS/ADPProject-NokiaDC/blob/master/demo.mp4)
 
 
 ##
