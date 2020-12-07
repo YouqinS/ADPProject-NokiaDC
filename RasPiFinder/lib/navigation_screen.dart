@@ -1,8 +1,8 @@
-import 'package:RasPiFinder/profile/my_pi.dart';
+import 'package:RasPiFinder/screens/home/home_page.dart';
+import 'package:RasPiFinder/screens/profile/my_pi.dart';
+import 'package:RasPiFinder/screens/profile/profile.dart';
 import 'package:RasPiFinder/widgets/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:RasPiFinder/home/home_page.dart';
-import 'package:RasPiFinder/profile/profile.dart';
 import 'package:provider/provider.dart';
 import 'models/user.dart';
 

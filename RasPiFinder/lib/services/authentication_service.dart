@@ -10,11 +10,11 @@ class AuthenticationService {
     return user != null ? MUser(uid: user.uid) : null;
   }
 
-  //auth change user stream
+  //screens.auth change user stream
   Stream<MUser> get user {
     return _firebaseAuth
         .authStateChanges()
-        // .map((User user) => _userFromFirebaseUser(user));
+        // .screens.map((User user) => _userFromFirebaseUser(user));
         .map(_userFromFirebaseUser);
   }
 
