@@ -457,7 +457,8 @@ class _PiDataState extends State<PiData> {
 
   void stayOrLeave(){
     if (dropdownValue == otherType) {
-      Navigator.of(context).popUntil(ModalRoute.withName('/')); // back to MyRasPie page
+      //Navigator.of(context).popUntil(ModalRoute.withName('/'));
+      Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName));
     }
     else {
       Navigator.of(context).pop();
