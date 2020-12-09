@@ -8,17 +8,17 @@ by students from Metropolia University of Applied Sciences for their Innovation 
 The project was offered and co-supervised by Metropolia and Nokia.
 
 ## Download APK and install it on your phone to test the App
-[app-arm64-v8a-release.apk](https://github.com/YouqinS/ADPProject-NokiaDC/blob/master/app-arm64-v8a-release.apk)
+[app-arm64-v8a-release.apk](https://github.com/YouqinS/ADPProject-NokiaDC/blob/master/app-x86_64-release.apk)
 
 [app-armeabi-v7a-release.apk](https://github.com/YouqinS/ADPProject-NokiaDC/blob/master/app-armeabi-v7a-release.apk) 
 
 
-## [How to setup Google firestore](https://github.com/YouqinS/ADPProject-NokiaDC)
+## [How to setup Google firestore](https://github.com/YouqinS/ADPProject-NokiaDC/blob/ApkDBconfig/Cloud%20Firestore%20for%20flutter.docx)
 
 
 ## How to setup for further development (Android)
 1. Clone the repository: [RasPiFinder](https://github.com/YouqinS/ADPProject-NokiaDC)
-1. Read: [How to setup Google firestore](https://github.com/YouqinS/ADPProject-NokiaDC)
+1. Read: [How to setup Google firestore](https://github.com/YouqinS/ADPProject-NokiaDC/blob/ApkDBconfig/Cloud%20Firestore%20for%20flutter.docx)
 1. Setup your account on Google fire cloud 
 1. Setup the connection to database in project
 1. Run the project with Android Studio/Visual Studio
