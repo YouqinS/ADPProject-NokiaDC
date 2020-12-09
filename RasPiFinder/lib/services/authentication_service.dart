@@ -55,12 +55,11 @@ class AuthenticationService {
         password: password,
       );
       User user = authResult.user;
-      print('firebaseAuth authResult = ' + authResult.toString());
-      print('firebaseAuth user id = ' + user.uid);
 
       //create a new document for the user with the uid
       await DatabaseService(uid: user.uid)
           .createOrEditUser(username, email, phone);
+      print('HAHAHAHAHAH');
       return _userFromFirebaseUser(user);
     } catch (e) {
       print(e.toString());
