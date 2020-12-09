@@ -13,7 +13,7 @@ The project was offered and co-supervised by Metropolia and Nokia.
 [app-armeabi-v7a-release.apk](https://github.com/YouqinS/ADPProject-NokiaDC/blob/master/app-armeabi-v7a-release.apk) 
 
 
-## [How to setup Google firestore](https://github.com/YouqinS/ADPProject-NokiaDC)
+## [How to setup Google firestore](https://github.com/YouqinS/ADPProject-NokiaDC/Cloud Firestore for flutter.docx)
 
 
 ## How to setup for further development (Android)
