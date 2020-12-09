@@ -1,5 +1,5 @@
+import 'package:RasPiFinder/screens/onboarding/sharedPreferences.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:RasPiFinder/onboarding/sharedPreferences.dart';
 
 void main() {
   test('SF should be able to add integer value', () async {
