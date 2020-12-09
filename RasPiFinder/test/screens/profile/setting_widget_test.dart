@@ -7,7 +7,6 @@ import 'package:firebase_core/firebase_core.dart';
 
 import '../../mock.dart';
 
-
 void main() {
   setupFirebaseAuthMocks();
 
@@ -16,7 +15,8 @@ void main() {
   });
 
   Widget makeTestableWidget(Widget child) {
-    return RasPiFinder(); }
+    return RasPiFinder();
+  }
 
   group('Find and test widgets', () {
     testWidgets('Find widgets', (WidgetTester tester) async {
@@ -30,12 +30,11 @@ void main() {
       final rowFinder = find.byType(Row);
       final textFinder = find.byType(Text);
 
-
       await tester.pump();
 
       expect(stackFinder, findsWidgets);
       expect(scaffoldFinder, findsOneWidget);
-      expect(flatbtnFinder, findsNWidgets(2));
+      expect(flatbtnFinder, findsNWidgets(1));
       expect(singleChildSclFinder, findsOneWidget);
       expect(sizedBoxFinder, findsWidgets);
       expect(rowFinder, findsWidgets);
@@ -46,7 +45,6 @@ void main() {
       await tester.pumpWidget(makeTestableWidget(SettingsPage()));
 
       tester.tap(find.byType(FlatButton).first);
-
     });
   });
 }
